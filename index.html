@@ -3,368 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr Lucky Bundle - Admin Dashboard</title>
+    <title>Mr Lucky Bundle - Admin & Store</title>
     <style>
-        :root {
-            --primary: #25D366;
-            --dark: #111b21;
-            --light: #f0f2f5;
-            --danger: #ef4444;
-            --card-bg: #ffffff;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: var(--dark);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 4px solid var(--primary);
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 15px;
-        }
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        h2 { margin-top: 0; color: var(--dark); font-size: 1.2rem; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .btn-danger { background-color: var(--danger); }
-        .btn-sm { padding: 5px 10px; font-size: 0.8rem; width: auto; display: inline-block; margin-right: 5px; }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        .alert-box {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            display: none;
-        }
-        .order-item, .bundle-mgmt-item {
-            background: #f9fafb;
-            border-left: 4px solid var(--primary);
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-badge {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            display: none;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .payment-info {
-            background: #eef2ff;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; color: #111; }
+        .box { background: #f9f9f9; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ddd; }
+        input, select { width: 100%; padding: 10px; margin: 6px 0 12px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #25D366; color: white; border: none; padding: 10px 15px; width: 100%; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button.danger { background: #dc3545; }
+        .order-card { background: #fff3cd; border-left: 5px solid #ffc107; padding: 10px; margin-bottom: 8px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Mr Lucky Bundle</h1>
-    <p>Admin: Juma Shaban | Contact: 0616517946</p>
-</header>
-
 <div class="container">
-    
-    <!-- Sehemu ya Mteja -->
-    <div class="card" id="client-view">
-        <h2>Chagua Kifurushi Chako</h2>
-        
-        <div class="payment-info">
-            💳 <b>Sehemu ya Malipo:</b> Tuma pesa kwa Jina: <b>Juma Shaban</b> | Namba: <b>0616517946</b>
+    <h1>Mr Lucky Bundle</h1>
+    <p style="text-align:center; font-size: 0.85rem;">Admin: Juma Shaban | Contact: 0616517946</p>
+
+    <!-- SEHEMU YA MTEJA -->
+    <div class="box" id="clientView">
+        <h2>Nunua Kifurushi</h2>
+        <div style="background:#e2e3e5; padding:8px; margin-bottom:10px; font-size:0.85rem; border-radius:4px;">
+            💳 Tuma malipo kwa: <b>Juma Shaban</b> (Namba: <b>0616517946</b>)
+        </div>
+        <div id="preOrderNotice" style="background:#f8d7da; color:#721c24; padding:8px; display:none; margin-bottom:10px; font-weight:bold; text-align:center; border-radius:4px;">
+            ⚠️ Nafasi zimefika kikomo! Oda itakuwa ya Pre-order ya saa sita usiku.
         </div>
 
-        <div id="stock-status" class="status-badge">⚠️ Nafasi zimefika kikomo kwa leo! Weka Pre-order kwa ajili ya saa sita usiku.</div>
-        <div id="notification-alert" class="alert-box">Oda yako imetumwa kikamilifu kwa Admin Juma! Subiri huduma.</div>
-        
-        <label for="bundleSelect">Vifurushi Vinavyopatikana na Bei:</label>
-        <select id="bundleSelect">
-            <!-- Vifurushi vinajaa hapa moja kwa moja kutoka kwenye Admin Memory -->
-        </select>
-        
-        <label for="clientPhone">Namba yako ya Simu ya Kupokelea Bando:</label>
+        <label>Chagua Kifurushi:</label>
+        <select id="bundleSelect"></select>
+
+        <label>Namba yako ya Simu:</label>
         <input type="text" id="clientPhone" placeholder="Mfano: 07xxxxxxxx">
-        
-        <button class="btn" id="orderBtn" onclick="submitOrder()">Tuma Oda Sasa</button>
+
+        <button onclick="placeOrder()">Tuma Oda Sasa</button>
     </div>
 
-    <!-- Kuingia Admin -->
-    <div class="card" id="admin-login">
-        <h2>Ingia Kwenye Dashibodi ya Admin</h2>
-        <input type="password" id="adminPin" placeholder="Weka PIN yako ya Siri (0616)">
-        <button class="btn" onclick="verifyAdmin()">Fungua Dashibodi</button>
+    <!-- SEHEMU YA KUINGIA ADMIN -->
+    <div class="box" id="loginView">
+        <h2>Ingia Admin</h2>
+        <input type="password" id="adminPinInput" placeholder="Weka PIN (0616)">
+        <button onclick="loginAdmin()">Fungua Dashibodi</button>
     </div>
 
-    <!-- Dashibodi Kuu ya Admin (Full Access) -->
-    <div class="card" id="admin-dashboard" style="display: none;">
-        <h2>⚙️ Admin Master Dashboard</h2>
+    <!-- DASHIBODI YA ADMIN (Full Control) -->
+    <div class="box" id="adminView" style="display:none;">
+        <h2>⚙️ Dashibodi ya Admin</h2>
         
-        <div style="background: #eef2ff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-            <h3>Dhibiti Hali ya Vifurushi (Stock Control)</h3>
-            <label><input type="checkbox" id="toggleStock" onchange="updateStockStatus()"> <b>Washa Pre-Order / Funga Nafasi za Leo</b></label>
+        <div style="background:#e8f4fd; padding:10px; margin-bottom:10px; border-radius:4px;">
+            <label><input type="checkbox" id="preOrderToggle" onchange="togglePreOrder()"> <b>Washa Hali ya Pre-Order (Funga Nafasi za Leo)</b></label>
         </div>
 
-        <h3>Oda Zilizoingia kutoka kwa Wateja (<span id="orderCount">0</span>)</h3>
-        <div id="ordersList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 5px; border-radius: 6px;">
-            <p style="color: #666; text-align: center;">Hakuna oda bado.</p>
-        </div>
-        <button class="btn btn-danger" onclick="clearOrders()">Futa Oda Zote Zilizopo</button>
+        <h3>Oda Zote (<span id="orderCount">0</span>)</h3>
+        <div id="ordersContainer" style="max-height:200px; overflow-y:auto; border:1px solid #ccc; padding:5px; background:white; margin-bottom:10px;"></div>
+        <button class="danger" onclick="clearOrders()">Futa Oda Zote</button>
 
-        <h3 style="margin-top: 25px;">Dhibiti Vifurushi na Kubadilisha Bei (Full Pricing Control)</h3>
-        <label>Ongeza Kifurushi Kipya (Jina na Bei):</label>
+        <h3 style="margin-top:20px;">Ongeza Kifurushi Kipya</h3>
         <input type="text" id="newBundleName" placeholder="Mfano: Halotel 2GB - TZS 2,000">
-        <button class="btn" onclick="addBundle()">Ongeza Kwenye Mfumo</button>
+        <button onclick="addBundle()">Ongeza Kwenye Mfumo</button>
 
-        <h4 style="margin-top: 15px;">Orodha ya Vifurushi Vilivyopo (Badili Bei au Futa):</h4>
-        <div id="bundlesManagementList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px;">
-            <!-- Orodha ya edit inajaa hapa -->
-        </div>
+        <h3 style="margin-top:20px;">Vifurushi Vilivyopo (Badili Bei au Futa)</h3>
+        <div id="adminBundleList" style="max-height:200px; overflow-y:auto; border:1px solid #ccc; padding:5px; background:white; margin-bottom:10px;"></div>
 
-        <button class="btn btn-danger" onclick="logoutAdmin()" style="margin-top: 20px;">Funga / Toka Admin (Lock)</button>
+        <button class="danger" onclick="logoutAdmin()" style="margin-top:15px;">Funga Admin (Lock)</button>
     </div>
 </div>
 
-<audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+<!-- SAUTI YA KENGELE -->
+<audio id="alarmAudio" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
-    // Vifurushi vya kuanzia kama hakuna
-    const defaultBundles = [
+    // Default Bundles kama hakuna kitu
+    const defaultList = [
         "Halotel 1GB - TZS 1,000",
         "Halotel 5GB - TZS 4,000",
         "Halotel Unlimited - TZS 10,000"
     ];
 
     window.onload = function() {
-        checkAndInitBundles();
-        loadOrders();
-        loadBundlesForClient();
-        loadBundlesForAdmin();
-        checkStockState();
+        if(!localStorage.getItem('mb_bundles')) {
+            localStorage.setItem('mb_bundles', JSON.stringify(defaultList));
+        }
+        refreshAll();
     };
 
-    function checkAndInitBundles() {
-        if(!localStorage.getItem('lucky_custom_bundles')) {
-            localStorage.setItem('lucky_custom_bundles', JSON.stringify(defaultBundles));
-        }
+    function refreshAll() {
+        loadClientBundles();
+        loadAdminBundles();
+        loadOrders();
+        checkPreOrderStatus();
     }
 
-    function submitOrder() {
-        const phone = document.getElementById('clientPhone').value;
-        const bundle = document.getElementById('bundleSelect').value;
-        const isPreOrder = document.getElementById('toggleStock').checked;
+    // WATEJA: Kuweka Oda
+    function placeOrder() {
+        let phone = document.getElementById('clientPhone').value;
+        let bundle = document.getElementById('bundleSelect').value;
+        let isPre = localStorage.getItem('mb_preorder') === 'true';
 
         if(!phone) {
             alert("Tafadhali jaza namba yako ya simu!");
             return;
         }
 
-        let orders = JSON.parse(localStorage.getItem('lucky_orders') || '[]');
-        const newOrder = {
-            id: Date.now(),
+        let orders = JSON.parse(localStorage.getItem('mb_orders') || '[]');
+        let newOrd = {
             phone: phone,
             bundle: bundle,
-            type: isPreOrder ? "Pre-order ya Saa Sita" : "Oda ya Kawaida",
-            time: new Date().toLocaleString()
+            type: isPre ? "Pre-Order (Saa Sita)" : "Oda ya Kawaida",
+            time: new Date().toLocaleTimeString()
         };
 
-        orders.push(newOrder);
-        localStorage.setItem('lucky_orders', JSON.stringify(orders));
+        orders.push(newOrd);
+        localStorage.setItem('mb_orders', JSON.stringify(orders));
 
-        // Piga kengele ya admin
-        document.getElementById('alarmSound').play().catch(e => console.log("Audio blocked"));
-        document.getElementById('notification-alert').style.display = 'block';
+        // Piga kengele na onyo
+        document.getElementById('alarmAudio').play().catch(e => console.log(e));
+        alert("Oda yako imetumwa kikamilifu kwa Admin Juma!");
         document.getElementById('clientPhone').value = '';
-
-        setTimeout(() => {
-            document.getElementById('notification-alert').style.display = 'none';
-        }, 5000);
-
-        // Kama admin yupo kwenye ukurasa, zifuatishe zionekane moja kwa moja
         loadOrders();
     }
 
-    function verifyAdmin() {
-        const pin = document.getElementById('adminPin').value;
+    // ADMIN: Kuingia
+    function loginAdmin() {
+        let pin = document.getElementById('adminPinInput').value;
         if(pin === "0616") {
-            document.getElementById('admin-dashboard').style.display = 'block';
-            document.getElementById('admin-login').style.display = 'none';
-            loadOrders();
-            loadBundlesForAdmin();
-            alert("Umeingia kwa mafanikio! Una full access ya kubadili kila kitu.");
+            document.getElementById('adminView').style.display = 'block';
+            document.getElementById('loginView').style.display = 'none';
+            refreshAll();
+            alert("Umeingia kwenye Admin kwa mafanikio!");
         } else {
-            alert("PIN siyo sahihi! Jaribu tena.");
-        }
-    }
-
-    function loadOrders() {
-        let orders = JSON.parse(localStorage.getItem('lucky_orders') || '[]');
-        const listDiv = document.getElementById('ordersList');
-        document.getElementById('orderCount').innerText = orders.length;
-
-        if(orders.length === 0) {
-            listDiv.innerHTML = '<p style="color: #666; text-align: center;">Hakuna oda bado.</p>';
-            return;
-        }
-
-        let html = '';
-        orders.slice().reverse().forEach((ord) => {
-            html += `<div class="order-item" style="display: block; margin-bottom: 10px;">
-                <strong>📦 ${ord.bundle}</strong><br>
-                Namba ya Mteja: <a href="tel:${ord.phone}" style="color:blue; font-weight:bold;">${ord.phone}</a><br>
-                Hali: <span style="color:red; font-weight:bold;">${ord.type}</span> | <small>${ord.time}</small>
-            </div>`;
-        });
-        listDiv.innerHTML = html;
-    }
-
-    function clearOrders() {
-        if(confirm("Una hakika unataka kufuta oda zote?")) {
-            localStorage.removeItem('lucky_orders');
-            loadOrders();
-        }
-    }
-
-    function updateStockStatus() {
-        const isChecked = document.getElementById('toggleStock').checked;
-        localStorage.setItem('lucky_stock_limit', isChecked);
-        checkStockState();
-    }
-
-    function checkStockState() {
-        const isChecked = localStorage.getItem('lucky_stock_limit') === 'true';
-        const badge = document.getElementById('stock-status');
-        const btn = document.getElementById('orderBtn');
-        
-        document.getElementById('toggleStock').checked = isChecked;
-
-        if(isChecked) {
-            badge.style.display = 'block';
-            btn.innerText = "Weka Pre-Order ya Saa Sita";
-        } else {
-            badge.style.display = 'none';
-            btn.innerText = "Tuma Oda Sasa";
-        }
-    }
-
-    function addBundle() {
-        const bundleName = document.getElementById('newBundleName').value;
-        if(!bundleName) {
-            alert("Andika jina la kifurushi na bei yake!");
-            return;
-        }
-        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
-        customBundles.push(bundleName);
-        localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
-        
-        document.getElementById('newBundleName').value = '';
-        loadBundlesForClient();
-        loadBundlesForAdmin();
-        alert("Kifurushi kimeongezwa kwa mafanikio!");
-    }
-
-    function loadBundlesForClient() {
-        const select = document.getElementById('bundleSelect');
-        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
-        let optionsHtml = '';
-        customBundles.forEach(b => {
-            optionsHtml += `<option value="${b}">${b}</option>`;
-        });
-        select.innerHTML = optionsHtml;
-    }
-
-    function loadBundlesForAdmin() {
-        const mgmtDiv = document.getElementById('bundlesManagementList');
-        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
-        
-        if(customBundles.length === 0) {
-            mgmtDiv.innerHTML = '<p style="color: #666; text-align: center;">Hakuna vifurushi.</p>';
-            return;
-        }
-
-        let html = '';
-        customBundles.forEach((b, index) => {
-            html += `<div class="bundle-mgmt-item">
-                <span><b>${b}</b></span>
-                <div>
-                    <button class="btn btn-sm" onclick="editBundle(${index})">Hariri/Edit</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteBundle(${index})">Futa</button>
-                </div>
-            </div>`;
-        });
-        mgmtDiv.innerHTML = html;
-    }
-
-    function editBundle(index) {
-        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
-        let currentVal = customBundles[index];
-        let newVal = prompt("Badilisha Jina au Bei ya Kifurushi:", currentVal);
-        
-        if(newVal !== null && newVal.trim() !== "") {
-            customBundles[index] = newVal.trim();
-            localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
-            loadBundlesForClient();
-            loadBundlesForAdmin();
-            alert("Bei/Kifurushi kimehaririwa kikamilifu!");
-        }
-    }
-
-    function deleteBundle(index) {
-        if(confirm("Una hakika unataka kufuta kifurushi hiki?")) {
-            let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
-            customBundles.splice(index, 1);
-            localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
-            loadBundlesForClient();
-            loadBundlesForAdmin();
-            alert("Kifurushi kimefutwa!");
+            alert("PIN siyo sahihi! Jaribu 0616");
         }
     }
 
     function logoutAdmin() {
-        document.getElementById('admin-dashboard').style.display = 'none';
-        document.getElementById('admin-login').style.display = 'block';
-        document.getElementById('adminPin').value = '';
-        alert("Umetoka kwenye dashibodi salama.");
+        document.getElementById('adminView').style.display = 'none';
+        document.getElementById('loginView').style.display = 'block';
+        document.getElementById('adminPinInput').value = '';
+    }
+
+    // ADMIN: Kuona na kufuta oda
+    function loadOrders() {
+        let orders = JSON.parse(localStorage.getItem('mb_orders') || '[]');
+        document.getElementById('orderCount').innerText = orders.length;
+        let container = document.getElementById('ordersContainer');
+
+        if(orders.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#777;">Hakuna oda bado.</p>';
+            return;
+        }
+
+        let html = '';
+        orders.slice().reverse().forEach((o, i) => {
+            html += `<div class="order-card">
+                <b>📦 ${o.bundle}</b><br>
+                Namba: <a href="tel:${o.phone}">${o.phone}</a><br>
+                Aina: <span style="color:red;">${o.type}</span> | <small>${o.time}</small>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function clearOrders() {
+        if(confirm("Futa oda zote kabisa?")) {
+            localStorage.removeItem('mb_orders');
+            loadOrders();
+        }
+    }
+
+    // ADMIN: Kudhibiti Vifurushi na Bei (Add, Edit, Delete)
+    function loadClientBundles() {
+        let bundles = JSON.parse(localStorage.getItem('mb_bundles') || '[]');
+        let select = document.getElementById('bundleSelect');
+        let html = '';
+        bundles.forEach(b => {
+            html += `<option value="${b}">${b}</option>`;
+        });
+        select.innerHTML = html;
+    }
+
+    function loadAdminBundles() {
+        let bundles = JSON.parse(localStorage.getItem('mb_bundles') || '[]');
+        let list = document.getElementById('adminBundleList');
+        if(bundles.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#777;">Hakuna vifurushi.</p>';
+            return;
+        }
+        let html = '';
+        bundles.forEach((b, idx) => {
+            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px; border-bottom:1px solid #eee;">
+                <span><b>${b}</b></span>
+                <div>
+                    <button style="padding:4px 8px; width:auto; background:#ffc107; color:black;" onclick="editBundle(${idx})">Edit</button>
+                    <button style="padding:4px 8px; width:auto;" class="danger" onclick="deleteBundle(${idx})">Futa</button>
+                </div>
+            </div>`;
+        });
+        list.innerHTML = html;
+    }
+
+    function addBundle() {
+        let val = document.getElementById('newBundleName').value;
+        if(!val) { alert("Andika jina na bei!"); return; }
+        let bundles = JSON.parse(localStorage.getItem('mb_bundles') || '[]');
+        bundles.push(val);
+        localStorage.setItem('mb_bundles', JSON.stringify(bundles));
+        document.getElementById('newBundleName').value = '';
+        refreshAll();
+        alert("Kimeongezwa!");
+    }
+
+    function editBundle(idx) {
+        let bundles = JSON.parse(localStorage.getItem('mb_bundles') || '[]');
+        let newVal = prompt("Hariri Jina na Bei ya Kifurushi:", bundles[idx]);
+        if(newVal !== null && newVal.trim() !== "") {
+            bundles[idx] = newVal.trim();
+            localStorage.setItem('mb_bundles', JSON.stringify(bundles));
+            refreshAll();
+            alert("Mabadiliko yamehifadhiwa!");
+        }
+    }
+
+    function deleteBundle(idx) {
+        if(confirm("Futa kifurushi hiki?")) {
+            let bundles = JSON.parse(localStorage.getItem('mb_bundles') || '[]');
+            bundles.splice(idx, 1);
+            localStorage.setItem('mb_bundles', JSON.stringify(bundles));
+            refreshAll();
+        }
+    }
+
+    // PRE-ORDER TOGGLE
+    function togglePreOrder() {
+        let state = document.getElementById('preOrderToggle').checked;
+        localStorage.setItem('mb_preorder', state);
+        checkPreOrderStatus();
+    }
+
+    function checkPreOrderStatus() {
+        let isPre = localStorage.getItem('mb_preorder') === 'true';
+        document.getElementById('preOrderToggle').checked = isPre;
+        let notice = document.getElementById('preOrderNotice');
+        if(isPre) {
+            notice.style.display = 'block';
+        } else {
+            notice.style.display = 'none';
+        }
     }
 </script>
 
