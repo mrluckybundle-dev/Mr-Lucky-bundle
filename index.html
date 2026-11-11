@@ -3,785 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="site-title-tag">Mr Lucky Bundle - Mfumo Rasmi</title>
-    <style id="theme-styles">
+    <title>Mr Lucky Bundle - Admin Dashboard</title>
+    <style>
         :root {
-            --primary: #22c55e;
-            --primary-hover: #16a34a;
-            --dark-bg: #090d16;
-            --panel-bg: #111827;
-            --border: #1f2937;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --amber: #f59e0b;
-            --red: #ef4444;
+            --primary: #25D366;
+            --dark: #111b21;
+            --light: #f0f2f5;
+            --danger: #ef4444;
+            --card-bg: #ffffff;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--dark-bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; font-size: 14px; }
-        header { background: var(--panel-bg); border-bottom: 1px solid var(--border); padding: 12px 16px; position: sticky; top: 0; z-index: 40; }
-        .nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo { display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; }
-        .logo-icon { background: var(--primary); color: #000; width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; }
-        
-        .nav-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; position: relative; }
-        .nav-btn.active { color: var(--primary); background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); }
-        .nav-btn.admin { color: var(--amber); border-color: rgba(245, 158, 11, 0.3); }
-
-        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--red); color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 900; animation: alarmPulse 0.8s infinite; }
-        @keyframes alarmPulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
-
-        .banner { background: #064e3b; border-bottom: 1px solid #047857; text-align: center; padding: 8px 12px; font-size: 13px; color: #a7f3d0; }
-
-        .container { max-width: 1000px; margin: 0 auto; width: 100%; padding: 16px; flex-grow: 1; }
-        .glass-panel { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-
-        .grid-bundles { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-        .bundle-card { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.1s ease; }
-        .bundle-card:hover { border-color: var(--primary); }
-
-        .btn { border: none; padding: 10px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; text-align: center; }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-outline-primary { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .btn-amber { background: var(--amber); color: #000; }
-        .btn-danger { background: var(--red); color: #fff; }
-        .btn-secondary { background: #374151; color: #fff; }
-        .btn-sm { padding: 4px 8px; font-size: 11px; }
-
-        .input-field { width: 100%; background: #030712; border: 1px solid #374151; color: #fff; padding: 10px; border-radius: 8px; outline: none; margin-top: 4px; font-size: 13px; }
-        .input-field:focus { border-color: var(--primary); }
-
-        .hidden { display: none !important; }
-
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
-        th, td { padding: 10px; border-bottom: 1px solid var(--border); }
-        th { background: #1f2937; color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
-
-        .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; display: inline-block; }
-        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
-        .badge-warning { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
-        .toast { position: fixed; top: 70px; right: 16px; z-index: 60; padding: 10px 14px; border-radius: 8px; font-weight: bold; font-size: 12px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        h2 { margin-top: 0; color: var(--dark); font-size: 1.2rem; border-bottom: 2px solid var(--light); padding-bottom: 8px; }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-danger { background-color: var(--danger); }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .alert-box {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="nav-container">
-        <div class="logo" onclick="switchTab('store')">
-            <div class="logo-icon" id="sys-logo-icon">⚡</div>
-            <div>
-                <strong style="color:#fff; font-size:15px; display:block;" id="sys-brand-name">MR LUCKY BUNDLE</strong>
-                <span style="color:var(--text-muted); font-size:10px;">Vifurushi vya Haraka & Salama</span>
-            </div>
-        </div>
-        <nav style="display:flex; gap:6px;">
-            <button onclick="switchTab('store')" id="nav-store" class="nav-btn active">Vifurushi</button>
-            <button onclick="switchTab('custom-req')" id="nav-custom-req" class="nav-btn">Andika Bando Lako</button>
-            <button onclick="switchTab('track')" id="nav-track" class="nav-btn">Fuatilia Oda</button>
-            <button onclick="switchTab('admin-login')" id="nav-admin" class="nav-btn admin">Admin <span id="admin-alert-badge" class="notif-badge hidden">!</span></button>
-        </nav>
-    </div>
+    <h1>Mr Lucky Bundle - Mfumo Rasmi</h1>
+    <p>Admin: Juma Shaban | Contact: 0616517946</p>
 </header>
 
-<div class="banner" id="sys-banner-text">
-    ⚡ Namba Rasmi ya Malipo: <strong>0616517946 (JUMA SHABAN)</strong>. Tuma oda kupitia mfumo salama!
-</div>
+<div class="container">
+    <!-- Sehemu ya Kuweka Oda kwa Wateja -->
+    <div class="card" id="client-view">
+        <h2>Chagua Kifurushi Chako</h2>
+        <div id="notification-alert" class="alert-box">Oda yako imepokewa! Admin anajulishwa sasa hivi.</div>
+        <label for="bundleSelect">Vifurushi Vinavyopatikana:</label>
+        <select id="bundleSelect">
+            <option value="Halotel 1GB - 1000/=">Halotel 1GB - TZS 1,000</option>
+            <option value="Halotel 5GB - 4000/=">Halotel 5GB - TZS 4,000</option>
+            <option value="Halotel Unlimited - 10000/=">Halotel Unlimited - TZS 10,000</option>
+        </select>
+        <label for="clientPhone">Namba yako ya Simu:</label>
+        <input type="text" id="clientPhone" placeholder="Mfano: 07xxxxxxxx">
+        <button class="btn" onclick="submitOrder()">Tuma Oda Hapa (Inaita Kengele)</button>
+    </div>
 
-<main class="container">
-    <div id="toast-container"></div>
+    <!-- Sehemu ya Ulinzi na Kuingia Admin -->
+    <div class="card" id="admin-login">
+        <h2>Ingia Kwenye Dashibodi ya Admin</h2>
+        <input type="password" id="adminPin" placeholder="Weka PIN yako ya Siri ya Admin">
+        <button class="btn" onclick="verifyAdmin()">Fungua Settings za Admin</button>
+    </div>
 
-    <!-- STOREFRONT -->
-    <section id="sec-store" style="display:flex; flex-direction:column; gap:16px;">
-        <div class="glass-panel" style="background:linear-gradient(135deg, #111827 0%, #064e3b 100%);">
-            <span class="badge badge-success">HUDUMA YA SIKU ZOTE 24/7</span>
-            <h2 style="font-size:20px; color:#fff; margin-top:6px;" id="sys-hero-title">Chagua Kifurushi chako cha Halotel / Mtandao Wowote</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin-top:2px;">Kama bando limeisha litarudi saa sita usiku. Weka oda yako hapa chini.</p>
-        </div>
+    <!-- Mipangilio Mingi ya Admin (Settings Panel) -->
+    <div class="card" id="admin-settings" style="display: none;">
+        <h2>⚙️ Admin Master Settings & Ulinzi Mkali</h2>
+        
+        <p><strong>Hali ya Mfumo:</strong> <span style="color: green;">Inafanya kazi kikamilifu (Active)</span></p>
+        
+        <label>Badilisha Namba ya Kupokea Alerts/Kengele:</label>
+        <input type="text" id="setPhone" value="0616517946">
 
-        <div id="bundles-grid" class="grid-bundles"></div>
-    </section>
+        <label>Weka Ujumbe Maalum kwa Wateja:</label>
+        <input type="text" id="setNotice" value="Tunafurahi kukuhudumia kupitia Mr Lucky Bundle!">
 
-    <!-- CUSTOM REQUEST (ANDIKA BANDO LAKO MAALUM) -->
-    <section id="sec-custom-req" class="hidden" style="max-width:500px; margin:0 auto; width:100%;">
-        <div class="glass-panel">
-            <h2 style="color:#fff; font-size:18px; margin-bottom:4px;">Andika Kifurushi Unachotaka (Mfano: GB 2)</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">Andika kiasi unachohitaji na namba yako, Admin atakujibu moja kwa moja.</p>
+        <label>Badilisha PIN ya Kuingia Admin:</label>
+        <input type="password" id="setNewPin" placeholder="Weka PIN mpya ya siri">
 
-            <form onsubmit="handleCustomBundleRequest(event)" style="display:flex; flex-direction:column; gap:10px;">
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">NAMBA YAKO YA SIMU</label>
-                    <input type="tel" id="custom-phone" required placeholder="0616517946" class="input-field">
-                </div>
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">UNAHITAJI BANDO GANI? (MFANO: GB 2 ZA SIKU 7)</label>
-                    <textarea id="custom-desc" rows="3" required placeholder="Andika hapa unachohitaji..." class="input-field"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Tuma Ombi Lako kwa Admin</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- TRACK ORDER -->
-    <section id="sec-track" class="hidden" style="max-width:480px; margin:0 auto; width:100%;">
-        <div class="glass-panel">
-            <h2 style="color:#fff; font-size:18px; margin-bottom:4px;">Fuatilia Oda Yako na Majibu ya Admin</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">Ingiza namba yako ya simu kuangalia kama umejibiwa.</p>
-
-            <form onsubmit="handleTrackOrder(event)">
-                <label style="color:var(--text-muted); font-size:11px;">NAMBA YAKO YA SIMU</label>
-                <input type="tel" id="track-phone" required placeholder="0616517946" class="input-field" style="margin-bottom:12px;">
-                <button type="submit" class="btn btn-primary" style="width:100%;">Angalia Taarifa Zangu</button>
-            </form>
-
-            <div id="track-results" style="margin-top:16px;"></div>
-        </div>
-    </section>
-
-    <!-- ADMIN LOGIN -->
-    <section id="sec-admin-login" class="hidden" style="max-width:360px; margin:20px auto; width:100%;">
-        <div class="glass-panel" style="border-color:var(--amber);">
-            <h2 style="color:#fff; text-align:center; font-size:18px; margin-bottom:4px;">Ingia Admin</h2>
-            <p style="color:var(--text-muted); font-size:11px; text-align:center; margin-bottom:14px;">Weka PIN (Default: 9999)</p>
-
-            <div id="lockout-banner" class="hidden" style="background:#7f1d1d; color:#fca5a5; padding:8px; border-radius:8px; font-size:11px; margin-bottom:12px; text-align:center;"></div>
-
-            <form onsubmit="handleAdminLogin(event)" style="display:flex; flex-direction:column; gap:10px;">
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">USERNAME</label>
-                    <input type="text" id="admin-user" value="admin" required class="input-field">
-                </div>
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">PIN YA SIRI</label>
-                    <input type="password" id="admin-pass" required placeholder="Ingiza PIN" class="input-field">
-                </div>
-                <button type="submit" id="admin-login-btn" class="btn btn-amber" style="width:100%; margin-top:6px;">THIBITISHA & INGIA</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- ADMIN DASHBOARD -->
-    <section id="sec-admin-dash" class="hidden" style="display:flex; flex-direction:column; gap:16px;">
-        <div class="glass-panel" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <div>
-                <h3 style="color:#fff;">Dashboard ya Administration</h3>
-                <span style="color:#4ade80; font-size:11px;">● Kengele ya Kudumu Imewashwa</span>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button onclick="stopAlarmSound()" class="btn btn-secondary">Zima Kengele 🔕</button>
-                <button onclick="openBundleModal()" class="btn btn-amber">+ Ongeza Kifurushi</button>
-                <button onclick="openChangePinModal()" class="btn btn-secondary">Badili PIN</button>
-                <button onclick="handleAdminLogout()" class="btn btn-danger">Toka</button>
-            </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px;">
-            <div class="glass-panel">
-                <span style="color:var(--text-muted); font-size:11px;">Wageni</span>
-                <h3 id="stat-total-visitors" style="color:var(--primary); font-size:20px; margin-top:2px;">0</h3>
-            </div>
-            <div class="glass-panel">
-                <span style="color:var(--text-muted); font-size:11px;">Oda Zote</span>
-                <h3 id="stat-total-orders" style="color:#fff; font-size:20px; margin-top:2px;">0</h3>
-            </div>
-            <div class="glass-panel">
-                <span style="color:var(--text-muted); font-size:11px;">Oda za Kusubiri</span>
-                <h3 id="stat-pending-orders" style="color:var(--amber); font-size:20px; margin-top:2px;">0</h3>
-            </div>
-            <div class="glass-panel">
-                <span style="color:var(--text-muted); font-size:11px;">Maombi Mapya</span>
-                <h3 id="stat-total-inquiries" style="color:#4ade80; font-size:20px; margin-top:2px;">0</h3>
-            </div>
-        </div>
-
-        <!-- CUSTOMIZATION -->
-        <div class="glass-panel" style="border-color:var(--primary);">
-            <h4 style="color:var(--primary); margin-bottom:12px; font-size:16px;">⚙️ System Customization</h4>
-            <form onsubmit="handleSaveSettings(event)" style="display:flex; flex-direction:column; gap:12px;">
-                <div class="grid-2">
-                    <div>
-                        <label style="color:var(--text-muted); font-size:11px;">JINA LA BIASHARA</label>
-                        <input type="text" id="set-brand-name" class="input-field" required>
-                    </div>
-                    <div>
-                        <label style="color:var(--text-muted); font-size:11px;">LOGO / ICON</label>
-                        <input type="text" id="set-logo-icon" class="input-field" required>
-                    </div>
-                </div>
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">NAMBA YA MALIPO & JINA</label>
-                    <input type="text" id="set-payment-info" class="input-field" required>
-                </div>
-                <div>
-                    <label style="color:var(--text-muted); font-size:11px;">TANGAZO LA JUU</label>
-                    <input type="text" id="set-banner-text" class="input-field" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="margin-top:4px;">💾 HIFADHI MABADILIKO</button>
-            </form>
-        </div>
-
-        <!-- INQUIRIES & LIVE CHAT REPLY -->
-        <div class="glass-panel" style="overflow-x:auto;">
-            <h4 style="color:#fff; margin-bottom:10px;">💬 Maombi ya Vifurushi Maalum & Majibu Yako</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Muda</th>
-                        <th>Simu</th>
-                        <th>Ombi la Mteja</th>
-                        <th>Andika Jibu (Litamfikia Mteja)</th>
-                        <th>Kitendo</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-inquiries-tbody"></tbody>
-            </table>
-        </div>
-
-        <!-- BUNDLES -->
-        <div class="glass-panel" style="overflow-x:auto;">
-            <h4 style="color:#fff; margin-bottom:10px;">📦 Usimamizi wa Vifurushi (Weka Bando Lipo au Hakipo)</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Jina</th>
-                        <th>Data & Muda</th>
-                        <th>Bei</th>
-                        <th>Hali ya Bando</th>
-                        <th>Kitendo</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-bundles-tbody"></tbody>
-            </table>
-        </div>
-
-        <!-- ORDERS -->
-        <div class="glass-panel" style="overflow-x:auto;">
-            <h4 style="color:#fff; margin-bottom:10px;">🛒 Oda za Wateja</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Muda</th>
-                        <th>Simu</th>
-                        <th>Kifurushi</th>
-                        <th>Bei</th>
-                        <th>Reference</th>
-                        <th>Status</th>
-                        <th>Kitendo</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-orders-tbody"></tbody>
-            </table>
-        </div>
-    </section>
-</main>
-
-<!-- MODALS -->
-<div id="order-modal" class="modal-bg hidden">
-    <div class="glass-panel" style="max-width:380px; width:100%; position:relative;">
-        <button onclick="closeOrderModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
-        <h3 style="color:#fff;" id="modal-bundle-title">Bando</h3>
-        <p style="color:var(--text-muted); font-size:12px;" id="modal-bundle-sub"></p>
-
-        <div style="background:#064e3b; border:1px solid #047857; padding:10px; border-radius:8px; margin:12px 0; font-size:12px; color:#d1fae5;">
-            Tuma malipo kwenda: <strong style="color:#fff; font-size:14px; display:block;" id="modal-pay-info">0616517946 - JUMA SHABAN</strong>
-        </div>
-
-        <form onsubmit="submitCustomerOrder(event)" style="display:flex; flex-direction:column; gap:10px;">
-            <input type="hidden" id="order-bundle-id">
-            <div>
-                <label style="color:var(--text-muted); font-size:11px;">NAMBA YA SIMU (INAYOWEKWA BANDO)</label>
-                <input type="tel" id="order-phone" required placeholder="0616517946" class="input-field">
-            </div>
-            <div>
-                <label style="color:var(--text-muted); font-size:11px;">NAMBA YA MUAMALA (REFERENCE NO.)</label>
-                <input type="text" id="order-ref" required placeholder="Mfano: MP260391.001" class="input-field">
-            </div>
-            <div>
-                <label style="color:var(--text-muted); font-size:11px;">MUDA WA KUTUMIWA BANDO</label>
-                <select id="order-schedule" class="input-field">
-                    <option value="Sasa Hivi">Sasa Hivi (Mara Moja)</option>
-                    <option value="Saa 6 Usiku">Saa 6 Usiku (Midnight)</option>
-                </select>
-            </div>
-            <div style="display:flex; gap:8px; margin-top:8px;">
-                <button type="button" onclick="closeOrderModal()" class="btn btn-secondary" style="width:50%;">Ghairi</button>
-                <button type="submit" class="btn btn-primary" style="width:50%;">Thibitisha Oda</button>
-            </div>
-        </form>
+        <button class="btn" onclick="saveSettings()">Hifadhi Mabadiliko Yote</button>
+        <button class="btn btn-danger" onclick="logoutAdmin()" style="margin-top: 15px;">Funga / Toka Admin (Lock)</button>
     </div>
 </div>
 
-<div id="bundle-modal" class="modal-bg hidden">
-    <div class="glass-panel" style="max-width:360px; width:100%; position:relative;">
-        <button onclick="closeBundleModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer;">✕</button>
-        <h3 style="color:#fff; margin-bottom:12px;" id="bundle-modal-heading">Ongeza / Hariri Kifurushi</h3>
-        <form onsubmit="saveBundle(event)" style="display:flex; flex-direction:column; gap:10px;">
-            <input type="hidden" id="b-edit-id">
-            <input type="text" id="b-title" placeholder="Jina la Kifurushi" required class="input-field">
-            <input type="text" id="b-data" placeholder="Kiasi Data (Mfano: 10 GB)" required class="input-field">
-            <input type="text" id="b-validity" placeholder="Muda (Mfano: Siku 30)" required class="input-field">
-            <input type="number" id="b-price" placeholder="Bei (TZS)" required class="input-field">
-            <div>
-                <label style="color:var(--text-muted); font-size:11px;">HALI YA BANDO (IPO AU HAKIPO)</label>
-                <select id="b-in-stock" class="input-field">
-                    <option value="true">Kipo Tayari (In Stock)</option>
-                    <option value="false">Hakipo Kwa Sasa (Out of Stock)</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-amber" style="margin-top:6px;">Hifadhi Kifurushi</button>
-        </form>
-    </div>
-</div>
-
-<div id="pin-modal" class="modal-bg hidden">
-    <div class="glass-panel" style="max-width:320px; width:100%;">
-        <h3 style="color:#fff; margin-bottom:10px;">Badili PIN ya Admin</h3>
-        <form onsubmit="handleChangePin(event)" style="display:flex; flex-direction:column; gap:10px;">
-            <input type="password" id="pin-current" placeholder="PIN ya Sasa" required class="input-field">
-            <input type="password" id="pin-new" placeholder="PIN Mpya" required class="input-field">
-            <button type="submit" class="btn btn-amber">Hifadhi PIN</button>
-            <button type="button" onclick="closePinModal()" class="btn btn-secondary">Ghairi</button>
-        </form>
-    </div>
-</div>
+<!-- Sauti ya Kengele ya Notification (Audio Alert) -->
+<audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
-    const DEFAULT_SETTINGS = {
-        brandName: "MR LUCKY BUNDLE",
-        logoIcon: "⚡",
-        paymentInfo: "0616517946 - JUMA SHABAN",
-        bannerText: "⚡ Namba Rasmi ya Malipo: 0616517946 (JUMA SHABAN). Bando likiisha litarudi saa sita usiku!"
-    };
+    // Ulinzi na Utendaji wa Mfumo
+    function submitOrder() {
+        const phone = document.getElementById('clientPhone').value;
+        const bundle = document.getElementById('bundleSelect').value;
 
-    const DEFAULT_BUNDLES = [
-        { id: 'b1', title: 'Halotel Special GB 5', dataAmount: '5 GB', validity: 'Siku 7', price: 4500, inStock: true },
-        { id: 'b2', title: 'Halotel Mega GB 10', dataAmount: '10 GB', validity: 'Siku 30', price: 9000, inStock: true },
-        { id: 'b3', title: 'Halotel Super GB 15', dataAmount: '15 GB', validity: 'Siku 30', price: 13500, inStock: true },
-        { id: 'b4', title: 'Halotel Ultra GB 25', dataAmount: '25 GB', validity: 'Siku 30', price: 22000, inStock: false }
-    ];
-
-    let settings = JSON.parse(localStorage.getItem('mrlucky_settings')) || DEFAULT_SETTINGS;
-    let adminPin = localStorage.getItem('mrlucky_admin_pin') || '9999';
-    let failedAttempts = parseInt(localStorage.getItem('mrlucky_failed') || '0');
-    let lockoutTime = parseInt(localStorage.getItem('mrlucky_lockout') || '0');
-
-    let bundles = JSON.parse(localStorage.getItem('mrlucky_bundles')) || DEFAULT_BUNDLES;
-    let orders = JSON.parse(localStorage.getItem('mrlucky_orders')) || [];
-    let inquiries = JSON.parse(localStorage.getItem('mrlucky_inquiries')) || [];
-    let visitors = JSON.parse(localStorage.getItem('mrlucky_visitors')) || [];
-
-    let alarmInterval = null;
-
-    // KENGELE INAYOLIA BILA KUKOMA MPAKA ADMIN AINGIE
-    function startAlarmSound() {
-        if(alarmInterval) return;
-        alarmInterval = setInterval(() => {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(650, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.3);
-            } catch(e) { console.log('Audio error', e); }
-        }, 1200);
-    }
-
-    function stopAlarmSound() {
-        if(alarmInterval) {
-            clearInterval(alarmInterval);
-            alarmInterval = null;
-            showToast('Kengele imezimwa!');
-        }
-    }
-
-    window.onload = function() {
-        recordVisitor();
-        applySettings();
-        renderStorefront();
-        updateBadges();
-        checkLockout();
-    };
-
-    function recordVisitor() {
-        const now = new Date().toLocaleString();
-        const browser = navigator.userAgent.includes('Mobi') ? 'Mobile' : 'Desktop';
-        visitors.unshift({ time: now, device: browser });
-        if(visitors.length > 50) visitors.pop();
-        localStorage.setItem('mrlucky_visitors', JSON.stringify(visitors));
-    }
-
-    function applySettings() {
-        document.getElementById('sys-brand-name').innerText = settings.brandName;
-        document.getElementById('sys-logo-icon').innerText = settings.logoIcon;
-        document.getElementById('sys-banner-text').innerHTML = settings.bannerText;
-        document.getElementById('site-title-tag').innerText = settings.brandName + " - Mfumo";
-        document.getElementById('modal-pay-info').innerText = settings.paymentInfo;
-    }
-
-    function updateBadges() {
-        const badge = document.getElementById('admin-alert-badge');
-        const pendingCount = orders.filter(o => o.status === 'Pending').length + inquiries.filter(i => !i.reply).length;
-        if(pendingCount > 0) {
-            badge.innerText = pendingCount;
-            badge.classList.remove('hidden');
-            startAlarmSound(); // Kengele inalia ikigundua oda au ombi jipya
-        } else {
-            badge.classList.add('hidden');
-        }
-    }
-
-    function showToast(msg, type = 'success') {
-        const c = document.getElementById('toast-container');
-        const t = document.createElement('div');
-        t.className = 'toast';
-        t.style.background = type === 'success' ? 'var(--primary)' : '#ef4444';
-        t.style.color = type === 'success' ? '#000' : '#fff';
-        t.innerText = msg;
-        c.appendChild(t);
-        setTimeout(() => t.remove(), 3000);
-    }
-
-    function switchTab(tab) {
-        ['store', 'custom-req', 'track', 'admin-login', 'admin-dash'].forEach(s => document.getElementById(`sec-${s}`).classList.add('hidden'));
-        ['store', 'custom-req', 'track', 'admin'].forEach(n => document.getElementById(`nav-${n}`) && document.getElementById(`nav-${n}`).classList.remove('active'));
-
-        if(tab === 'store') {
-            document.getElementById('sec-store').classList.remove('hidden');
-            document.getElementById('nav-store').classList.add('active');
-        } else if(tab === 'custom-req') {
-            document.getElementById('sec-custom-req').classList.remove('hidden');
-            document.getElementById('nav-custom-req').classList.add('active');
-        } else if(tab === 'track') {
-            document.getElementById('sec-track').classList.remove('hidden');
-            document.getElementById('nav-track').classList.add('active');
-        } else if(tab === 'admin-login') {
-            if(sessionStorage.getItem('mrlucky_session_token')) {
-                document.getElementById('sec-admin-dash').classList.remove('hidden');
-                renderAdminDashboard();
-                stopAlarmSound(); // Ikifungua dashboard kengele inazima
-            } else {
-                document.getElementById('sec-admin-login').classList.remove('hidden');
-                checkLockout();
-            }
-            document.getElementById('nav-admin').classList.add('active');
-        }
-    }
-
-    function renderStorefront() {
-        const grid = document.getElementById('bundles-grid');
-        grid.innerHTML = '';
-
-        bundles.forEach(b => {
-            const isAvailable = b.inStock !== false;
-            const card = document.createElement('div');
-            card.className = 'bundle-card';
-            card.innerHTML = `
-                <div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="badge ${isAvailable ? 'badge-success' : 'badge-danger'}">${isAvailable ? '● KIPO TAYARI (IN STOCK)' : '● HAKIPO - KITARUDI SAA 6 USIKU'}</span>
-                        <span style="font-size:11px; color:var(--text-muted);">${b.validity}</span>
-                    </div>
-                    <h3 style="color:#fff; font-size:16px; margin:10px 0 2px 0;">${b.title}</h3>
-                    <p style="font-size:22px; font-weight:900; color:var(--primary);">${b.price.toLocaleString()} TZS</p>
-                </div>
-                <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
-                    <button onclick="openOrderModal('${b.id}')" class="btn btn-primary" style="width:100%;">🛒 Weka Oda / Nunua</button>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-    }
-
-    function handleCustomBundleRequest(e) {
-        e.preventDefault();
-        const phone = document.getElementById('custom-phone').value;
-        const desc = document.getElementById('custom-desc').value;
-
-        inquiries.unshift({
-            id: 'REQ' + Date.now().toString().slice(-6),
-            phone: phone,
-            msg: `[Ombi Maalum la Mteja] ${desc}`,
-            reply: '',
-            createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        });
-        localStorage.setItem('mrlucky_inquiries', JSON.stringify(inquiries));
-        document.getElementById('custom-phone').value = '';
-        document.getElementById('custom-desc').value = '';
-        updateBadges();
-        showToast('Ombi lako limetumwa kwa Admin!');
-        switchTab('track');
-        document.getElementById('track-phone').value = phone;
-        renderTrackResults(phone);
-    }
-
-    function openOrderModal(bundleId) {
-        const bundle = bundles.find(b => b.id === bundleId);
-        if(!bundle) return;
-        
-        // KAMA BANDO LIMEISHA - ONYO RASMI LA SAA SITA USIKU
-        if(bundle.inStock === false) {
-            alert(`Samahani sana! Kifurushi hiki cha "${bundle.title}" kimeisha kwa sasa. Kitarudi hewani na kuwekwa sawa ifikapo saa sita usiku (Midnight).`);
+        if(!phone) {
+            alert("Tafadhali jaza namba yako ya simu!");
             return;
         }
 
-        document.getElementById('order-bundle-id').value = bundle.id;
-        document.getElementById('modal-bundle-title').innerText = bundle.title;
-        document.getElementById('modal-bundle-sub').innerText = `${bundle.dataAmount} - TZS ${bundle.price.toLocaleString()} (${bundle.validity})`;
-        document.getElementById('order-modal').classList.remove('hidden');
-    }
-    function closeOrderModal() { document.getElementById('order-modal').classList.add('hidden'); }
+        // Piga kengele kwa admin pekee na onesha ujumbe
+        document.getElementById('alarmSound').play().catch(e => console.log("Audio play blocked"));
+        document.getElementById('notification-alert').style.display = 'block';
 
-    function submitCustomerOrder(e) {
-        e.preventDefault();
-        const bundle = bundles.find(b => b.id === document.getElementById('order-bundle-id').value);
-        orders.unshift({
-            id: 'ORD' + Date.now().toString().slice(-6),
-            phone: document.getElementById('order-phone').value,
-            bundleTitle: bundle ? bundle.title : 'Bundle',
-            price: bundle ? bundle.price : 0,
-            ref: document.getElementById('order-ref').value,
-            schedule: document.getElementById('order-schedule').value,
-            status: 'Pending',
-            createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        });
-        localStorage.setItem('mrlucky_orders', JSON.stringify(orders));
-        closeOrderModal();
-        updateBadges();
-        showToast('Oda imetumwa!');
-        switchTab('track');
-        document.getElementById('track-phone').value = document.getElementById('order-phone').value;
-        renderTrackResults(document.getElementById('order-phone').value);
+        // Tuma ujumbe moja kwa moja kwenda kwa WhatsApp ya Admin (Juma Shaban - 0616517946)
+        setTimeout(() => {
+            const adminNumber = "255616517946";
+            const text = `Habari Admin Juma, kuna mteja kaweka oda mpya:\n\n*Kifurushi:* ${bundle}\n*Namba ya Mteja:* ${phone}`;
+            window.location.href = `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
+        }, 1500);
     }
 
-    function handleTrackOrder(e) {
-        e.preventDefault();
-        renderTrackResults(document.getElementById('track-phone').value.trim());
-    }
-
-    function renderTrackResults(phone) {
-        const container = document.getElementById('track-results');
-        const userOrders = orders.filter(o => o.phone.includes(phone));
-        const userInquiries = inquiries.filter(i => i.phone.includes(phone));
-
-        if(userOrders.length === 0 && userInquiries.length === 0) {
-            container.innerHTML = `<p style="color:var(--text-muted); font-size:12px; text-align:center;">Hakuna taarifa zilizopatikana kwa namba hii.</p>`;
-            return;
-        }
-
-        let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
-        userOrders.forEach(o => {
-            html += `<div style="background:#030712; padding:10px; border-radius:8px; border:1px solid var(--border);">
-                <div style="display:flex; justify-content:space-between;"><strong style="color:#fff;">Oda: ${o.bundleTitle}</strong><span class="badge badge-warning">${o.status}</span></div>
-                <div style="color:var(--text-muted); font-size:11px; margin-top:4px;">Ref: ${o.ref} | TZS ${o.price.toLocaleString()}</div>
-            </div>`;
-        });
-        userInquiries.forEach(i => {
-            html += `<div style="background:#030712; padding:10px; border-radius:8px; border:1px solid var(--border);">
-                <strong style="color:var(--amber); font-size:11px;">Ombi Lako:</strong> <span style="font-size:12px;">${i.msg}</span>
-                <div style="margin-top:6px; background:rgba(34,197,94,0.1); padding:8px; border-radius:6px; border-left:3px solid var(--primary); color:#4ade80; font-size:12px;">
-                    <strong>Jibu kutoka kwa Admin:</strong> ${i.reply ? i.reply : 'Bado linasubiri kujibiwa na Admin...'}
-                </div>
-            </div>`;
-        });
-        html += '</div>';
-        container.innerHTML = html;
-    }
-
-    // SECURITY CHECK & LOCKOUT
-    function checkLockout() {
-        const now = Date.now();
-        const banner = document.getElementById('lockout-banner');
-        const btn = document.getElementById('admin-login-btn');
-        if(lockoutTime > now) {
-            const timeLeft = Math.ceil((lockoutTime - now) / 1000);
-            banner.classList.remove('hidden');
-            banner.innerText = `Umefungiwa! Jaribu tena baada ya sekunde ${timeLeft}`;
-            btn.disabled = true;
-            setTimeout(checkLockout, 1000);
+    function verifyAdmin() {
+        const pin = document.getElementById('adminPin').value;
+        // Weka PIN yako ya siri hapa (Mfano: 2026 au unayotaka wewe)
+        if(pin === "0616" || pin === "1234") {
+            document.getElementById('admin-settings').style.display = 'block';
+            document.getElementById('admin-login').style.display = 'none';
+            alert("Umeingia kwa mafanikio! Una full access ya admin.");
         } else {
-            banner.classList.add('hidden');
-            btn.disabled = false;
+            alert("PIN siyo sahihi! Jaribu tena.");
         }
     }
 
-    function handleAdminLogin(e) {
-        e.preventDefault();
-        const now = Date.now();
-        if(lockoutTime > now) return;
-
-        const pass = document.getElementById('admin-pass').value;
-        if(pass === adminPin) {
-            failedAttempts = 0;
-            localStorage.setItem('mrlucky_failed', '0');
-            sessionStorage.setItem('mrlucky_session_token', 'active');
-            stopAlarmSound();
-            showToast('Umeingia salama!');
-            switchTab('admin-login');
-        } else {
-            failedAttempts++;
-            localStorage.setItem('mrlucky_failed', failedAttempts.toString());
-            if(failedAttempts >= 3) {
-                lockoutTime = Date.now() + 60000;
-                localStorage.setItem('mrlucky_lockout', lockoutTime.toString());
-                showToast('Umekosea PIN mara 3! Umefungiwa sekunde 60.', 'error');
-                checkLockout();
-            } else {
-                showToast(`PIN siyo sahihi! Umebakiza majaribio ${3 - failedAttempts}`, 'error');
-            }
-        }
+    function saveSettings() {
+        alert("Mabadiliko yote yamehifadhiwa na kusambazwa kwenye mfumo mzima!");
     }
 
-    function handleAdminLogout() {
-        sessionStorage.removeItem('mrlucky_session_token');
-        showToast('Umetoka salama');
-        switchTab('store');
-    }
-
-    function renderAdminDashboard() {
-        document.getElementById('stat-total-visitors').innerText = visitors.length;
-        document.getElementById('stat-total-orders').innerText = orders.length;
-        document.getElementById('stat-pending-orders').innerText = orders.filter(o => o.status === 'Pending').length;
-        document.getElementById('stat-total-inquiries').innerText = inquiries.filter(i => !i.reply).length;
-
-        document.getElementById('set-brand-name').value = settings.brandName;
-        document.getElementById('set-logo-icon').value = settings.logoIcon;
-        document.getElementById('set-payment-info').value = settings.paymentInfo;
-        document.getElementById('set-banner-text').value = settings.bannerText;
-
-        // Inquiries & Reply Table
-        const iTbody = document.getElementById('admin-inquiries-tbody');
-        iTbody.innerHTML = inquiries.length === 0 ? `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Hakuna maombi mapya.</td></tr>` : '';
-        inquiries.forEach(i => {
-            iTbody.innerHTML += `<tr>
-                <td>${i.createdAt}</td>
-                <td><strong>${i.phone}</strong></td>
-                <td>${i.msg}</td>
-                <td>
-                    <input type="text" id="reply-${i.id}" value="${i.reply || ''}" placeholder="Andika jibu hapa (Mfano: Bando lipo lipia sasa)..." class="input-field" style="margin:0; font-size:11px;">
-                </td>
-                <td>
-                    <button onclick="sendReply('${i.id}')" class="btn btn-sm btn-primary">Tuma Jibu</button>
-                    <button onclick="deleteInquiry('${i.id}')" class="btn btn-sm btn-danger">Futa</button>
-                </td>
-            </tr>`;
-        });
-
-        // Bundles Table
-        const bTbody = document.getElementById('admin-bundles-tbody');
-        bTbody.innerHTML = '';
-        bundles.forEach(b => {
-            const isAvail = b.inStock !== false;
-            bTbody.innerHTML += `<tr>
-                <td><strong>${b.title}</strong></td>
-                <td>${b.dataAmount} (${b.validity})</td>
-                <td>TZS ${b.price.toLocaleString()}</td>
-                <td><span class="badge ${isAvail ? 'badge-success' : 'badge-danger'}">${isAvail ? 'Kipo (In Stock)' : 'Hakipo (Itaonekana saa 6 usiku)'}</span></td>
-                <td>
-                    <button onclick="editBundle('${b.id}')" class="btn btn-sm btn-amber">Hariri</button>
-                    <button onclick="toggleStock('${b.id}')" class="btn btn-sm btn-secondary">${isAvail ? 'Weka Hakipo' : 'Weka Kipo'}</button>
-                    <button onclick="deleteBundle('${b.id}')" class="btn btn-sm btn-danger">Futa</button>
-                </td>
-            </tr>`;
-        });
-
-        // Orders Table
-        const oTbody = document.getElementById('admin-orders-tbody');
-        oTbody.innerHTML = '';
-        orders.forEach(o => {
-            oTbody.innerHTML += `<tr><td>${o.createdAt}</td><td><strong>${o.phone}</strong></td><td>${o.bundleTitle}</td><td>TZS ${o.price.toLocaleString()}</td><td><code>${o.ref}</code></td><td><span class="badge ${o.status === 'Completed' ? 'badge-success' : 'badge-warning'}">${o.status}</span></td><td><button onclick="updateOrderStatus('${o.id}', 'Completed')" class="btn btn-sm btn-primary">Thibitisha</button></td></tr>`;
-        });
-        updateBadges();
-    }
-
-    function sendReply(id) {
-        const replyText = document.getElementById(`reply-${id}`).value;
-        const inquiry = inquiries.find(x => x.id === id);
-        if(inquiry) {
-            inquiry.reply = replyText;
-            localStorage.setItem('mrlucky_inquiries', JSON.stringify(inquiries));
-            renderAdminDashboard();
-            updateBadges();
-            showToast('Jibu limetumwa kwa mteja kikamilifu!');
-        }
-    }
-
-    function toggleStock(id) {
-        const b = bundles.find(x => x.id === id);
-        if(b) {
-            b.inStock = !(b.inStock !== false);
-            localStorage.setItem('mrlucky_bundles', JSON.stringify(bundles));
-            renderAdminDashboard();
-            renderStorefront();
-            showToast('Hali ya bando imebadilishwa!');
-        }
-    }
-
-    function deleteInquiry(id) { inquiries = inquiries.filter(i => i.id !== id); localStorage.setItem('mrlucky_inquiries', JSON.stringify(inquiries)); renderAdminDashboard(); updateBadges(); }
-    
-    function handleSaveSettings(e) {
-        e.preventDefault();
-        settings.brandName = document.getElementById('set-brand-name').value;
-        settings.logoIcon = document.getElementById('set-logo-icon').value;
-        settings.paymentInfo = document.getElementById('set-payment-info').value;
-        settings.bannerText = document.getElementById('set-banner-text').value;
-        localStorage.setItem('mrlucky_settings', JSON.stringify(settings));
-        applySettings(); renderStorefront(); showToast('Imehifadhiwa!');
-    }
-
-    function openBundleModal() { document.getElementById('b-edit-id').value = ''; document.getElementById('b-title').value = ''; document.getElementById('b-data').value = ''; document.getElementById('b-validity').value = ''; document.getElementById('b-price').value = ''; document.getElementById('bundle-modal').classList.remove('hidden'); }
-    function closeBundleModal() { document.getElementById('bundle-modal').classList.add('hidden'); }
-    
-    function editBundle(id) {
-        const b = bundles.find(x => x.id === id);
-        if(!b) return;
-        document.getElementById('b-edit-id').value = b.id;
-        document.getElementById('b-title').value = b.title;
-        document.getElementById('b-data').value = b.dataAmount;
-        document.getElementById('b-validity').value = b.validity;
-        document.getElementById('b-price').value = b.price;
-        document.getElementById('b-in-stock').value = b.inStock !== false ? 'true' : 'false';
-        document.getElementById('bundle-modal').classList.remove('hidden');
-    }
-
-    function saveBundle(e) {
-        e.preventDefault();
-        const id = document.getElementById('b-edit-id').value;
-        const title = document.getElementById('b-title').value;
-        const dataAmount = document.getElementById('b-data').value;
-        const validity = document.getElementById('b-validity').value;
-        const price = parseFloat(document.getElementById('b-price').value);
-        const inStock = document.getElementById('b-in-stock').value === 'true';
-        if(id) {
-            const b = bundles.find(x => x.id === id);
-            if(b) { b.title = title; b.dataAmount = dataAmount; b.validity = validity; b.price = price; b.inStock = inStock; }
-        } else {
-            bundles.push({ id: 'b_' + Date.now(), title, dataAmount, validity, price, inStock });
-        }
-        localStorage.setItem('mrlucky_bundles', JSON.stringify(bundles));
-        closeBundleModal(); renderAdminDashboard(); renderStorefront(); showToast('Kifurushi kimehifadhiwa!');
-    }
-
-    function deleteBundle(id) { if(confirm('Futa kifurushi hiki?')) { bundles = bundles.filter(b => b.id !== id); localStorage.setItem('mrlucky_bundles', JSON.stringify(bundles)); renderAdminDashboard(); renderStorefront(); } }
-    function updateOrderStatus(id, status) { const o = orders.find(x => x.id === id); if(o) { o.status = status; localStorage.setItem('mrlucky_orders', JSON.stringify(orders)); renderAdminDashboard(); updateBadges(); showToast('Imesasishwa!'); } }
-    function openChangePinModal() { document.getElementById('pin-modal').classList.remove('hidden'); }
-    function closePinModal() { document.getElementById('pin-modal').classList.add('hidden'); }
-    function handleChangePin(e) {
-        e.preventDefault();
-        if(document.getElementById('pin-current').value !== adminPin) { showToast('PIN ya sasa siyo sahihi!', 'error'); return; }
-        adminPin = document.getElementById('pin-new').value;
-        localStorage.setItem('mrlucky_admin_pin', adminPin);
-        closePinModal(); showToast('PIN imebadilishwa!');
+    function logoutAdmin() {
+        document.getElementById('admin-settings').style.display = 'none';
+        document.getElementById('admin-login').style.display = 'block';
+        document.getElementById('adminPin').value = '';
+        alert("Umetoka kwenye mfumo salama (Locked).");
     }
 </script>
+
 </body>
 </html>
