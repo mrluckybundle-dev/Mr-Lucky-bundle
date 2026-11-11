@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr Lucky Bundle - Admin & Dashboard</title>
+    <title>Mr Lucky Bundle - Admin Dashboard</title>
     <style>
         :root {
             --primary: #25D366;
@@ -51,6 +51,7 @@
             margin-top: 10px;
         }
         .btn-danger { background-color: var(--danger); }
+        .btn-sm { padding: 5px 10px; font-size: 0.8rem; width: auto; display: inline-block; margin-right: 5px; }
         input, select {
             width: 100%;
             padding: 10px;
@@ -67,13 +68,16 @@
             margin-bottom: 15px;
             display: none;
         }
-        .order-item {
+        .order-item, .bundle-mgmt-item {
             background: #f9fafb;
             border-left: 4px solid var(--primary);
             padding: 10px;
             margin-bottom: 8px;
             border-radius: 4px;
             font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .status-badge {
             background: #fee2e2;
@@ -112,13 +116,11 @@
         </div>
 
         <div id="stock-status" class="status-badge">⚠️ Nafasi zimefika kikomo kwa leo! Weka Pre-order kwa ajili ya saa sita usiku.</div>
-        <div id="notification-alert" class="alert-box">Oda yako imetumwa kikamilifu kwa Admin! Subiri huduma.</div>
+        <div id="notification-alert" class="alert-box">Oda yako imetumwa kikamilifu kwa Admin Juma! Subiri huduma.</div>
         
-        <label for="bundleSelect">Vifurushi Vinavyopatikana:</label>
+        <label for="bundleSelect">Vifurushi Vinavyopatikana na Bei:</label>
         <select id="bundleSelect">
-            <option value="Halotel 1GB - TZS 1,000">Halotel 1GB - TZS 1,000</option>
-            <option value="Halotel 5GB - TZS 4,000">Halotel 5GB - TZS 4,000</option>
-            <option value="Halotel Unlimited - TZS 10,000">Halotel Unlimited - TZS 10,000</option>
+            <!-- Vifurushi vinajaa hapa moja kwa moja kutoka kwenye Admin Memory -->
         </select>
         
         <label for="clientPhone">Namba yako ya Simu ya Kupokelea Bando:</label>
@@ -136,11 +138,11 @@
 
     <!-- Dashibodi Kuu ya Admin (Full Access) -->
     <div class="card" id="admin-dashboard" style="display: none;">
-        <h2>⚙️ Admin Master Dashboard & Oda Zote</h2>
+        <h2>⚙️ Admin Master Dashboard</h2>
         
         <div style="background: #eef2ff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
             <h3>Dhibiti Hali ya Vifurushi (Stock Control)</h3>
-            <label><input type="checkbox" id="toggleStock" onchange="updateStockStatus()"> <b>Washa Pre-Order / Funga Nafasi za Leo</b> (Ili mteja aambiwe nafasi zimeisha na aweke oda ya saa sita)</label>
+            <label><input type="checkbox" id="toggleStock" onchange="updateStockStatus()"> <b>Washa Pre-Order / Funga Nafasi za Leo</b></label>
         </div>
 
         <h3>Oda Zilizoingia kutoka kwa Wateja (<span id="orderCount">0</span>)</h3>
@@ -149,10 +151,15 @@
         </div>
         <button class="btn btn-danger" onclick="clearOrders()">Futa Oda Zote Zilizopo</button>
 
-        <h3 style="margin-top: 20px;">Dhibiti Vifurushi na Bei</h3>
+        <h3 style="margin-top: 25px;">Dhibiti Vifurushi na Kubadilisha Bei (Full Pricing Control)</h3>
         <label>Ongeza Kifurushi Kipya (Jina na Bei):</label>
         <input type="text" id="newBundleName" placeholder="Mfano: Halotel 2GB - TZS 2,000">
-        <button class="btn" onclick="addBundle()">Ongeza Kwenye Orodha ya Wateja</button>
+        <button class="btn" onclick="addBundle()">Ongeza Kwenye Mfumo</button>
+
+        <h4 style="margin-top: 15px;">Orodha ya Vifurushi Vilivyopo (Badili Bei au Futa):</h4>
+        <div id="bundlesManagementList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px;">
+            <!-- Orodha ya edit inajaa hapa -->
+        </div>
 
         <button class="btn btn-danger" onclick="logoutAdmin()" style="margin-top: 20px;">Funga / Toka Admin (Lock)</button>
     </div>
@@ -161,11 +168,26 @@
 <audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
+    // Vifurushi vya kuanzia kama hakuna
+    const defaultBundles = [
+        "Halotel 1GB - TZS 1,000",
+        "Halotel 5GB - TZS 4,000",
+        "Halotel Unlimited - TZS 10,000"
+    ];
+
     window.onload = function() {
+        checkAndInitBundles();
         loadOrders();
-        loadBundles();
+        loadBundlesForClient();
+        loadBundlesForAdmin();
         checkStockState();
     };
+
+    function checkAndInitBundles() {
+        if(!localStorage.getItem('lucky_custom_bundles')) {
+            localStorage.setItem('lucky_custom_bundles', JSON.stringify(defaultBundles));
+        }
+    }
 
     function submitOrder() {
         const phone = document.getElementById('clientPhone').value;
@@ -179,6 +201,7 @@
 
         let orders = JSON.parse(localStorage.getItem('lucky_orders') || '[]');
         const newOrder = {
+            id: Date.now(),
             phone: phone,
             bundle: bundle,
             type: isPreOrder ? "Pre-order ya Saa Sita" : "Oda ya Kawaida",
@@ -196,6 +219,9 @@
         setTimeout(() => {
             document.getElementById('notification-alert').style.display = 'none';
         }, 5000);
+
+        // Kama admin yupo kwenye ukurasa, zifuatishe zionekane moja kwa moja
+        loadOrders();
     }
 
     function verifyAdmin() {
@@ -204,9 +230,10 @@
             document.getElementById('admin-dashboard').style.display = 'block';
             document.getElementById('admin-login').style.display = 'none';
             loadOrders();
-            alert("Umeingia kwa mafanikio! Una full access.");
+            loadBundlesForAdmin();
+            alert("Umeingia kwa mafanikio! Una full access ya kubadili kila kitu.");
         } else {
-            alert("PIN siyo sahihi!");
+            alert("PIN siyo sahihi! Jaribu tena.");
         }
     }
 
@@ -221,12 +248,11 @@
         }
 
         let html = '';
-        orders.forEach((ord, index) => {
-            html += `<div class="order-item">
-                <strong>Oda #${index+1} - ${ord.bundle}</strong><br>
-                Namba ya Mteja: <b>${ord.phone}</b><br>
-                Aina: <span style="color:red; font-weight:bold;">${ord.type}</span><br>
-                <small>Muda: ${ord.time}</small>
+        orders.slice().reverse().forEach((ord) => {
+            html += `<div class="order-item" style="display: block; margin-bottom: 10px;">
+                <strong>📦 ${ord.bundle}</strong><br>
+                Namba ya Mteja: <a href="tel:${ord.phone}" style="color:blue; font-weight:bold;">${ord.phone}</a><br>
+                Hali: <span style="color:red; font-weight:bold;">${ord.type}</span> | <small>${ord.time}</small>
             </div>`;
         });
         listDiv.innerHTML = html;
@@ -271,24 +297,67 @@
         customBundles.push(bundleName);
         localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
         
-        loadBundles();
         document.getElementById('newBundleName').value = '';
+        loadBundlesForClient();
+        loadBundlesForAdmin();
         alert("Kifurushi kimeongezwa kwa mafanikio!");
     }
 
-    function loadBundles() {
+    function loadBundlesForClient() {
         const select = document.getElementById('bundleSelect');
-        // Weka vifurushi vya msingi na vya ziada
-        let defaultOptions = `
-            <option value="Halotel 1GB - TZS 1,000">Halotel 1GB - TZS 1,000</option>
-            <option value="Halotel 5GB - TZS 4,000">Halotel 5GB - TZS 4,000</option>
-            <option value="Halotel Unlimited - TZS 10,000">Halotel Unlimited - TZS 10,000</option>
-        `;
         let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+        let optionsHtml = '';
         customBundles.forEach(b => {
-            defaultOptions += `<option value="${b}">${b}</option>`;
+            optionsHtml += `<option value="${b}">${b}</option>`;
         });
-        select.innerHTML = defaultOptions;
+        select.innerHTML = optionsHtml;
+    }
+
+    function loadBundlesForAdmin() {
+        const mgmtDiv = document.getElementById('bundlesManagementList');
+        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+        
+        if(customBundles.length === 0) {
+            mgmtDiv.innerHTML = '<p style="color: #666; text-align: center;">Hakuna vifurushi.</p>';
+            return;
+        }
+
+        let html = '';
+        customBundles.forEach((b, index) => {
+            html += `<div class="bundle-mgmt-item">
+                <span><b>${b}</b></span>
+                <div>
+                    <button class="btn btn-sm" onclick="editBundle(${index})">Hariri/Edit</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteBundle(${index})">Futa</button>
+                </div>
+            </div>`;
+        });
+        mgmtDiv.innerHTML = html;
+    }
+
+    function editBundle(index) {
+        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+        let currentVal = customBundles[index];
+        let newVal = prompt("Badilisha Jina au Bei ya Kifurushi:", currentVal);
+        
+        if(newVal !== null && newVal.trim() !== "") {
+            customBundles[index] = newVal.trim();
+            localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
+            loadBundlesForClient();
+            loadBundlesForAdmin();
+            alert("Bei/Kifurushi kimehaririwa kikamilifu!");
+        }
+    }
+
+    function deleteBundle(index) {
+        if(confirm("Una hakika unataka kufuta kifurushi hiki?")) {
+            let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+            customBundles.splice(index, 1);
+            localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
+            loadBundlesForClient();
+            loadBundlesForAdmin();
+            alert("Kifurushi kimefutwa!");
+        }
     }
 
     function logoutAdmin() {
