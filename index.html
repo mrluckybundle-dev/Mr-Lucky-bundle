@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr Lucky Bundle - Admin Dashboard</title>
+    <title>Mr Lucky Bundle - Admin & Dashboard</title>
     <style>
         :root {
             --primary: #25D366;
@@ -67,105 +67,235 @@
             margin-bottom: 15px;
             display: none;
         }
+        .order-item {
+            background: #f9fafb;
+            border-left: 4px solid var(--primary);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .payment-info {
+            background: #eef2ff;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Mr Lucky Bundle - Mfumo Rasmi</h1>
+    <h1>Mr Lucky Bundle</h1>
     <p>Admin: Juma Shaban | Contact: 0616517946</p>
 </header>
 
 <div class="container">
-    <!-- Sehemu ya Kuweka Oda kwa Wateja -->
+    
+    <!-- Sehemu ya Mteja -->
     <div class="card" id="client-view">
         <h2>Chagua Kifurushi Chako</h2>
-        <div id="notification-alert" class="alert-box">Oda yako imepokewa! Admin anajulishwa sasa hivi.</div>
+        
+        <div class="payment-info">
+            💳 <b>Sehemu ya Malipo:</b> Tuma pesa kwa Jina: <b>Juma Shaban</b> | Namba: <b>0616517946</b>
+        </div>
+
+        <div id="stock-status" class="status-badge">⚠️ Nafasi zimefika kikomo kwa leo! Weka Pre-order kwa ajili ya saa sita usiku.</div>
+        <div id="notification-alert" class="alert-box">Oda yako imetumwa kikamilifu kwa Admin! Subiri huduma.</div>
+        
         <label for="bundleSelect">Vifurushi Vinavyopatikana:</label>
         <select id="bundleSelect">
-            <option value="Halotel 1GB - 1000/=">Halotel 1GB - TZS 1,000</option>
-            <option value="Halotel 5GB - 4000/=">Halotel 5GB - TZS 4,000</option>
-            <option value="Halotel Unlimited - 10000/=">Halotel Unlimited - TZS 10,000</option>
+            <option value="Halotel 1GB - TZS 1,000">Halotel 1GB - TZS 1,000</option>
+            <option value="Halotel 5GB - TZS 4,000">Halotel 5GB - TZS 4,000</option>
+            <option value="Halotel Unlimited - TZS 10,000">Halotel Unlimited - TZS 10,000</option>
         </select>
-        <label for="clientPhone">Namba yako ya Simu:</label>
+        
+        <label for="clientPhone">Namba yako ya Simu ya Kupokelea Bando:</label>
         <input type="text" id="clientPhone" placeholder="Mfano: 07xxxxxxxx">
-        <button class="btn" onclick="submitOrder()">Tuma Oda Hapa (Inaita Kengele)</button>
+        
+        <button class="btn" id="orderBtn" onclick="submitOrder()">Tuma Oda Sasa</button>
     </div>
 
-    <!-- Sehemu ya Ulinzi na Kuingia Admin -->
+    <!-- Kuingia Admin -->
     <div class="card" id="admin-login">
         <h2>Ingia Kwenye Dashibodi ya Admin</h2>
-        <input type="password" id="adminPin" placeholder="Weka PIN yako ya Siri ya Admin">
-        <button class="btn" onclick="verifyAdmin()">Fungua Settings za Admin</button>
+        <input type="password" id="adminPin" placeholder="Weka PIN yako ya Siri (0616)">
+        <button class="btn" onclick="verifyAdmin()">Fungua Dashibodi</button>
     </div>
 
-    <!-- Mipangilio Mingi ya Admin (Settings Panel) -->
-    <div class="card" id="admin-settings" style="display: none;">
-        <h2>⚙️ Admin Master Settings & Ulinzi Mkali</h2>
+    <!-- Dashibodi Kuu ya Admin (Full Access) -->
+    <div class="card" id="admin-dashboard" style="display: none;">
+        <h2>⚙️ Admin Master Dashboard & Oda Zote</h2>
         
-        <p><strong>Hali ya Mfumo:</strong> <span style="color: green;">Inafanya kazi kikamilifu (Active)</span></p>
-        
-        <label>Badilisha Namba ya Kupokea Alerts/Kengele:</label>
-        <input type="text" id="setPhone" value="0616517946">
+        <div style="background: #eef2ff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+            <h3>Dhibiti Hali ya Vifurushi (Stock Control)</h3>
+            <label><input type="checkbox" id="toggleStock" onchange="updateStockStatus()"> <b>Washa Pre-Order / Funga Nafasi za Leo</b> (Ili mteja aambiwe nafasi zimeisha na aweke oda ya saa sita)</label>
+        </div>
 
-        <label>Weka Ujumbe Maalum kwa Wateja:</label>
-        <input type="text" id="setNotice" value="Tunafurahi kukuhudumia kupitia Mr Lucky Bundle!">
+        <h3>Oda Zilizoingia kutoka kwa Wateja (<span id="orderCount">0</span>)</h3>
+        <div id="ordersList" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #ddd; padding: 5px; border-radius: 6px;">
+            <p style="color: #666; text-align: center;">Hakuna oda bado.</p>
+        </div>
+        <button class="btn btn-danger" onclick="clearOrders()">Futa Oda Zote Zilizopo</button>
 
-        <label>Badilisha PIN ya Kuingia Admin:</label>
-        <input type="password" id="setNewPin" placeholder="Weka PIN mpya ya siri">
+        <h3 style="margin-top: 20px;">Dhibiti Vifurushi na Bei</h3>
+        <label>Ongeza Kifurushi Kipya (Jina na Bei):</label>
+        <input type="text" id="newBundleName" placeholder="Mfano: Halotel 2GB - TZS 2,000">
+        <button class="btn" onclick="addBundle()">Ongeza Kwenye Orodha ya Wateja</button>
 
-        <button class="btn" onclick="saveSettings()">Hifadhi Mabadiliko Yote</button>
-        <button class="btn btn-danger" onclick="logoutAdmin()" style="margin-top: 15px;">Funga / Toka Admin (Lock)</button>
+        <button class="btn btn-danger" onclick="logoutAdmin()" style="margin-top: 20px;">Funga / Toka Admin (Lock)</button>
     </div>
 </div>
 
-<!-- Sauti ya Kengele ya Notification (Audio Alert) -->
 <audio id="alarmSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <script>
-    // Ulinzi na Utendaji wa Mfumo
+    window.onload = function() {
+        loadOrders();
+        loadBundles();
+        checkStockState();
+    };
+
     function submitOrder() {
         const phone = document.getElementById('clientPhone').value;
         const bundle = document.getElementById('bundleSelect').value;
+        const isPreOrder = document.getElementById('toggleStock').checked;
 
         if(!phone) {
             alert("Tafadhali jaza namba yako ya simu!");
             return;
         }
 
-        // Piga kengele kwa admin pekee na onesha ujumbe
-        document.getElementById('alarmSound').play().catch(e => console.log("Audio play blocked"));
-        document.getElementById('notification-alert').style.display = 'block';
+        let orders = JSON.parse(localStorage.getItem('lucky_orders') || '[]');
+        const newOrder = {
+            phone: phone,
+            bundle: bundle,
+            type: isPreOrder ? "Pre-order ya Saa Sita" : "Oda ya Kawaida",
+            time: new Date().toLocaleString()
+        };
 
-        // Tuma ujumbe moja kwa moja kwenda kwa WhatsApp ya Admin (Juma Shaban - 0616517946)
+        orders.push(newOrder);
+        localStorage.setItem('lucky_orders', JSON.stringify(orders));
+
+        // Piga kengele ya admin
+        document.getElementById('alarmSound').play().catch(e => console.log("Audio blocked"));
+        document.getElementById('notification-alert').style.display = 'block';
+        document.getElementById('clientPhone').value = '';
+
         setTimeout(() => {
-            const adminNumber = "255616517946";
-            const text = `Habari Admin Juma, kuna mteja kaweka oda mpya:\n\n*Kifurushi:* ${bundle}\n*Namba ya Mteja:* ${phone}`;
-            window.location.href = `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
-        }, 1500);
+            document.getElementById('notification-alert').style.display = 'none';
+        }, 5000);
     }
 
     function verifyAdmin() {
         const pin = document.getElementById('adminPin').value;
-        // Weka PIN yako ya siri hapa (Mfano: 2026 au unayotaka wewe)
-        if(pin === "0616" || pin === "1234") {
-            document.getElementById('admin-settings').style.display = 'block';
+        if(pin === "0616") {
+            document.getElementById('admin-dashboard').style.display = 'block';
             document.getElementById('admin-login').style.display = 'none';
-            alert("Umeingia kwa mafanikio! Una full access ya admin.");
+            loadOrders();
+            alert("Umeingia kwa mafanikio! Una full access.");
         } else {
-            alert("PIN siyo sahihi! Jaribu tena.");
+            alert("PIN siyo sahihi!");
         }
     }
 
-    function saveSettings() {
-        alert("Mabadiliko yote yamehifadhiwa na kusambazwa kwenye mfumo mzima!");
+    function loadOrders() {
+        let orders = JSON.parse(localStorage.getItem('lucky_orders') || '[]');
+        const listDiv = document.getElementById('ordersList');
+        document.getElementById('orderCount').innerText = orders.length;
+
+        if(orders.length === 0) {
+            listDiv.innerHTML = '<p style="color: #666; text-align: center;">Hakuna oda bado.</p>';
+            return;
+        }
+
+        let html = '';
+        orders.forEach((ord, index) => {
+            html += `<div class="order-item">
+                <strong>Oda #${index+1} - ${ord.bundle}</strong><br>
+                Namba ya Mteja: <b>${ord.phone}</b><br>
+                Aina: <span style="color:red; font-weight:bold;">${ord.type}</span><br>
+                <small>Muda: ${ord.time}</small>
+            </div>`;
+        });
+        listDiv.innerHTML = html;
+    }
+
+    function clearOrders() {
+        if(confirm("Una hakika unataka kufuta oda zote?")) {
+            localStorage.removeItem('lucky_orders');
+            loadOrders();
+        }
+    }
+
+    function updateStockStatus() {
+        const isChecked = document.getElementById('toggleStock').checked;
+        localStorage.setItem('lucky_stock_limit', isChecked);
+        checkStockState();
+    }
+
+    function checkStockState() {
+        const isChecked = localStorage.getItem('lucky_stock_limit') === 'true';
+        const badge = document.getElementById('stock-status');
+        const btn = document.getElementById('orderBtn');
+        
+        document.getElementById('toggleStock').checked = isChecked;
+
+        if(isChecked) {
+            badge.style.display = 'block';
+            btn.innerText = "Weka Pre-Order ya Saa Sita";
+        } else {
+            badge.style.display = 'none';
+            btn.innerText = "Tuma Oda Sasa";
+        }
+    }
+
+    function addBundle() {
+        const bundleName = document.getElementById('newBundleName').value;
+        if(!bundleName) {
+            alert("Andika jina la kifurushi na bei yake!");
+            return;
+        }
+        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+        customBundles.push(bundleName);
+        localStorage.setItem('lucky_custom_bundles', JSON.stringify(customBundles));
+        
+        loadBundles();
+        document.getElementById('newBundleName').value = '';
+        alert("Kifurushi kimeongezwa kwa mafanikio!");
+    }
+
+    function loadBundles() {
+        const select = document.getElementById('bundleSelect');
+        // Weka vifurushi vya msingi na vya ziada
+        let defaultOptions = `
+            <option value="Halotel 1GB - TZS 1,000">Halotel 1GB - TZS 1,000</option>
+            <option value="Halotel 5GB - TZS 4,000">Halotel 5GB - TZS 4,000</option>
+            <option value="Halotel Unlimited - TZS 10,000">Halotel Unlimited - TZS 10,000</option>
+        `;
+        let customBundles = JSON.parse(localStorage.getItem('lucky_custom_bundles') || '[]');
+        customBundles.forEach(b => {
+            defaultOptions += `<option value="${b}">${b}</option>`;
+        });
+        select.innerHTML = defaultOptions;
     }
 
     function logoutAdmin() {
-        document.getElementById('admin-settings').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'none';
         document.getElementById('admin-login').style.display = 'block';
         document.getElementById('adminPin').value = '';
-        alert("Umetoka kwenye mfumo salama (Locked).");
+        alert("Umetoka kwenye dashibodi salama.");
     }
 </script>
 
