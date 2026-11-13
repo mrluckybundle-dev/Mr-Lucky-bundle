@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="sw">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101d3a"><title>MR LUCKY BUNDLE V4.10</title>
+<style>
+:root{--navy:#102a43;--gold:#f4b942;--bg:#f1f7f8;--ink:#172b3a;--muted:#607486;--line:#dce8ec;--green:#16834a;--red:#c93636;--teal:#0f9d9a;--surface:#ffffff;--soft-surface:#e8edf5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,Arial,sans-serif;transition:background .2s,color .2s}
+header{background:linear-gradient(120deg,#102a43,#0f766e);color:#fff;padding:20px 0;box-shadow:0 8px 24px #102a4322}.wrap{max-width:1100px;margin:auto;padding:16px}.head{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:22px;font-weight:900}.brand span{color:var(--gold)}button{border:0;border-radius:12px;padding:11px 16px;background:linear-gradient(120deg,var(--navy),#145b68);color:#fff;font-weight:750;cursor:pointer;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button.gold{background:var(--gold);color:#171717}button.soft{background:#e8edf5;color:var(--navy)}button.red{background:var(--red)}button:disabled{opacity:.45;cursor:not-allowed}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tabs button{background:#e5eaf2;color:var(--navy)}.tabs button.active{background:linear-gradient(120deg,#102a43,#0f9d9a);color:white;box-shadow:0 5px 14px #0f766e22}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 24px #102a430d;margin-bottom:14px}.card h2,.card h3{margin-top:0}.muted{color:var(--muted)}.small{font-size:12px}.price{font-size:24px;font-weight:900;margin:8px 0}.pill{display:inline-block;border-radius:30px;padding:4px 9px;background:#edf1f7;font-size:12px}.pill.ok{background:#e3f6eb;color:var(--green)}.pill.bad{background:#ffebeb;color:var(--red)}
+label{display:block;font-weight:700;margin:10px 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #d8deea;border-radius:10px;background:var(--surface);color:var(--ink);font:inherit}textarea{min-height:75px}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.hidden{display:none!important}.notice{padding:12px;border-radius:10px;background:#fff5d6;margin:10px 0}.success{background:#e4f7eb}.error{background:#ffebeb}.section{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 0 12px}.section h2{margin:0}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{background:#f5f7fa}.stat{font-size:26px;font-weight:900}.footer{text-align:center;color:var(--muted);padding:28px 10px}.bell{position:relative}.count{background:#d93636;color:white;border-radius:30px;padding:2px 7px;font-size:12px}.setup{border:2px dashed #d3a500;background:#fff9df;padding:14px;border-radius:12px}.announcement{background:linear-gradient(120deg,#fff6dc,#e6faf6);border:2px solid #f5b700;border-radius:16px;padding:15px;margin:14px 0}.announcement img{display:block;max-width:100%;max-height:320px;object-fit:contain;border-radius:12px;margin-top:10px}.contactbox{background:var(--soft-surface);padding:14px;border-radius:14px;margin-top:14px}
+/* Clean dashboard layout and optional dark theme */
+body[data-theme="dark"]{--bg:#10151f;--surface:#1b2432;--soft-surface:#263346;--ink:#edf3fa;--muted:#b2c0d0;--line:#354357;color-scheme:dark}
+body[data-theme="dark"] input,body[data-theme="dark"] select,body[data-theme="dark"] textarea{background:#111a27;color:#edf3fa;border-color:#40516a}
+body[data-theme="dark"] .tabs button{background:#263346;color:#edf3fa}
+body[data-theme="dark"] .tabs button.active{background:linear-gradient(120deg,#155e75,#0f9d9a);color:#fff}
+body[data-theme="dark"] .pill{background:#263346;color:#e6edf5}
+body[data-theme="dark"] th{background:#263346}
+.admin-tools{display:flex;flex-wrap:wrap;align-items:center;gap:9px}
+.admin-settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.settings-group{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--surface);margin:12px 0}
+.settings-group h3{margin:0 0 8px}
+.settings-group summary{cursor:pointer;font-weight:800;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.settings-group summary::-webkit-details-marker{display:none}
+.settings-group summary:after{content:"＋";font-size:20px;color:var(--teal)}
+.settings-group[open] summary:after{content:"−"}
+#adminSettingsSection{scroll-margin-top:18px}
+
+.admin-subpage{position:relative;background:var(--bg,#f5f7fb);padding:14px;border-radius:16px;margin-top:14px}
+.admin-subpage .card{margin:12px 0}
+
+.admin-module{margin:14px 0;border:1px solid var(--line,#dbe3ea);border-radius:14px;padding:12px;background:var(--card,#fff)}
+.module-action{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.module-action h3{margin:4px 0;font-size:1rem}
+.module-content{padding-top:12px}
+
+:root{--navy:#111111;--gold:#a8793d;--bg:#f2f3f5;--ink:#171717;--muted:#62666d;--line:#dedfe3;--surface:#fff;--soft-surface:#eceef1}
+header{background:#111!important;color:#fff}
+button,button.gold,button.soft,button.red{background:#171717!important;color:#fff!important;border:1px solid #171717!important;box-shadow:0 2px 5px #00000018}
+button:hover{background:#333!important;color:#fff!important;filter:none}
+button:disabled{opacity:.45}
+.admin-module{background:#fff;border:1px solid #d8dadd;border-radius:13px;margin:10px 0;padding:14px}
+.module-action{min-height:44px}
+.module-action h3{font-weight:800;color:#171717}
+.admin-subpage{background:#f1f2f4;border:1px solid #ddd}
+.admin-subpage .card{border:1px solid #e1e2e5;box-shadow:0 3px 12px #00000008}
+#stats{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}
+@media(max-width:600px){.admin-module{padding:11px}.module-action{align-items:flex-start}.module-action button{min-width:120px}}
+/* High contrast dark themes */
+body[data-theme="dark"]{--bg:#10151f;--surface:#1b2432;--soft-surface:#263346;--ink:#f2f5fa;--muted:#bdc8d6;--line:#3b485a;color:#f2f5fa;color-scheme:dark}
+body[data-theme="dark"] .card,body[data-theme="dark"] .admin-module,body[data-theme="dark"] .admin-subpage,body[data-theme="dark"] .settings-group,body[data-theme="dark"] .contactbox{background:#1b2432!important;color:#f2f5fa!important;border-color:#3b485a!important}
+body[data-theme="dark"] .notice,body[data-theme="dark"] .announcement{background:#283548!important;color:#f2f5fa!important;border-color:#46566c!important}
+body[data-theme="dark"] input,body[data-theme="dark"] select,body[data-theme="dark"] textarea{background:#111a27!important;color:#f2f5fa!important;border-color:#52627a!important}
+body[data-theme="dark"] input::placeholder,body[data-theme="dark"] textarea::placeholder{color:#aeb9c8!important}
+body[data-theme="dark"] th{background:#2a374a!important;color:#f2f5fa!important}
+body[data-theme="dark"] .muted,body[data-theme="dark"] .small{color:#bdc8d6!important}
+body[data-theme="dark"] .pill{background:#344258!important;color:#f2f5fa!important}
+body[data-theme="black"]{--bg:#000!important;--surface:#080808!important;--soft-surface:#111!important;--ink:#fff!important;--muted:#c5c5c5!important;--line:#303030!important;color:#fff!important;color-scheme:dark}
+body[data-theme="black"] .card,body[data-theme="black"] .admin-module,body[data-theme="black"] .admin-subpage,body[data-theme="black"] .settings-group,body[data-theme="black"] .contactbox{background:#080808!important;color:#fff!important;border-color:#303030!important}
+body[data-theme="black"] .notice,body[data-theme="black"] .announcement{background:#171717!important;color:#fff!important}
+body[data-theme="black"] input,body[data-theme="black"] select,body[data-theme="black"] textarea{background:#101010!important;color:#fff!important;border-color:#454545!important}
+body[data-theme="black"] th{background:#171717!important;color:#fff!important}
+body[data-theme="navy"]{--bg:#071321!important;--surface:#102238!important;--soft-surface:#18334e!important;--ink:#f2f7ff!important;--muted:#b9c9dc!important;--line:#29425b!important;color:#f2f7ff!important;color-scheme:dark}
+body[data-theme="navy"] .card,body[data-theme="navy"] .admin-module,body[data-theme="navy"] .admin-subpage,body[data-theme="navy"] .settings-group,body[data-theme="navy"] .contactbox{background:#102238!important;color:#f2f7ff!important;border-color:#29425b!important}
+body[data-theme="navy"] .notice,body[data-theme="navy"] .announcement{background:#19334d!important;color:#f2f7ff!important}
+body[data-theme="navy"] input,body[data-theme="navy"] select,body[data-theme="navy"] textarea{background:#091827!important;color:#f2f7ff!important;border-color:#38536e!important}
+body[data-theme="navy"] th{background:#19334d!important;color:#f2f7ff!important}
+body[data-theme="dark"] button,body[data-theme="black"] button,body[data-theme="navy"] button{background:#080808!important;color:#fff!important;border-color:#080808!important}
+
+button,.actions button{background:#111!important;color:#fff!important;border:1px solid #111!important;border-radius:12px!important;font-weight:750;box-shadow:0 3px 10px #00000018}
+button.soft{background:#252525!important;color:#fff!important;border-color:#252525!important}
+.product-card{display:flex;flex-direction:column;gap:8px;min-height:220px}.product-card .actions{margin-top:auto}.product-card.selected{outline:2px solid #a8793d}
+.order-cta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:14px;position:sticky;bottom:8px;z-index:3;box-shadow:0 8px 28px #00000020}
+@media(max-width:560px){.order-cta{flex-direction:column;align-items:stretch}.order-cta button{width:100%}}
+
+/* V5.6 compact admin control centre */
+#adminPanel .admin-module{padding:12px 14px;margin:9px 0;border-radius:15px}
+#adminPanel .module-action{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:10px}
+#adminPanel .module-action:before{content:"";width:36px;height:36px;border-radius:11px;background:#171717;display:block}
+#settingsModule .module-action:before{content:"⚙";color:#fff;display:grid;place-items:center;font-size:19px}
+#networkModule .module-action:before{content:"⌁";color:#fff;display:grid;place-items:center;font-size:24px}
+#announcementModule .module-action:before{content:"▤";color:#fff;display:grid;place-items:center;font-size:20px}
+#ordersModule .module-action:before{content:"▣";color:#fff;display:grid;place-items:center;font-size:19px}
+#inquiriesModule .module-action:before{content:"✉";color:#fff;display:grid;place-items:center;font-size:18px}
+#productsModule .module-action:before{content:"▦";color:#fff;display:grid;place-items:center;font-size:19px}
+#adminPanel .module-action h3{font-size:.95rem;line-height:1.25;margin:0}
+#adminPanel .module-action button{min-width:104px;padding:9px 12px;font-size:.78rem}
+#adminPanel .admin-tools{display:flex;flex-wrap:wrap;gap:7px}
+#adminPanel .admin-tools button{padding:8px 11px;font-size:.78rem}
+#adminPanel .admin-module .module-content{padding-top:10px}
+#cashRows .actions{display:flex;gap:5px;flex-wrap:wrap}
+#cashRows button{padding:7px 9px;font-size:.75rem}
+@media(max-width:480px){#adminPanel .module-action{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}#adminPanel .module-action:before{width:32px;height:32px}#adminPanel .module-action button{min-width:88px;padding:8px;font-size:.72rem}}
+ 
+.status-strip{display:flex;align-items:center;gap:9px;padding:9px 13px;margin:10px 0;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:.88rem;font-weight:700}
+.status-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.status-dot.online{background:#16a34a;box-shadow:0 0 0 4px #16a34a20}.status-dot.offline{background:#8b929c}
+.finance-dashboard{margin:12px 0}.finance-kpis{grid-template-columns:repeat(auto-fit,minmax(155px,1fr))}
+.finance-kpi{border-left:4px solid #171717}.finance-kpi h2{font-size:1.25rem;overflow-wrap:anywhere}
+.finance-stock{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-top:10px}
+.reply-bubble{background:var(--soft-surface);padding:9px 11px;border-radius:10px;margin:7px 0}
+.small-action{margin-top:7px}
+
+.payment-method-row{display:grid;grid-template-columns:minmax(155px,.8fr) minmax(180px,1.2fr);gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.payment-method-check{display:flex;align-items:center;gap:7px;margin:0}.payment-method-check input{width:auto}.payment-method-check small{color:var(--muted)}
+@media(max-width:560px){.payment-method-row{grid-template-columns:1fr}}
+#bellToggleButton{background:#171717;color:#fff;border:1px solid #171717;font-weight:800}
+#bellToggleButton:hover{filter:brightness(1.15)}
+
+/* MAISHA YANGU — private futuristic vault */
+.life-open-btn{display:inline-flex;align-items:center;justify-content:center;min-width:190px;margin:12px 0;padding:14px 22px;border-radius:14px;background:#17233e;color:#fff;border:1px solid #6278b2;font-size:18px;font-weight:800;letter-spacing:.3px}
+#lifeVault{margin-top:10px}
+.life-shell{background:radial-gradient(circle at 10% 0%,#263c72 0,#11182d 42%,#090d18 100%);color:#eef3ff;border:1px solid #34446a;border-radius:24px;padding:18px;margin:18px 0;box-shadow:0 18px 55px #05091455}
+.life-shell h2,.life-shell h3{color:#fff}.life-muted{color:#aab8d5}.life-card{background:linear-gradient(145deg,#1b2948,#121b31);border:1px solid #34476f;border-radius:18px;padding:15px;color:#f4f7ff}
+.life-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.life-shell input,.life-shell textarea,.life-shell select{background:#0c1426!important;color:#fff!important;border:1px solid #3c5078!important}.life-shell label{color:#dce6ff}
+.life-primary{background:linear-gradient(120deg,#5b7cfa,#7c4dff)!important;border:0!important}.life-chip{display:inline-block;border:1px solid #52658f;border-radius:30px;padding:5px 10px;color:#dbe5ff;font-size:12px}
+.life-pattern{display:grid;grid-template-columns:repeat(3,64px);gap:10px;justify-content:center;margin:16px auto}
+.life-pattern button{height:58px;width:58px;border-radius:18px;background:#25365b!important;border:1px solid #536a9d!important;font-size:20px}
+.life-pattern button.selected{background:#725cf5!important;box-shadow:0 0 0 3px #b4a9ff55}
+.life-record{background:#111c33;border:1px solid #30446d;border-radius:14px;padding:12px;margin:8px 0}
+.announcement-gallery{display:flex;align-items:center;gap:8px;margin:12px 0}.announcement-gallery img{flex:1;max-width:80%;max-height:300px;object-fit:contain;cursor:zoom-in}.announcement-thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 0}.announcement-thumbs img{width:76px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}.announcement-lightbox{display:none;position:fixed;inset:0;z-index:99999;background:#050914f2;align-items:center;justify-content:center;gap:10px;padding:16px}.announcement-lightbox.show{display:flex}.announcement-lightbox img{max-width:82vw;max-height:85vh;object-fit:contain}.announcement-lightbox button{font-size:24px}.announcement-lightbox .close-lightbox{position:absolute;right:18px;top:18px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header><div class="wrap head"><div><div class="brand">MR LUCKY <span>BUNDLE</span></div><div class="small">Huduma za vifurushi kwa urahisi</div></div><div class="actions"><button class="soft" id="customerSettingsButton" onclick="toggleCustomerPrefs()">⚙️ Settings</button><button class="gold" onclick="go('shop')">Nunua bando</button></div></div></header>
+<div id="customerPrefs" class="wrap hidden"><div class="card"><div class="section"><h2>Settings za mteja / Customer settings</h2><button class="soft" onclick="toggleCustomerPrefs()">Funga</button></div><div class="row"><div><label for="customerTheme">Chagua rangi / Theme</label><select id="customerTheme" onchange="applyCustomerPrefs()"><option value="default">Navy & Teal</option><option value="ocean">Ocean Blue</option><option value="purple">Purple</option><option value="sunset">Sunset</option><option value="light">Light</option><option value="dark">Dark / Nyeusi</option></select></div><div><label for="customerLanguage">Lugha / Language</label><select id="customerLanguage" onchange="applyCustomerPrefs()"><option value="sw">Kiswahili</option><option value="en">English</option></select></div></div><p class="small muted">Mipangilio hii inahifadhiwa kwenye kifaa hiki tu; haibadilishi muonekano au lugha ya vifaa vingine.</p></div></div>
+<main class="wrap">
+<div id="configWarning" class="setup hidden"><b>Hatua ya usanidi inahitajika.</b><br>Weka Project URL na Publishable/anon key za Supabase ndani ya sehemu ya CONFIG kwenye faili hili. Usitumie service_role key hapa.</div>
+<div class="status-strip" id="publicAdminStatus"><span class="status-dot offline"></span><span id="publicAdminStatusText">Admin: Haipo mtandaoni kwa sasa</span></div>
+<div id="publicAnnouncement" class="announcement hidden"></div><div id="customerOfferBanner" class="card hidden" style="margin:12px 0;border:1px solid #d6a72c"></div><nav class="tabs"><button id="t-shop" class="active" onclick="go('shop')">Duka</button><button id="t-ask" onclick="go('ask')">Uliza huduma</button><button id="t-track" onclick="go('track')">Fuatilia oda</button><button id="t-admin" onclick="go('admin')">Admin</button></nav>
+<section id="shop"><div class="section"><div><h2>Chagua mtandao wako</h2><div class="muted">Chagua Yas, Vodacom au Halotel ili kuona bei na vifurushi vyake.</div></div><button class="soft" onclick="loadProducts()">Onyesha upya</button></div><div id="networkChoices" class="grid"></div><div class="section"><h2 id="networkHeading">Vifurushi vyote</h2></div><div id="products" class="grid"><div class="card">Inapakia vifurushi...</div></div><div id="orderResult"></div></section>
+<section id="ask" class="hidden"><div class="card"><h2>Uliza kama huduma ipo</h2><div class="muted">Admin atapokea ombi lako kwenye dashibodi yake.</div><div class="row"><div><label>Jina</label><input id="qName" autocomplete="name"></div><div><label>Namba ya simu</label><input id="qPhone" autocomplete="tel" placeholder="07XXXXXXXX"></div></div><label>Chagua kifurushi kilichopo (hiari)</label><select id="qProduct"><option value="">Sijachagua kwenye orodha</option></select><label>Au andika bando/huduma unayotaka</label><input id="qCustomProduct" placeholder="Mfano: Halotel GB 3"><label>Ujumbe</label><textarea id="qMessage" placeholder="Andika maelezo ya ziada..."></textarea><div class="actions"><button onclick="sendInquiry()">Tuma ombi</button></div><div id="qResult"></div><div class="contactbox"><b>Huduma kwa mteja</b><p class="muted">Ikiwa tumechelewa kukuhudumia, tupigie moja kwa moja.</p><div class="actions"><a href="tel:0616517946"><button type="button">Piga 0616517946</button></a><a href="tel:0683012124"><button type="button" class="soft">Piga 0683012124</button></a></div></div>
+<div class="card" style="margin-top:14px"><h3>Majibu ya Admin</h3><p class="muted">Weka jina na simu ulizotumia kuuliza, kisha bonyeza Angalia majibu. Majibu yataonekana hapa bila kufuatilia oda.</p><label>Jina ulilotumia</label><input id="replyName" autocomplete="name"><label>Namba ya simu uliyotumia</label><input id="replyPhone" autocomplete="tel"><button class="soft" onclick="checkMyReplies()">Angalia majibu</button><div id="myReplies"></div></div>
+<div class="card" style="margin-top:14px"><h3>Msaidizi wa MR LUCKY (Offline)</h3><p class="muted">Husaidia kwa maswali ya kawaida hata bila intaneti. Kwa majibu maalum, tuma ombi kwa Admin.</p><div id="botChat" class="notice" style="min-height:70px">Karibu! Uliza kuhusu bei, vifurushi, mtandao au muda wa matumizi.</div><label>Ujumbe wako</label><input id="botQuestion" placeholder="Mfano: Bei ya GB 5 ni kiasi gani?"><button onclick="askOfflineAssistant()">Uliza msaidizi</button></div>
+</div></section>
+<section id="track" class="hidden"><div class="card"><h2>Fuatilia oda</h2><label>Namba ya oda</label><input id="trackCode" placeholder="MLB-XXXXXXXX"><label>Namba ya mawasiliano (au namba ya kuungiwa ikiwa hukuandika mawasiliano)</label><input id="trackPhone" placeholder="07XXXXXXXX"><div class="actions"><button onclick="trackOrder()">Tafuta oda</button></div><div id="trackResult"></div><div class="card" style="margin-top:12px"><h3>Oda nilizowahi kufuatilia kwenye kifaa hiki</h3><div id="savedCustomerOrders" class="small muted">Hakuna oda zilizohifadhiwa bado.</div></div><div class="small muted" style="margin-top:10px">Hifadhi namba ya oda na simu yako ili kuangalia hatua za oda wakati wowote. Admin akifungua oda, utaona muda wa kuifungua.</div></div></section>
+<section id="admin" class="hidden">
+<div id="loginBox" class="card"><h2>Admin Login</h2><p class="muted">Ingia kwa akaunti ya Admin iliyoundwa kwenye Supabase. Hakuna nenosiri la pamoja la 1234.</p><label>Email ya Admin</label><input id="adminEmail" type="email" autocomplete="username"><label>Nenosiri</label><input id="adminPassword" type="password" autocomplete="current-password"><div class="actions"><button onclick="adminLogin()">Ingia</button></div><div id="loginResult"></div></div>
+<div id="adminPanel" class="hidden">
+
+<button id="lifeOpenBtn" class="life-open-btn" onclick="lifeOpenVault()">MAISHA YANGU</button><div id="lifeVault" class="life-shell hidden">
+ <div class="section" style="margin-top:0">
+  <div><h2 style="margin:8px 0 2px">MAISHA YANGU</h2></div>
+  <button class="life-primary" onclick="lifeLockNow()">Funga</button>
+ </div>
+ <div id="lifeGate" class="life-card">
+  <h3>🔐 Mlango wa usalama</h3><p class="life-muted">PIN mara 1 → Password mara 1 → Pattern ileile mara 5. Ni tofauti na Admin login.</p>
+  <div id="lifeSetup" class="hidden">
+   <h3>Sanidi ulinzi wako mara ya kwanza</h3>
+   <div class="row"><div><label>PIN mpya (tarakimu 4–8)</label><input id="lifePinNew" type="password" inputmode="numeric" maxlength="8"></div><div><label>Password mpya</label><input id="lifePassNew" type="password" minlength="10" placeholder="Angalau herufi 10"></div></div>
+   <p class="life-muted small">Chora pattern yako ya siri yenye angalau nukta 4. Rudia pattern hiyo hiyo mara tano.</p>
+   <div class="life-pattern" id="lifeSetupPattern"></div><div id="lifeSetupCount" class="life-muted small">Pattern 0/5</div>
+   <div class="actions"><button class="life-primary" onclick="lifeSaveSetup()">Hifadhi ulinzi</button><button class="soft" onclick="lifeClearPattern('setup')">Futa pattern</button></div>
+  </div>
+  <div id="lifeUnlock" class="hidden">
+   <label>1. PIN</label><input id="lifePin" type="password" inputmode="numeric" maxlength="8" placeholder="Ingiza PIN">
+   <label>2. Password</label><input id="lifePass" type="password" placeholder="Ingiza password">
+   <p class="life-muted small">3. Chora pattern ileile mara tano mfululizo.</p>
+   <div class="life-pattern" id="lifeUnlockPattern"></div><div id="lifeUnlockCount" class="life-muted small">Pattern 0/5</div>
+   <div class="actions"><button class="life-primary" onclick="lifeUnlock()">Fungua MAISHA YANGU</button><button class="soft" onclick="lifeClearPattern('unlock')">Anza upya</button></div>
+  </div>
+  <div id="lifeGateMessage" class="notice">Vault imefungwa. Taarifa binafsi hazionekani hadi uthibitishe siri zote.</div>
+ </div>
+ <div id="lifeWorkspace" class="hidden">
+  <div class="life-grid">
+   <div class="life-card"><div class="life-muted small">FEDHA BINAFSI</div><h3>💳 Fedha & Madeni</h3><div class="small">Mikopo, malipo na matumizi yako binafsi.</div></div>
+   <div class="life-card"><div class="life-muted small">PRIVATE GALLERY</div><h3>🖼️ Picha & Faili</h3><div class="small">Picha, PDF na nyaraka zako za siri.</div></div>
+   <div class="life-card"><div class="life-muted small">MEMORY SPACE</div><h3>📝 Kumbukumbu</h3><div class="small">Maandishi, makubaliano na taarifa muhimu.</div></div>
+   <div class="life-card"><div class="life-muted small">MY SCHEDULE</div><h3>🗓️ Ratiba</h3><div class="small">Mipango na tarehe za kukumbuka.</div></div>
+  </div>
+  <div class="life-grid" style="margin-top:14px">
+   <div class="life-card"><h3>➕ Hifadhi kumbukumbu</h3><label>Aina</label><select id="lifeType"><option value="note">Kumbukumbu</option><option value="loan_given">Nimkopesha mtu</option><option value="loan_taken">Nimekopa</option><option value="income">Mapato binafsi</option><option value="expense">Matumizi binafsi</option><option value="reminder">Kikumbusho</option></select><label>Kichwa / Jina la mtu</label><input id="lifeTitle" maxlength="120" placeholder="Mfano: Juma — mkopo"><label>Kiasi (TSh, hiari)</label><input id="lifeAmount" type="number" min="0" step="1"><label>Tarehe ya kulipa / kukumbuka</label><input id="lifeDue" type="date"><label>Maelezo</label><textarea id="lifeBody" maxlength="5000" placeholder="Andika taarifa zako..."></textarea><button class="life-primary" onclick="lifeSaveRecord()">Hifadhi salama</button></div>
+   <div class="life-card"><h3>📁 Picha na nyaraka</h3><p class="life-muted small">Faili binafsi zinahifadhiwa kwenye private storage, hadi 10 MB kwa faili.</p><input id="lifeFile" type="file" accept="image/*,.pdf,.txt,.doc,.docx" multiple><button class="life-primary" onclick="lifeUploadFiles()">Pakia faili</button><div id="lifeFiles" class="small"></div></div>
+  </div>
+  <div class="life-card" style="margin-top:14px"><div class="section"><h3>Rekodi zako binafsi</h3><button class="soft" onclick="lifeLoadRecords()">↻ Sasisha</button></div><div id="lifeRecords" class="life-muted">Inapakia...</div></div>
+ </div>
+</div>
+<div class="section"><h2>Dashibodi ya Admin</h2><div class="admin-tools"><button class="soft" onclick="openAdminSettings()">⚙️ Settings</button><label class="small" style="display:flex;align-items:center;gap:6px;margin:0"><input id="adminSoundEnabled" type="checkbox" style="width:auto" onchange="setAdminSound(this.checked)"> Washa kengele</label><button class="soft" id="bellToggleButton" onclick="toggleBellButton()">Zima kengele</button><button class="soft bell" onclick="requestNotifications()">🔔 Jaribu arifa</button><span class="count" id="unreadCount">0 mpya</span><span id="bellStatus" class="pill">Kengele haijajaribiwa</span><button class="soft" onclick="adminLogout()">Toka</button></div></div>
+<div class="notice small">Ili kengele ifanye kazi, bonyeza “Washa / Jaribu kengele” mara moja baada ya kuingia, ruhusu notifications, na acha ukurasa wa Admin wazi. Kengele ya browser haiwezi kupiga simu/SMS ukurasa ukiwa umefungwa.</div><div class="grid" id="stats"></div>
+<div class="finance-dashboard card">
+ <div class="section"><div><h3>Muhtasari wa biashara</h3><span class="small muted">Fedha na stock ya data</span></div><button class="soft" onclick="loadBusinessFinance()">Sasisha</button></div>
+ <div class="grid finance-kpis" id="businessFinanceKpis"><div class="card">Inapakia hesabu...</div></div>
+ <div class="grid finance-stock" id="businessStockKpis"></div>
+ <p class="small muted">Gross profit = mauzo ya stock ukitoa gharama ya MB zilizouzwa kwa wastani wa gharama ya ununuzi. Net profit = gross profit ukitoa expenses.</p>
+</div>
+
+<div class="admin-module" id="settingsModule">
+<div class="module-action"><h3>Settings za mfumo</h3><button class="soft" onclick="toggleAdminModule('settingsModule',this)">Fungua Settings</button></div>
+<div class="module-content hidden">
+<div class="section" id="adminSettingsSection"><h2>⚙️ Settings za mfumo</h2><span class="pill">Mipangilio yote inayopatikana</span></div>
+<div class="card">
+ <p class="muted">Chagua kundi la mipangilio unayotaka. Mabadiliko ya duka huhifadhiwa Supabase; mlio wa Admin huhifadhiwa kwenye kifaa cha Admin pekee.</p>
+ <details class="settings-group" open><summary>🏪 Taarifa za biashara</summary><div class="admin-settings-grid">
+  <div><label>Jina la biashara</label><input id="setStoreName" value="MR LUCKY BUNDLE"></div>
+  <div><label>Simu ya huduma kwa mteja</label><input id="setSupportPhone" placeholder="Namba ya simu"></div>
+ </div></details>
+ <details class="settings-group"><summary>💳 Malipo</summary><div class="admin-settings-grid">
+  <div><label>Namba ya malipo</label><input id="setPayNumber" value="0616517946" placeholder="Namba ya kupokea malipo"></div>
+  <div><label>Jina la mpokeaji wa malipo</label><input id="setPayName" placeholder="Jina linaloonekana wakati wa kulipa"></div>
+  <div style="grid-column:1/-1"><label>Maelekezo ya malipo kwa mteja</label><textarea id="setPayInstructions" placeholder="Andika maelekezo ya malipo..."></textarea></div>
+ </div><div class="card" style="margin-top:12px"><h3>Njia za malipo anazoruhusu mteja</h3><p class="small muted">Washa njia unazotaka. Weka namba/akaunti au maelekezo ya kupokea fedha kwa kila njia. Mteja ataona njia zilizowashwa pekee.</p><div id="paymentMethodsAdmin"></div><div class="row"><div><label>Ongeza njia nyingine</label><input id="customPaymentName" placeholder="Mfano: Benki nyingine / wallet"></div><div style="align-self:end"><button type="button" class="soft" onclick="addCustomPaymentMethod()">Ongeza njia</button></div></div><button type="button" onclick="savePaymentMethods()">Hifadhi njia za malipo</button><div id="paymentMethodsResult" class="small"></div></div></details>
+ <details class="settings-group"><summary>🎨 Muonekano wa duka</summary><div class="admin-settings-grid">
+  <div><label>Rangi kuu ya tovuti</label><input id="setMainColor" type="color" value="#101d3a"></div>
+  <div><label>Muonekano wa kifaa hiki</label><select id="adminDisplayTheme" onchange="previewAdminDisplayTheme()"><option value="light">Light — Nyeupe safi</option><option value="dark">Dark — Nyeusi laini</option><option value="black">AMOLED — Nyeusi kabisa</option><option value="navy">Navy — Blue ya usiku</option></select></div>
+ </div><p class="small muted">Rangi ya biashara huathiri mwonekano wa duka kwa wateja. Dark mode ya Admin ni ya kifaa hiki tu.</p>
+ <div class="actions"><button class="soft" onclick="applyAdminDisplayTheme()">Tumia muonekano</button></div></details>
+ <details class="settings-group"><summary>🔔 Arifa za oda na milio</summary>
+<label style="display:flex;align-items:center;gap:10px"><input id="adminSoundSetting" type="checkbox" style="width:auto" onchange="setAdminSound(this.checked)"> Washa mlio wa oda mpya</label>
+<div class="admin-settings-grid"><div><label>Aina ya mlio</label><select id="adminRingtone" onchange="localStorage.setItem('mlb_admin_ringtone',this.value)"><option value="bell">Bell</option><option value="chime">Chime</option><option value="alert">Alert</option><option value="call">Call</option><option value="ding">Ding</option></select></div><div><label>Ukubwa wa sauti</label><input id="adminVolume" type="range" min="1" max="100" value="65" oninput="localStorage.setItem('mlb_admin_volume',this.value)"></div></div>
+<p class="small muted">Mlio hurudiwa kwa oda ambazo bado hujazifungua.</p><div class="actions"><button onclick="testSelectedRingtone()">Sikiliza mlio</button><button class="soft" onclick="requestNotifications()">Ruhusu arifa</button></div></details>
+ <div class="actions"><button onclick="saveSystemSettings()">Hifadhi Settings za biashara</button><button class="soft" onclick="loadSystemSettings()">Pakia Settings</button></div><div id="settingsResult"></div>
+</div>
+
+</div></div>
+<div class="admin-module" id="networkModule">
+<div class="module-action"><h3>Hali ya mitandao / Pre-order</h3><button class="soft" onclick="toggleAdminModule('networkModule',this)">Fungua mitandao</button></div>
+<div class="module-content hidden">
+<div class="section"><h2>Hali ya mitandao / Pre-order</h2></div>
+<div class="card">
+ <p class="muted">Ukifunga mtandao kwa muda, wateja wataona ujumbe wako na bado wataweza kuweka Pre-order.</p>
+ <div id="networkAdminSettings"></div>
+ <div class="actions"><button onclick="saveNetworkControls()">Hifadhi hali za mitandao</button></div><div id="networkSettingsResult"></div>
+</div>
+
+</div></div>
+<div class="admin-module" id="announcementModule">
+<div class="module-action"><h3>Tangazo kwa wateja wote</h3><button class="soft" onclick="toggleAdminModule('announcementModule',this)">Fungua tangazo</button></div>
+<div class="module-content hidden">
+<div class="section"><h2>Tangazo kwa wateja wote</h2></div><div class="card"><p class="muted">Tangazo litaonekana kwa kila mteja hadi ulifiche au ulifute mwenyewe.</p><label>Kichwa cha tangazo</label><input id="aTitle" maxlength="120" placeholder="Mfano: Ofa maalum leo"><label>Ujumbe</label><textarea id="aMessage" placeholder="Andika ujumbe kwa wateja..."></textarea><label>Picha (hiari, hadi 5 MB)</label><input id="aImage" type="file" accept="image/png,image/jpeg,image/webp" multiple><div class="actions"><button onclick="publishAnnouncement()">Chapisha tangazo</button><button class="soft" onclick="hideAnnouncement()">Ficha tangazo</button><button class="red" onclick="deleteAnnouncement()">Futa tangazo</button></div><div id="announcementAdmin"></div></div>
+
+</div></div>
+<div class="admin-module" id="customerOfferModule">
+<div class="module-action"><h3>Dashboard ya mteja · Nafasi na ofa</h3><button class="soft" onclick="toggleAdminModule('customerOfferModule',this)">Simamia dashboard</button></div>
+<div class="module-content hidden"><div class="card"><p class="muted">Weka idadi ya nafasi zilizobaki na muda wa ofa/huduma. Muda huhesabiwa kwa miezi, wiki, siku na saa.</p><label>Kichwa kinachoonekana kwa mteja</label><input id="offerTitle" maxlength="100" placeholder="Mfano: Nafasi za vifurushi vya wiki hii"><label>Maelezo</label><textarea id="offerMessage" maxlength="500" placeholder="Andika taarifa kwa wateja"></textarea><div class="row"><div><label>Nafasi zilizobaki</label><input id="offerSlots" type="number" min="0" max="100000" value="0"></div><div><label>Miezi</label><input id="offerMonths" type="number" min="0" max="24" value="0"></div><div><label>Wiki</label><input id="offerWeeks" type="number" min="0" max="104" value="0"></div><div><label>Siku</label><input id="offerDays" type="number" min="0" max="365" value="0"></div><div><label>Saa</label><input id="offerHours" type="number" min="0" max="23" value="0"></div></div><label style="display:flex;gap:8px;align-items:center"><input id="offerEnabled" type="checkbox" checked style="width:auto"> Onyesha dashboard hii kwa wateja</label><div class="actions"><button onclick="saveCustomerOffer()">Hifadhi na onyesha</button><button class="soft" onclick="loadCustomerOfferAdmin()">Pakia mipangilio</button></div><div id="offerAdminResult"></div></div></div></div>
+<div class="admin-module" id="ordersModule">
+<div class="module-action"><h3>Oda za wateja</h3><button class="soft" onclick="toggleAdminModule('ordersModule',this)">Fungua oda</button><span class="pill" id="orderCountBadge">0 oda mpya</span></div>
+<div class="module-content hidden">
+<div class="section"><h2>Oda za wateja</h2><button class="soft" onclick="loadAdminData()">Onyesha upya</button></div><div class="card tablewrap"><table><thead><tr><th>Oda / Tarehe</th><th>Mteja</th><th>Kifurushi</th><th>Bei</th><th>Hali</th><th>Malipo / Aliyelipa</th><th>Namba ya kuungiwa</th><th>Maoni ya Admin</th><th>Kitendo</th></tr></thead><tbody id="orders"></tbody></table></div>
+
+</div></div>
+<div class="admin-module" id="inquiriesModule">
+<div class="module-action"><h3>Maombi ya huduma na majibu</h3><button class="soft" onclick="toggleAdminModule('inquiriesModule',this)">Fungua maombi</button></div>
+<div class="module-content hidden">
+<div class="section"><h2>Maombi ya huduma na majibu kwa wateja</h2><p class="muted">Andika jibu hapa; mteja ataliona kwenye sehemu ya Uliza huduma.</p></div><div class="card tablewrap"><table><thead><tr><th>Tarehe</th><th>Mteja</th><th>Simu</th><th>Huduma</th><th>Swali</th><th>Jibu kwa mteja</th><th>Hali</th><th>Kitendo</th></tr></thead><tbody id="inquiries"></tbody></table></div>
+
+</div></div>
+<div class="admin-module" id="productsModule">
+<div class="module-action"><h3>Simamia vifurushi</h3><button class="soft" onclick="toggleAdminModule('productsModule',this)">Fungua vifurushi</button></div>
+<div class="module-content hidden">
+<div class="section"><h2>Simamia vifurushi</h2></div><div class="card"><div class="row"><div><label>Jina</label><input id="pName"></div><div><label>Mtandao</label><input id="pNetwork"></div><div><label>Bei (TSh)</label><input id="pPrice" type="number" min="1"></div></div><label>Maelezo</label><input id="pDesc"><div class="actions"><button onclick="addProduct()">Ongeza kifurushi</button></div><div id="productAdmin"></div></div>
+
+
+</div></div>
+<div class="section"><h2>Usimamizi wa fedha na wateja</h2></div>
+<div class="grid">
+ <div class="card"><h3>Cashbook & Stock ya GB/MB</h3><p class="muted">Nunua GB, rekodi mauzo ya GB au MB, na fuatilia salio la siku, wiki na mwezi.</p><button onclick="openAdminPage('cashbookPage')">Fungua Cashbook</button></div>
+ <div class="card"><h3>Wateja / CRM</h3><p class="muted">Taarifa na historia ya wateja.</p><button class="soft" onclick="openAdminPage('crmPage');loadCRM()">Fungua CRM</button></div>
+</div>
+
+
+
+<div id="cashbookPage" class="admin-subpage hidden">
+ <div class="section"><button class="soft" onclick="closeAdminPages()">← Rudi Dashboard</button><h2>Cashbook & Stock ya Internet</h2></div>
+ <div class="card">
+  <h3>1. Nunua GB</h3>
+  <p class="muted">Rekodi jumla ya GB ulizonunua, gharama yake, na muda wa bando.</p>
+  <div class="row">
+   <div><label>Muda wa bando</label><select id="stockBuyPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi</option></select></div>
+   <div><label>Jumla ya MB ulizonunua</label><input id="stockBuyMB" type="number" min="1" step="1" placeholder="Mfano 12600" oninput="previewPurchaseGB()"><small id="stockBuyGBPreview" class="muted">Sawa na 0.0000 GB</small></div>
+   <div><label>Umenunua kwa TSh</label><input id="stockBuyCost" type="number" min="0" step="1" placeholder="Mfano 50000"></div>
+  </div>
+  <label>Maelezo (hiari)</label><input id="stockBuyNote" maxlength="180" placeholder="Chanzo / kumbukumbu">
+  <button onclick="saveStockPurchase()">Hifadhi ununuzi wa MB</button>
+ </div>
+ <div class="card">
+  <h3>2. Uza MB</h3>
+  <p class="muted">Andika GB au MB ulizouza na kiasi cha fedha ulichopokea. Mauzo yanapunguza stock ya muda husika.</p>
+  <div class="row">
+   <div><label>Muda wa bando lililouzwa</label><select id="stockSellPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi</option></select></div>
+   <div><label>Kiasi ulicyouza</label><input id="stockSellMB" type="number" min="0.01" step="0.01" placeholder="Mfano 0.5"></div><div><label>Unauza kwa kipimo gani?</label><select id="stockSellUnit"><option value="MB">MB</option><option value="GB">GB</option></select></div>
+   <div><label>Umeuza kwa TSh</label><input id="stockSellAmount" type="number" min="1" step="1" placeholder="Mfano 2500"></div>
+  </div>
+  <div class="row">
+   <div><label>Jina la mteja (hiari)</label><input id="stockSellCustomer" maxlength="100" placeholder="Jina la mteja"></div>
+   <div><label>Namba ya mteja (hiari)</label><input id="stockSellPhone" inputmode="tel" maxlength="20" placeholder="07XXXXXXXX"></div>
+  </div>
+  <label>Maelezo (hiari)</label><input id="stockSellNote" maxlength="180" placeholder="Kumbukumbu ya huduma">
+  <button onclick="saveStockSale()">Hifadhi mauzo ya MB</button>
+ </div>
+ <div class="card">
+  <h3>3. Mauzo ya leo — mapato ya huduma kwa wateja</h3>
+  <p class="muted">Kila unapomhudumia mteja, jaza mauzo hapo juu. Hapa utaona jumla ya fedha ulizoingiza leo na rekodi za wateja.</p>
+  <div class="grid" id="dailySalesStats"></div>
+  <div class="tablewrap"><table><thead><tr><th>Muda</th><th>Mteja</th><th>Simu</th><th>Kiasi cha GB/MB</th><th>Mapato</th></tr></thead><tbody id="dailySalesRows"></tbody></table></div>
+ </div>
+ <div class="card">
+  <h3>4. Stock iliyobaki</h3>
+  <p class="muted">GB ulizonunua hubadilishwa kuwa MB (1 GB = 1024 MB). Salio linaoneshwa tofauti kwa siku, wiki na mwezi.</p>
+  <div class="grid" id="stockPeriodStats"></div>
+  <button class="soft" onclick="loadStockLedger()">Sasisha stock</button>
+ </div>
+ <div class="card">
+  <h3>5. Cashbook ya fedha</h3>
+  <div class="row">
+   <div><label>Aina</label><select id="cbType"><option value="income">Mapato mengine</option><option value="expense">Matumizi</option></select></div>
+   <div><label>Kiasi (TSh)</label><input id="cbAmount" type="number" min="1"></div>
+   <div><label>Njia ya malipo</label><select id="cbMethod"><option>M-Pesa</option><option>Tigo Pesa</option><option>Airtel Money</option><option>Pesa taslimu</option><option>Nyingine</option></select></div>
+  </div>
+  <label>Maelezo</label><input id="cbDescription" maxlength="200" placeholder="Mfano: gharama za uendeshaji">
+  <button onclick="addCashbookEntry()">Hifadhi mapato/matumizi</button>
+  <div class="grid" id="cashStats"></div>
+  <div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Maelezo</th><th>Njia</th><th>Kiasi</th><th>Kitendo</th></tr></thead><tbody id="cashRows"></tbody></table></div>
+ </div>
+ <div class="card"><h3>6. Historia ya ununuzi na mauzo ya GB/MB</h3><div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Muda</th><th>GB</th><th>MB</th><th>TSh</th><th>Maelezo</th><th>Action</th></tr></thead><tbody id="stockLedgerRows"></tbody></table></div></div>
+<div class="card"><h3>7. Mtaji wa biashara na kutoa faida</h3><p class="muted">Rekodi mtaji unaoweka kwenye line ya kupokea fedha na faida unayoitoa. Utoaji wa faida si gharama ya biashara.</p><div class="row"><div><label>Aina ya muamala</label><select id="capitalType"><option value="capital_in">Ongeza mtaji</option><option value="profit_withdrawal">Nimetoa faida</option></select></div><div><label>Line / akaunti</label><input id="capitalLine" placeholder="Mfano M-Pesa 061..."></div></div><div class="row"><div><label>Kiasi TSh</label><input id="capitalAmount" type="number" min="1"></div><div><label>Maelezo</label><input id="capitalNote" placeholder="Maelezo ya muamala"></div></div><button onclick="saveCapitalTransaction()">Hifadhi muamala</button><div id="capitalSummary" class="grid"></div><div id="capitalRows"></div></div>
+<div class="card"><h3>8. Madeni ya wateja</h3><p class="muted">Rekodi mauzo ya mkopo na fuatilia malipo ya deni.</p><div class="row"><div><label>Jina la mteja</label><input id="debtName" placeholder="Jina"></div><div><label>Simu</label><input id="debtPhone" placeholder="07XXXXXXXX"></div></div><div class="row"><div><label>Huduma / GB</label><input id="debtProduct" placeholder="Mfano 5 GB"></div><div><label>Kiasi cha deni TSh</label><input id="debtAmount" type="number" min="1"></div></div><label>Maelezo</label><input id="debtNote" placeholder="Maelezo ya mkopo"><button onclick="saveCustomerDebt()">Hifadhi deni</button><div id="debtSummary" class="grid"></div><div id="debtRows"></div></div>
+</div>
+<div id="crmPage" class="admin-subpage hidden">
+ <div class="section"><button class="soft" onclick="closeAdminPages()">← Rudi Dashboard</button><h2>Wateja / CRM</h2><button class="soft" onclick="loadCRM()">Sasisha</button></div>
+ <div class="card"><div class="grid" id="crmStats"></div><div class="tablewrap"><table><thead><tr><th>Mteja</th><th>Simu</th><th>Oda</th><th>Matumizi (TSh)</th><th>Oda ya mwisho</th></tr></thead><tbody id="crmRows"></tbody></table></div></div>
+</div>
+
+<div class="notice small">Oda na maombi huhifadhiwa kwenye database ya pamoja. Backup ya database ifanywe kwenye Supabase. Usishiriki nenosiri la Admin wala service_role key.</div>
+</div></section>
+<div class="footer">MR LUCKY BUNDLE · V4.4 CUSTOMER CARE<br>Huduma kwa mteja: 0616517946 · 0683012124</div>
+</main>
+<script>
+// CONFIG: replace these two placeholders with values from Supabase > Project Settings > API.
+const SUPABASE_URL = "https://mdiiobrijxggaisisjvu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_UFL-UZJqAMqugNDDLIsQ1A_NLGYDYmX";
+const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("_HAPA") && !SUPABASE_ANON_KEY.includes("_HAPA");
+const db = configured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}}) : null;
+let adminUser=null,knownOrderIds=new Set(),knownInquiryIds=new Set(),realtime=null,audioCtx=null,adminPresenceTimer=null,publicPresenceTimer=null;
+let pendingOrderIds=new Set(),orderAlarmTimer=null;
+let adminSoundOn=localStorage.getItem("mlb_admin_sound")!=="off";
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(v){return "TSh "+Number(v||0).toLocaleString("en-US")}
+function go(page){if(page==="shop")loadCustomerOfferPublic();["shop","ask","track","admin"].forEach(x=>{$(x).classList.toggle("hidden",x!==page);$("t-"+(x==="shop"?"shop":x==="ask"?"ask":x==="track"?"track":"admin")).classList.toggle("active",x===page)})}
+function toggleCustomerPrefs(){const panel=$("customerPrefs");panel.classList.toggle("hidden");if(!panel.classList.contains("hidden"))panel.scrollIntoView({behavior:"smooth",block:"start"})}
+const customerThemes={default:["#102a43","#0f766e","#f4b942","#f1f7f8"],ocean:["#123c69","#1d70a2","#70c1b3","#eef7fb"],purple:["#38245f","#7654a6","#e0b0ff","#f7f2fc"],sunset:["#743b2e","#c45d3c","#f2b880","#fff5ed"],light:["#263746","#647b8e","#dce8ec","#ffffff"],dark:["#182334","#0f766e","#d6a94b","#10151f"]};
+function applyCustomerPrefs(){let theme=$("customerTheme").value,lang=$("customerLanguage").value;localStorage.setItem("mlb_customer_theme",theme);localStorage.setItem("mlb_customer_lang",lang);let c=customerThemes[theme]||customerThemes.default;document.documentElement.style.setProperty("--navy",c[0]);document.documentElement.style.setProperty("--teal",c[1]);document.documentElement.style.setProperty("--gold",c[2]);document.documentElement.style.setProperty("--bg",c[3]);document.body.dataset.theme=theme==="dark"?"dark":"light";document.documentElement.lang=lang;applyLanguage(lang)}
+function applyLanguage(lang){const sw={"Duka":"Shop","Uliza huduma":"Ask for service","Fuatilia oda":"Track order","Admin":"Admin","Nunua bando":"Buy bundles","Chagua mtandao wako":"Choose your network","Onyesha upya":"Refresh","Fuatilia oda":"Track order","Tafuta oda":"Find order","Settings za mteja / Customer settings":"Customer settings","Chagua rangi / Theme":"Choose theme","Lugha / Language":"Language","Huduma kwa mteja":"Customer support"};document.querySelectorAll("nav button, header button, #customerPrefs label, #shop h2, #track h2, #track button, .contactbox b").forEach(el=>{if(!el.dataset.swText)el.dataset.swText=el.textContent.trim();let original=el.dataset.swText;el.textContent=lang==="en"?(sw[original]||original):original})}
+function loadCustomerPrefs(){let theme=localStorage.getItem("mlb_customer_theme")||"default",lang=localStorage.getItem("mlb_customer_lang")||"sw";$("customerTheme").value=theme;$("customerLanguage").value=lang;applyCustomerPrefs()}
+function openAdminSettings(){go("admin");const m=$("settingsModule");if(m){const c=m.querySelector(".module-content");c.classList.remove("hidden");const b=m.querySelector(".module-action button");if(b)b.textContent="Funga Settings";m.scrollIntoView({behavior:"smooth",block:"start"});loadSystemSettings()}}
+function previewAdminDisplayTheme(){const t=$("adminDisplayTheme").value;document.body.dataset.theme=t;localStorage.setItem("mlb_admin_display_theme",t)}
+function applyAdminDisplayTheme(){previewAdminDisplayTheme();alert("Muonekano umehifadhiwa kwenye kifaa hiki.")}
+function syncBellControls(){
+ const label=adminSoundOn?"Zima kengele":"Washa kengele";
+ if($("adminSoundEnabled"))$("adminSoundEnabled").checked=adminSoundOn;
+ if($("adminSoundSetting"))$("adminSoundSetting").checked=adminSoundOn;
+ if($("bellToggleButton"))$("bellToggleButton").textContent=label;
+}
+function toggleBellButton(){setAdminSound(!adminSoundOn)}
+function setAdminSound(on){adminSoundOn=!!on;if(on)unlockAudio();localStorage.setItem("mlb_admin_sound",on?"on":"off");syncBellControls();if(!on){pendingOrderIds.clear();stopOrderAlarmIfClear();if($("bellStatus"))$("bellStatus").textContent="Kengele imezimwa"}else{if($("bellStatus"))$("bellStatus").textContent="Kengele imewashwa — italia oda mpya";if(pendingOrderIds.size&&!orderAlarmTimer){beep();orderAlarmTimer=setInterval(()=>{if(adminSoundOn&&pendingOrderIds.size)beep();else stopOrderAlarmIfClear()},4500)}}}
+function ready(){if(!db){$("configWarning").classList.remove("hidden");$("products").innerHTML='<div class="card">Kwanza weka Supabase URL na anon/publishable key kwenye CONFIG.</div>';return false}return true}
+let selectedNetwork="Yas",networkControls={},settingsCache={},selectedProductForOrder=null;
+async function loadProducts(){
+ if(!ready())return;
+ let {data,error}=await db.from("products").select("id,name,network,description,price,available").order("created_at",{ascending:false});
+ if(error){$("products").innerHTML='<div class="card error">'+esc(error.message)+'</div>';return}
+ const networks=["Yas","Vodacom","Airtel","Halotel","Tigo"];
+ if(selectedNetwork==="Yote")selectedNetwork="Yas";
+ $("networkChoices").innerHTML=networks.map(n=>`<button class="${selectedNetwork===n?"":"soft"}" onclick="chooseNetwork('${n}')">${n}</button>`).join("");
+ const filtered=data.filter(p=>{
+ const n=(p.network||"").toLowerCase();
+ if(selectedNetwork==="Vodacom")return n.includes("voda")||n.includes("voda com");
+ return n.includes(selectedNetwork.toLowerCase());
+ });
+ $("networkHeading").textContent=`Vifurushi vya ${selectedNetwork}`;
+ $("products").innerHTML=filtered.map(p=>{const st=networkControls[p.network]||{};const unavailable=st.is_open===false||!p.available;return `<article class="card product-card ${selectedProductForOrder?.id===p.id?"selected":""}"><span class="pill">${esc(p.network||"Bundle")}</span><h3>${esc(p.name)}</h3><div class="muted">${esc(p.description||"")}</div><div class="price">${money(p.price)}</div><span class="pill ${unavailable?"bad":"ok"}">${esc(unavailable?(st.reopen_message||"Haipatikani kwa sasa"):"Inapatikana")}</span><div class="actions"><button class="soft" onclick="chooseProductForOrder('${p.id}')">${selectedProductForOrder?.id===p.id?"Kimechaguliwa":"Chagua kifurushi"}</button></div></article>`}).join("")||'<div class="card">Hakuna kifurushi kwenye mtandao huu kwa sasa.</div>';
+ $("products").insertAdjacentHTML("beforeend",`<div class="card order-cta"><b>${selectedProductForOrder?esc(selectedProductForOrder.name)+" · "+money(selectedProductForOrder.price):"Chagua kifurushi kwanza"}</b><button onclick="continueSelectedOrder()" ${selectedProductForOrder?"":"disabled"}>${selectedProductForOrder&&((networkControls[selectedProductForOrder.network]||{}).is_open===false||selectedProductForOrder.available===false)?"Weka Pre-order":"Weka oda"}</button></div>`);
+ $("qProduct").innerHTML=data.map(p=>`<option value="${p.id}">${esc(p.network)} · ${esc(p.name)} — ${money(p.price)}</option>`).join("");
+}
+function chooseNetwork(n){selectedNetwork=n;selectedProductForOrder=null;loadProducts()}
+function chooseProductForOrder(id){db.from("products").select("id,name,network,price,available,description").eq("id",id).single().then(({data,error})=>{if(error||!data)return;selectedProductForOrder=data;loadProducts()})}
+function continueSelectedOrder(){if(!selectedProductForOrder)return;const st=networkControls[selectedProductForOrder.network]||{};if((st.is_open===false||selectedProductForOrder.available===false)&&st.allow_preorder===false){alert(st.reopen_message||"Huduma imefungwa na Pre-order hairuhusiwi.");return}orderProduct(selectedProductForOrder.id)}
+function selectAsk(id){go("ask");$("qProduct").value=id}
+async function sendInquiry(){if(!ready())return;let name=$("qName").value.trim(),phone=$("qPhone").value.trim(),pid=$("qProduct").value||null,custom=$("qCustomProduct").value.trim(),msg=$("qMessage").value.trim();if(!name||!phone||(!pid&&!custom)){$("qResult").innerHTML='<div class="notice error">Jaza jina, simu na jina la bando/huduma unayotaka.</div>';return}let pname=custom;if(!pname&&pid){let pr=await db.from("products").select("name").eq("id",pid).single();pname=pr.data?.name||"Huduma"}let {error}=await db.from("inquiries").insert({customer_name:name,phone,product_id:pid,product_name:pname,message:msg});$("qResult").innerHTML=error?'<div class="notice error">Ombi halikutumwa: '+esc(error.message)+'</div>':'<div class="notice success">Ombi limetumwa kwa Admin! Jibu litaonekana hapa bila kufuatilia oda.</div>';if(!error){$("replyName").value=name;$("replyPhone").value=phone;$("qName").value="";$("qPhone").value="";$("qMessage").value="";$("qCustomProduct").value="";await checkMyReplies();}}
+async function checkMyReplies(){if(!ready())return;let name=$("replyName").value.trim(),phone=$("replyPhone").value.trim();if(!name||!phone){$("myReplies").innerHTML='<p class="notice error">Weka jina na simu ulizotumia kuuliza.</p>';return}let {data,error}=await db.rpc("get_my_inquiry_replies",{p_customer_name:name,p_phone:phone});if(error){$("myReplies").innerHTML='<p class="notice error">Imeshindikana kupata majibu. Hakikisha SQL ya majibu imewekwa Supabase.</p>';return} $("myReplies").innerHTML=(data||[]).map(x=>`<div class="notice" style="margin-top:10px"><b>${esc(x.product_name)}</b><br><span class="muted">${new Date(x.created_at).toLocaleString("sw-TZ")}</span><p>Swali lako: ${esc(x.message||"—")}</p><p><b>Jibu la Admin:</b> ${esc(x.reply||"Bado Admin hajajibu.")}</p><b>Hali: ${esc(x.status)}</b></div>`).join("")||'<p class="muted">Hakuna maombi yaliyopatikana kwa jina na simu hizo.</p>';}
+function askOfflineAssistant(){let q=($("botQuestion").value||"").toLowerCase();if(!q.trim())return;let answer="Asante kwa kuuliza. Msaidizi wa offline anaweza kueleza bei, vifurushi na upatikanaji unaoonekana kwenye ukurasa huu. Kwa swali maalum, tumia Uliza huduma ili Admin akujibu.";if(/bei|gharama|shiling|tsh|gb|kifurushi|bando/.test(q)){let cards=[...document.querySelectorAll("#products article")].map(c=>c.innerText).join("\n");answer=cards?"Vifurushi vinavyoonyeshwa sasa:\n"+cards:"Sina orodha ya vifurushi iliyopakiwa. Unganisha intaneti kisha jaribu tena.";}else if(/muda|siku|valid|expire/.test(q)){answer="Muda wa matumizi unaonyeshwa kwenye maelezo ya kila kifurushi. Angalia kadi ya kifurushi husika."; }else if(/oda|agiza|nunua|fuatili/.test(q)){answer="Kununua, chagua kifurushi kisha bonyeza Agiza sasa. Hifadhi namba ya oda utakayoonyeshwa. Kwa swali la upatikanaji, tuma ombi kwa Admin."; }else if(/admin|mtu|msaada|jibu/.test(q)){answer="Tuma swali kupitia fomu ya Uliza huduma. Admin akijibu, jibu litaonekana hapa kwenye sehemu ya Majibu ya Admin."; }$("botChat").innerHTML='<b>MR LUCKY:</b><br>'+esc(answer).replace(/\n/g,"<br>");$("botQuestion").value="";}
+
+async function orderProduct(pid){
+ if(!ready())return;
+ const {data:p,error}=await db.from("products").select("id,name,price,network,description,available").eq("id",pid).single();
+ if(error||!p){alert("Imeshindikana kupata kifurushi. Jaribu tena.");return}
+ const st=networkControls[p.network]||{is_open:true,allow_preorder:true,reopen_message:"Hakuna nafasi kwa sasa."};
+ const isPreorder=!st.is_open||!p.available;
+ const pay=settingsCache||{};
+ const payInstructions=pay.payment_instructions||"Chagua njia ya malipo unayopendelea.";
+ $("orderResult").innerHTML=`<div class="card" style="margin-top:16px" id="easyOrderForm">
+ <h2>Weka oda yako</h2><div class="notice"><b>${esc(p.network)} · ${esc(p.name)}</b><br>Bei: <b>${money(p.price)}</b><br>Hali: <b>${isPreorder?"Pre-order":"Inapatikana"}</b></div>
+ <h3>Hatua ya 1: Chagua njia ya malipo</h3><label>Njia ya malipo</label><select id="easyPaymentMethod" onchange="updateCustomerPaymentDetails()"></select><div id="customerPaymentDetails"></div><p class="small muted">${esc(payInstructions)}</p>
+ <h3>Hatua ya 2: Jaza taarifa</h3>
+ <label>Jina la mteja / muweka oda (hiari)</label><input id="easyCustomerName" maxlength="100" autocomplete="name" placeholder="Unaweza kuacha wazi">
+ <label>Namba yako ya simu ya mawasiliano (hiari)</label><input id="easyCustomerPhone" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="Unaweza kuacha wazi">
+ <label>Namba ya kuungiwa bando (mpokeaji wa kifurushi)</label><input id="easyBundlePhone" maxlength="20" inputmode="tel" placeholder="Weka namba itakayopewa bando">
+ <label>Jina la wakala au mtumaji wa malipo</label><input id="easyPayerName" maxlength="100" placeholder="Jina lililoonekana kwenye muamala">
+ <label>Picha ya screenshot ya muamala (hiari)</label>
+ <input id="easyPaymentScreenshot" type="file" accept="image/png,image/jpeg,image/webp" onchange="previewPaymentScreenshot(this)">
+ <small class="muted">Pakia picha ya uthibitisho wa malipo. PNG, JPG au WEBP; kiwango cha juu 5 MB.</small>
+ <div id="paymentScreenshotPreview" class="small"></div>
+ <div class="notice small">Jina la mteja, namba ya mawasiliano na jina la wakala/mtumaji ni hiari. Namba ya kuungiwa bando pekee ndiyo lazima. Admin atakagua malipo kabla ya kuhudumia oda.</div>
+ <div class="actions"><button onclick="submitEasyOrder('${p.id}',${isPreorder})">Tuma oda</button><button class="soft" onclick="$('orderResult').innerHTML=''">Ghairi</button></div><div id="easyOrderError"></div>
+ </div>`;
+ renderCustomerPaymentOptions();
+ $("orderResult").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function previewPaymentScreenshot(input){
+ const f=input.files&&input.files[0],box=$("paymentScreenshotPreview");if(!box)return;
+ if(!f){box.textContent="";return}
+ if(!["image/png","image/jpeg","image/webp"].includes(f.type)||f.size>5*1024*1024){input.value="";box.textContent="Chagua PNG/JPG/WEBP isiyozidi 5 MB.";return}
+ box.textContent="Picha tayari: "+f.name+" ("+(f.size/1024/1024).toFixed(2)+" MB)";
+}
+async function uploadPaymentScreenshot(orderCode){
+ const input=$("easyPaymentScreenshot"),file=input?.files?.[0];if(!file)return null;
+ if(!["image/png","image/jpeg","image/webp"].includes(file.type)||file.size>5*1024*1024)throw new Error("Screenshot lazima iwe PNG/JPG/WEBP na isizidi 5 MB.");
+ const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+ const safeCode=String(orderCode).replace(/[^A-Za-z0-9_-]/g,"");
+ const path=safeCode+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,9)+"."+ext;
+ const {data,error}=await db.storage.from("mlb-payment-proofs").upload(path,file,{contentType:file.type,upsert:false});
+ if(error)throw error;return data.path;
+}
+async function submitEasyOrder(productId,isPreorder){
+ const fullName=$("easyCustomerName").value.trim(),customerPhone=$("easyCustomerPhone").value.trim(),bundlePhone=$("easyBundlePhone").value.trim(),payerName=$("easyPayerName").value.trim();
+ if((customerPhone && customerPhone.length<5)||bundlePhone.length<9){$("easyOrderError").innerHTML='<div class="notice error">Weka namba sahihi ya kuungiwa bando (angalau tarakimu 9).</div>';return}
+ const {data:p,error}=await db.from("products").select("id,name,price,network").eq("id",productId).single();
+ if(error||!p){$("easyOrderError").textContent="Kifurushi hakipatikani tena. Refresh ukurasa.";return}
+ const chosenPayment=$("easyPaymentMethod")?.value||"";
+ if(!chosenPayment){$("easyOrderError").innerHTML='<div class="notice error">Hakuna njia ya malipo iliyowashwa. Wasiliana na Admin.</div>';return}
+ const orderCode=await createCustomerOrder({product:p,fullName:fullName||"Mteja",customerPhone:customerPhone||bundlePhone,bundlePhone,payerName,isPreorder});
+ if(!orderCode)return;
+ let screenshotPath=null;
+ try{screenshotPath=await uploadPaymentScreenshot(orderCode)}catch(uploadError){alert("Oda imepokelewa lakini screenshot haikupakiwa: "+uploadError.message+" Unaweza kumtumia Admin uthibitisho baadaye.");}
+ const {error:payChoiceError}=await db.from("mlb_order_payment_choices").insert({order_code:orderCode,method_name:chosenPayment,screenshot_path:screenshotPath,sender_name:payerName||null});
+ if(payChoiceError)alert("Oda imepokelewa lakini njia/screenshot ya malipo haijahifadhiwa: "+payChoiceError.message);
+ $("orderResult").innerHTML=`<div class="card notice success" style="margin-top:16px"><h2>Oda imepokelewa, ${esc(fullName||"Mteja")}!</h2><p>Namba yako ya oda:</p><strong style="font-size:24px">${esc(orderCode)}</strong><p>${esc(p.network)} · ${esc(p.name)} · ${money(p.price)}</p><p>Njia ya malipo: <b>${esc(chosenPayment)}</b></p><p>Hali: <b>${isPreorder?"Pre-order — Admin atakuhudumia nafasi ikipatikana.":"Inasubiri uthibitisho wa malipo."}</b></p><div class="actions"><button onclick="copyOrderCode('${esc(orderCode)}')">Nakili namba ya oda</button><button class="soft" onclick="go('track');$('trackCode').value='${esc(orderCode)}';$('trackPhone').value='${esc(customerPhone)}'">Fuatilia oda</button></div></div>`;
+ $("orderResult").scrollIntoView({behavior:"smooth",block:"center"});
+}
+async function createCustomerOrder(x){
+ const {data,error}=await db.rpc("create_order_v44",{
+  p_customer_name:x.fullName,p_phone:x.customerPhone,p_product_id:x.product.id,
+  p_payer_name:(x.payerName||"").trim()||"Haijawekwa",p_payment_phone:null,p_bundle_phone:x.bundlePhone,p_is_preorder:x.isPreorder
+ });
+ if(error){alert("Oda haikutumwa: "+error.message+". Angalia kama SQL ya kurekebisha oda imeendeshwa Supabase.");return null}
+ return String(data||"");
+}
+async function renderSavedCustomerOrders(){const el=$("savedCustomerOrders");if(!el)return;let rows=[];try{rows=JSON.parse(localStorage.getItem("mlb_order_history")||"[]")}catch(e){}el.innerHTML=rows.length?rows.map((x,i)=>`<div class="row" style="align-items:center;border-bottom:1px solid var(--line);padding:8px 0"><div><b>${esc(x.code)}</b><br><small>Simu: ${esc(x.phone)}</small></div><button class="soft" onclick="$(\'trackCode\').value=\'${esc(x.code)}\';$(\'trackPhone\').value=\'${esc(x.phone)}\';trackOrder()">Angalia hali</button></div>`).join(""):"Hakuna oda zilizohifadhiwa bado."}
+async function copyOrderCode(code){
+ try{await navigator.clipboard.writeText(code);alert("Namba ya oda imenakiliwa: "+code);}
+ catch(e){prompt("Nakili namba hii ya oda:",code);}
+}
+function shareOrder(message){
+ const text=decodeURIComponent(message);
+ const url="https://wa.me/?text="+encodeURIComponent(text);
+ window.open(url,"_blank");
+}
+async function trackOrder(){if(!ready())return;let code=$("trackCode").value.trim().toUpperCase(),phone=$("trackPhone").value.trim();if(!code||!phone){$("trackResult").innerHTML='<div class="notice error">Weka namba ya oda na simu iliyotumika kuagiza.</div>';return}let {data,error}=await db.rpc("mlb_customer_order_dashboard",{p_order_code:code,p_phone:phone});let row=data&&data[0];if(!error&&row){let saved=JSON.parse(localStorage.getItem("mlb_order_history")||"[]");if(!saved.some(x=>x.code===code&&x.phone===phone)){saved.unshift({code,phone});localStorage.setItem("mlb_order_history",JSON.stringify(saved.slice(0,20)));}renderSavedCustomerOrders();}$("trackResult").innerHTML=error?'<div class="notice error">'+esc(error.message)+'</div>':!row?'<div class="notice">Oda haijapatikana. Hakiki namba ya oda na simu.</div>':`<div class="card" style="border-left:4px solid #16a085"><h3>Dashboard ya oda yako</h3><b>${esc(row.order_code)}</b><br>${esc(row.product_name)} · ${money(row.price)}<p>Hali ya oda: <b>${esc(row.status)}</b><br>Malipo: <b>${esc(row.payment_status)}</b></p><div class="notice ${row.admin_note?"":"success"}"><b>Ujumbe kutoka Admin</b><p>${esc(row.admin_note||"Hakuna maelekezo mapya kwa sasa.")}</p></div><p>${row.admin_opened_at?"👁️ Admin amefungua oda yako: "+new Date(row.admin_opened_at).toLocaleString("sw-TZ"):"⏳ Admin bado hajafungua oda yako."}</p><small class="muted">Ilipokelewa: ${new Date(row.created_at).toLocaleString("sw-TZ")}</small></div>`}
+
+function viewPaymentProof(url){const w=window.open("","_blank");if(!w){alert("Ruhusu pop-up ili kuona screenshot.");return}w.document.write(`<title>Uthibitisho wa malipo · MR LUCKY BUNDLE</title><meta name="viewport" content="width=device-width,initial-scale=1"><body style="margin:0;background:#101827;color:white;font:16px Arial;text-align:center"><p>Screenshot ya uthibitisho wa malipo</p><img src="${String(url).replace(/\"/g,"&quot;")}" style="max-width:100%;height:auto;max-height:90vh;object-fit:contain"></body>`);w.document.close()}
+async function loadCustomerOfferAdmin(){if(!adminUser)return;const {data,error}=await db.from("mlb_customer_dashboard_config").select("*").eq("id",1).maybeSingle();if(error){$("offerAdminResult").textContent="Endesha SQL migration V5.10 kwanza.";return}if(!data)return;$("offerTitle").value=data.title||"";$("offerMessage").value=data.message||"";$("offerSlots").value=data.slots_remaining??0;$("offerEnabled").checked=!!data.enabled;if(data.ends_at){let ms=Math.max(0,new Date(data.ends_at)-Date.now()),hours=Math.floor(ms/3600000);$("offerMonths").value=0;$("offerWeeks").value=Math.floor(hours/168);$("offerDays").value=Math.floor((hours%168)/24);$("offerHours").value=hours%24}}
+async function saveCustomerOffer(){if(!adminUser)return;let months=Number($("offerMonths").value)||0,weeks=Number($("offerWeeks").value)||0,days=Number($("offerDays").value)||0,hours=Number($("offerHours").value)||0;let totalHours=months*30*24+weeks*7*24+days*24+hours;if(totalHours>0&&totalHours>24*365*3){alert("Muda wa ofa ni mrefu sana.");return}let ends_at=totalHours?new Date(Date.now()+totalHours*3600000).toISOString():null;let payload={id:1,title:$("offerTitle").value.trim(),message:$("offerMessage").value.trim(),slots_remaining:Math.max(0,Number($("offerSlots").value)||0),ends_at,enabled:$("offerEnabled").checked,updated_at:new Date().toISOString()};let {error}=await db.from("mlb_customer_dashboard_config").upsert(payload,{onConflict:"id"});$("offerAdminResult").textContent=error?"Haijahifadhiwa: "+error.message:"Imehifadhiwa. Dashboard ya mteja imesasishwa.";if(!error){await loadCustomerOfferPublic();$("offerAdminResult").textContent="Imehifadhiwa na dashboard ya mteja imesasishwa."}}
+async function loadCustomerOfferPublic(){if(!db)return;let {data,error}=await db.from("mlb_customer_dashboard_config").select("title,message,slots_remaining,ends_at,enabled").eq("id",1).maybeSingle();let el=$("customerOfferBanner");if(error||!data||!data.enabled){el.classList.add("hidden");return}let remain=data.ends_at?Math.max(0,new Date(data.ends_at)-Date.now()):0;let total=Math.floor(remain/1000),d=Math.floor(total/86400),h=Math.floor((total%86400)/3600),m=Math.floor((total%3600)/60),sec=total%60;el.classList.remove("hidden");el.innerHTML=`<h3>✨ ${esc(data.title||"Taarifa ya MR LUCKY BUNDLE")}</h3><p>${esc(data.message||"")}</p><div class="row"><div><b>${Number(data.slots_remaining)||0}</b><br><small>Nafasi zilizobaki</small></div><div><b>${data.ends_at?(remain>0?`${d} siku · ${h} saa · ${m} dakika`:"Muda umeisha") : "Haijawekewa mwisho"}</b><br><small>Muda uliobaki</small></div></div>`}
+
+async function setAdminPresence(online){
+ if(!adminUser||!db)return false;
+ const now=new Date().toISOString();
+ const {error}=await db.from("mlb_admin_presence").upsert({id:1,is_online:!!online,last_seen:online?now:null,updated_at:now},{onConflict:"id"});
+ if(error){console.warn("Admin presence update failed:",error.message);return false}
+ return true;
+}
+async function refreshPublicAdminPresence(){
+ if(!db)return;
+ const {data,error}=await db.from("mlb_admin_presence").select("is_online,last_seen,updated_at").eq("id",1).maybeSingle();
+ const stamp=data?.last_seen||data?.updated_at;
+ const fresh=stamp&&Number.isFinite(new Date(stamp).getTime())&&(Date.now()-new Date(stamp).getTime()<45000);
+ const online=!error&&data?.is_online===true&&!!fresh;
+ const el=$("publicAdminStatusText"),dot=document.querySelector("#publicAdminStatus .status-dot");
+ if(el)el.textContent=online?"Admin: Yupo mtandaoni":"Admin: Hayupo mtandaoni";
+ if(dot)dot.className="status-dot "+(online?"online":"offline");
+}
+function startAdminPresenceHeartbeat(){
+ if(adminPresenceTimer)clearInterval(adminPresenceTimer);
+ setAdminPresence(true);
+ adminPresenceTimer=setInterval(()=>{if(adminUser&&!document.hidden)setAdminPresence(true)},15000);
+}
+async function adminLogin(){unlockAudio();if(!ready())return;let {data,error}=await db.auth.signInWithPassword({email:$("adminEmail").value.trim(),password:$("adminPassword").value});if(error){$("loginResult").innerHTML='<div class="notice error">Imeshindikana kuingia. Hakikisha akaunti imeundwa na kupewa ruhusa ya Admin.</div>';return}
+let {data:role,error:roleErr}=await db.from("admin_users").select("user_id").eq("user_id",data.user.id).maybeSingle();if(roleErr||!role){await db.auth.signOut();$("loginResult").innerHTML='<div class="notice error">Akaunti hii haina ruhusa ya Admin.</div>';return}
+adminUser=data.user;pendingOrderIds.clear();if(orderAlarmTimer){clearInterval(orderAlarmTimer);orderAlarmTimer=null}syncBellControls();if($("bellStatus"))$("bellStatus").textContent="Umeingia Admin — kengele imesitishwa; italia oda mpya";await db.from("orders").update({admin_seen:true}).eq("admin_seen",false);$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime();requestNotifications()}
+async function adminLogout(){if(adminPresenceTimer){clearInterval(adminPresenceTimer);adminPresenceTimer=null}await setAdminPresence(false);await refreshPublicAdminPresence();if(db)await db.auth.signOut();if(realtime)db.removeChannel(realtime);realtime=null;lifeLockNow();lifeLockNow();adminUser=null;$("adminPanel").classList.add("hidden");$("loginBox").classList.remove("hidden")}
+async function loadAdminData(){if(!adminUser)return;let [{data:os,error:oe},{data:qs,error:qe}]=await Promise.all([db.from("orders").select("*").order("created_at",{ascending:false}).limit(200),db.from("inquiries").select("*").order("created_at",{ascending:false}).limit(200)]);if(oe||qe){alert("Imeshindikana kusoma data. Hakikisha SQL/RLS imesanidiwa.");return}const unseenCount=(os||[]).filter(x=>x.admin_seen===false).length;if($("orderCountBadge")){$("orderCountBadge").textContent=unseenCount+" oda mpya";$("orderCountBadge").classList.toggle("hidden",unseenCount===0);}
+ $("stats").innerHTML=[["Oda zote",os.length],["Zinasubiri",os.filter(x=>x.status==="Inasubiri").length],["Zimekamilika",os.filter(x=>x.status==="Imekamilika").length],["Maombi",qs.length]].map(x=>`<div class="card"><div class="muted">${x[0]}</div><div class="stat">${x[1]}</div></div>`).join("");
+const {data:paymentChoiceRows}=await db.from("mlb_order_payment_choices").select("order_code,method_name,screenshot_path,sender_name");
+ const paymentChoiceMap=Object.fromEntries((paymentChoiceRows||[]).map(x=>[x.order_code,x]));
+ const paymentProofUrls={};
+ await Promise.all((paymentChoiceRows||[]).filter(x=>x.screenshot_path).map(async x=>{const {data}=await db.storage.from("mlb-payment-proofs").createSignedUrl(x.screenshot_path,3600);if(data?.signedUrl)paymentProofUrls[x.order_code]=data.signedUrl;}));
+ $("orders").innerHTML=os.map(o=>`<tr><td><b>${esc(o.order_code)}</b><br><span class="small">${new Date(o.created_at).toLocaleString("sw-TZ")}</span></td><td>${esc(o.customer_name)}<br>${esc(o.phone)}</td><td>${esc(o.product_name)}<br><small>Malipo: ${esc(paymentChoiceMap[o.order_code]?.method_name||"—")}<br><small>Mtumaji: ${esc(paymentChoiceMap[o.order_code]?.sender_name||o.payer_name||"—")}</small>${paymentProofUrls[o.order_code]?`<br><a href="${esc(paymentProofUrls[o.order_code])}" target="_blank" rel="noopener">🖼️ Tazama screenshot</a>`:""}</small></td><td>${money(o.price)}</td><td><select onchange="updateOrder('${o.id}','status',this.value)">${["Inasubiri","Imethibitishwa","Inaendelea","Imekamilika","Imekataliwa"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td><div class="small">Aliyelipa: ${esc(o.payer_name||"—")}<br>Simu ya mawasiliano: ${esc(o.phone||"—")}</div><select onchange="updateOrder('${o.id}','payment_status',this.value)">${["Haijathibitishwa","Imelipwa","Imerejeshwa"].map(s=>`<option ${o.payment_status===s?"selected":""}>${s}</option>`).join("")}</select></td><td>${esc(o.bundle_phone||"—")}</td><td><textarea id="admin-note-${o.id}" rows="2" placeholder="Mfano: Namba ya mpokeaji si sahihi. Tafadhali hakiki...">${esc(o.admin_note||"")}</textarea><button class="soft" onclick="saveAdminOrderNote('${o.id}')">Hifadhi maoni</button></td><td><button class="soft" onclick="ackOrder('${o.id}')">Fungua / thibitisha</button><button class="red" onclick="deleteOrder('${o.id}')">Futa</button></td></tr>`).join("")||'<tr><td colspan="7">Hakuna oda.</td></tr>';
+$("inquiries").innerHTML=qs.map(q=>`<tr><td>${new Date(q.created_at).toLocaleString("sw-TZ")}</td><td>${esc(q.customer_name)}</td><td>${esc(q.phone)}</td><td>${esc(q.product_name)}</td><td>${esc(q.message)}</td><td><textarea id="reply-${q.id}" placeholder="Andika jibu...">${esc(q.reply||"")}</textarea><button class="soft" onclick="saveInquiryReply('${q.id}')">Tuma jibu</button></td><td><select onchange="updateInquiry('${q.id}',this.value)">${["Mpya","Inapatikana","Haipatikani","Amejibiwa"].map(st=>`<option ${q.status===st?"selected":""}>${st}</option>`).join("")}</select></td><td><button class="red" onclick="deleteInquiry('${q.id}')">Futa swali</button></td></tr>`).join("")||'<tr><td colspan="8">Hakuna maombi.</td></tr>';
+let {data:ps}=await db.from("products").select("*").order("created_at",{ascending:false});$("productAdmin").innerHTML=(ps||[]).map(p=>`<div class="row" style="padding:10px;border-bottom:1px solid #eee;align-items:center"><div><b>${esc(p.name)}</b><br>${money(p.price)} · ${p.available?"Inapatikana":"Haipatikani"}</div><div class="actions"><button class="soft" onclick="editProduct('${p.id}')">Hariri</button><button class="soft" onclick="toggleProduct('${p.id}',${!p.available})">${p.available?"Sitisha":"Washa"}</button><button class="red" onclick="deleteProduct('${p.id}')">Futa</button></div></div>`).join("");
+await renderAnnouncementAdmin();await loadAnnouncement();await loadSystemSettings();await loadNetworkControls();await loadCustomerOfferAdmin();
+}
+async function ackOrder(id){pendingOrderIds.delete(id);stopOrderAlarmIfClear();await db.from("orders").update({admin_seen:true,admin_opened_at:new Date().toISOString()}).eq("id",id);await loadAdminData()}
+async function saveAdminOrderNote(id){const admin_note=$("admin-note-"+id).value.trim();const {error}=await db.from("orders").update({admin_note}).eq("id",id);if(error)alert("Maoni hayajahifadhiwa: "+error.message);else{alert("Maoni ya Admin yamehifadhiwa. Mteja ataona kwenye ukurasa wa kufuatilia oda.");await loadAdminData()}}
+async function deleteOrder(id){if(!confirm("Futa oda hii kabisa?"))return;let {error}=await db.from("orders").delete().eq("id",id);if(error)alert(error.message);else loadAdminData()}
+async function deleteInquiry(id){if(!confirm("Futa swali hili na jibu lake?"))return;let {error}=await db.from("inquiries").delete().eq("id",id);if(error)alert(error.message);else loadAdminData()}
+async function deleteProduct(id){if(!confirm("Futa kifurushi? Historia ya oda/maswali itahifadhiwa."))return;let [{count:oc,error:oe},{count:qc,error:qe}]=await Promise.all([db.from("orders").select("id",{count:"exact",head:true}).eq("product_id",id),db.from("inquiries").select("id",{count:"exact",head:true}).eq("product_id",id)]);if(oe||qe){alert("Imeshindikana kukagua historia.");return}if((oc||0)+(qc||0)>0){let {error}=await db.from("products").update({available:false}).eq("id",id);if(error)alert(error.message);else alert("Kifurushi kimefichwa kwa sababu kina historia ya wateja.");}else{let {error}=await db.from("products").delete().eq("id",id);if(error)alert(error.message);else alert("Kifurushi kimefutwa.");}loadAdminData();loadProducts()}
+async function updateOrder(id,field,value){let {error}=await db.from("orders").update({[field]:value}).eq("id",id);if(error)alert(error.message);else loadAdminData()}
+async function updateInquiry(id,status){let {error}=await db.from("inquiries").update({status}).eq("id",id);if(error)alert(error.message);else loadAdminData()}
+async function saveInquiryReply(id){let reply=$("reply-"+id).value.trim();if(!reply){alert("Andika jibu kwanza.");return}let {error}=await db.from("inquiries").update({reply,status:"Amejibiwa"}).eq("id",id);if(error)alert("Jibu halijahifadhiwa: "+error.message);else{alert("Jibu limehifadhiwa. Mteja ataliona kwenye Uliza huduma.");loadAdminData()}}
+async function addProduct(){let name=$("pName").value.trim(),price=Number($("pPrice").value);if(!name||price<=0){alert("Weka jina na bei sahihi.");return}let {error}=await db.from("products").insert({name,network:$("pNetwork").value,price,description:$("pDesc").value,available:true});if(error)alert(error.message);else{["pName","pNetwork","pPrice","pDesc"].forEach(x=>$(x).value="");loadAdminData();loadProducts()}}
+async function editProduct(id){let {data:p}=await db.from("products").select("*").eq("id",id).single();if(!p)return;let name=prompt("Jina la kifurushi",p.name);if(name===null)return;let price=Number(prompt("Bei",p.price));if(!price||price<1)return;let {error}=await db.from("products").update({name,price}).eq("id",id);if(error)alert(error.message);else{loadAdminData();loadProducts()}}
+async function toggleProduct(id,available){let {error}=await db.from("products").update({available}).eq("id",id);if(error)alert(error.message);else{loadAdminData();loadProducts()}}
+let currentAnnouncement=null,announcementGalleryIndex=0;
+async function loadAnnouncement(){
+ if(!db)return;let {data,error}=await db.from("announcements").select("id,title,message,image_data,image_gallery,updated_at").eq("active",true).order("updated_at",{ascending:false}).limit(1).maybeSingle();
+ if(error)return;currentAnnouncement=data||null;let el=$("publicAnnouncement");
+ if(!data){el.classList.add("hidden");el.innerHTML="";return}
+ el.classList.remove("hidden");
+ const gallery=Array.isArray(data.image_gallery)&&data.image_gallery.length?data.image_gallery:(data.image_data?[data.image_data]:[]);announcementGalleryIndex=0;
+ el.innerHTML=`<b>📢 ${esc(data.title||"Taarifa kutoka MR LUCKY BUNDLE")}</b><p>${esc(data.message||"").replace(/\n/g,"<br>")}</p>${gallery.length?`<div class="announcement-gallery"><button class="soft" onclick="moveAnnouncementImage(-1)">‹</button><img id="announcementHeroImage" src="${gallery[0]}" alt="Picha ya tangazo" onclick="openAnnouncementImage()"><button class="soft" onclick="moveAnnouncementImage(1)">›</button><div class="small muted" id="announcementImageCount">1 / ${gallery.length}</div></div><div id="announcementThumbs" class="announcement-thumbs">${gallery.map((im,i)=>`<img src="${im}" onclick="setAnnouncementImage(${i})" alt="Picha ${i+1}">`).join("")}</div>`:""}
+ <div class="actions"><button class="soft" id="announcementLikeBtn" onclick="likeAnnouncement()">🤍 Like <span id="announcementLikeCount">0</span></button></div>
+ <div style="margin-top:12px"><b>Maoni na maswali</b><div id="announcementComments" class="small muted">Inapakia maoni...</div>
+ <label>Jina lako (hiari)</label><input id="commentName" maxlength="60" placeholder="Jina lako">
+ <label>Andika maoni au swali</label><textarea id="commentText" maxlength="1000" placeholder="Andika hapa..."></textarea>
+ <div class="actions"><button onclick="sendAnnouncementComment()">Tuma comment</button></div><div id="commentResult"></div></div>`;
+ await loadAnnouncementSocial();
+}
+
+
+ 
+function announcementImages(){const d=currentAnnouncement;if(!d)return[];return Array.isArray(d.image_gallery)&&d.image_gallery.length?d.image_gallery:(d.image_data?[d.image_data]:[])}
+function setAnnouncementImage(i){const a=announcementImages();if(!a.length)return;announcementGalleryIndex=(i+a.length)%a.length;$("announcementHeroImage").src=a[announcementGalleryIndex];$("announcementImageCount").textContent=(announcementGalleryIndex+1)+" / "+a.length}
+function moveAnnouncementImage(dir){setAnnouncementImage(announcementGalleryIndex+dir)}
+function openAnnouncementImage(){const a=announcementImages();if(!a.length)return;let modal=$("announcementLightbox");if(!modal){modal=document.createElement("div");modal.id="announcementLightbox";modal.className="announcement-lightbox";modal.innerHTML='<button onclick="moveAnnouncementImage(-1)">‹</button><img id="announcementLightboxImage"><button onclick="moveAnnouncementImage(1)">›</button><button class="close-lightbox" onclick="this.parentElement.classList.remove(\'show\')">✕</button>';document.body.appendChild(modal)}modal.classList.add("show");$("announcementLightboxImage").src=a[announcementGalleryIndex];}
+async function loadNetworkControlsPublic(){if(!db)return;const {data}=await db.from("network_controls").select("*");networkControls={};(data||[]).forEach(x=>networkControls[x.network]=x)}
+async function loadSystemSettings(){
+ if(!adminUser)return;
+ const {data,error}=await db.from("system_settings").select("key,value");
+ if(error){$("settingsResult").textContent="Settings hazijasomwa. Endesha V4.4 SQL.";return}
+ settingsCache={};(data||[]).forEach(x=>settingsCache[x.key]=x.value);
+ $("setStoreName").value=settingsCache.store_name||"MR LUCKY BUNDLE";
+ $("setSupportPhone").value=settingsCache.support_phone||"";
+ $("setPayNumber").value=settingsCache.payment_number||"0616517946";
+ $("setPayName").value=settingsCache.payment_name||"Juma Shabani Kuna";
+ $("setPayInstructions").value=settingsCache.payment_instructions||"";
+ $("setMainColor").value=settingsCache.main_color||"#101d3a";
+ if($("adminSoundSetting"))$("adminSoundSetting").checked=adminSoundOn;
+ if($("adminDisplayTheme"))$("adminDisplayTheme").value=localStorage.getItem("mlb_admin_display_theme")||"light";
+ if($("adminRingtone"))$("adminRingtone").value=localStorage.getItem("mlb_admin_ringtone")||"bell";
+ if($("adminVolume"))$("adminVolume").value=localStorage.getItem("mlb_admin_volume")||"65";
+ renderPaymentMethodsAdmin();
+}
+
+const defaultPaymentMethods=[{"name": "M-Pesa", "type": "Mobile money", "enabled": true, "details": ""}, {"name": "Mixx by Yas / Tigo Pesa", "type": "Mobile money", "enabled": true, "details": ""}, {"name": "Airtel Money", "type": "Mobile money", "enabled": true, "details": ""}, {"name": "HaloPesa", "type": "Mobile money", "enabled": true, "details": ""}, {"name": "AzamPesa", "type": "Mobile money", "enabled": true, "details": ""}, {"name": "Selcom Pesa", "type": "Mobile money", "enabled": false, "details": ""}, {"name": "CRDB Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "NMB Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "NBC Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Absa Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Stanbic Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Exim Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Equity Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "DTB Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Access Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Amana Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Azania Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Tanzania Commercial Bank (TCB)", "type": "Bank", "enabled": false, "details": ""}, {"name": "Bank of Africa Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "KCB Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Ecobank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "UBA Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Letshego Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "I&M Bank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "DCB Commercial Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Mkombozi Commercial Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Tanzania Agricultural Development Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "TPB Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Mwanga Hakika Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Mwalimu Commercial Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Maendeleo Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "TIB Development Bank", "type": "Bank", "enabled": false, "details": ""}, {"name": "Bank of India Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Bank of Baroda Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Citibank Tanzania", "type": "Bank", "enabled": false, "details": ""}, {"name": "Pesa taslimu", "type": "Other", "enabled": false, "details": ""}];
+let paymentMethodsConfig=defaultPaymentMethods.map(x=>({...x}));
+function getPaymentMethods(){
+ try{const raw=settingsCache.payment_methods_config;if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed))paymentMethodsConfig=parsed}}catch(e){paymentMethodsConfig=defaultPaymentMethods.map(x=>({...x}))}
+ return paymentMethodsConfig;
+}
+function renderPaymentMethodsAdmin(){
+ const list=getPaymentMethods(),root=$("paymentMethodsAdmin");if(!root)return;
+ root.innerHTML=list.map((m,i)=>`<div class="payment-method-row"><label class="payment-method-check"><input type="checkbox" id="pm-on-${i}" ${m.enabled?"checked":""}> ${esc(m.name)} <small>${esc(m.type||"")}</small></label><input id="pm-detail-${i}" value="${esc(m.details||"")}" placeholder="Namba / akaunti / maelekezo ya kupokea malipo"></div>`).join("");
+}
+function addCustomPaymentMethod(){
+ const name=$("customPaymentName").value.trim();if(!name)return;
+ const list=getPaymentMethods();if(list.some(x=>x.name.toLowerCase()===name.toLowerCase())){alert("Njia hiyo ipo tayari.");return}
+ list.push({name,type:"Custom",enabled:true,details:""});paymentMethodsConfig=list;$("customPaymentName").value="";renderPaymentMethodsAdmin();
+}
+async function savePaymentMethods(){
+ if(!adminUser)return;
+ const list=getPaymentMethods().map((m,i)=>({...m,enabled:$("pm-on-"+i).checked,details:$("pm-detail-"+i).value.trim()}));
+ const {error}=await db.from("system_settings").upsert({key:"payment_methods_config",value:JSON.stringify(list)},{onConflict:"key"});
+ if(error){$("paymentMethodsResult").textContent="Haijahifadhiwa: "+error.message;return}
+ paymentMethodsConfig=list;settingsCache.payment_methods_config=JSON.stringify(list);$("paymentMethodsResult").textContent="Njia za malipo zimehifadhiwa.";
+}
+function renderCustomerPaymentOptions(){
+ const list=getPaymentMethods().filter(m=>m.enabled),select=$("easyPaymentMethod");if(!select)return;
+ select.innerHTML=list.map(m=>`<option value="${esc(m.name)}">${esc(m.name)}</option>`).join("")||'<option value="">Hakuna njia ya malipo iliyowashwa</option>';
+ updateCustomerPaymentDetails();
+}
+function updateCustomerPaymentDetails(){
+ const selected=$("easyPaymentMethod")?.value,m=getPaymentMethods().find(x=>x.name===selected&&x.enabled),box=$("customerPaymentDetails");
+ if(box)box.innerHTML=m?`<div class="notice success"><b>${esc(m.name)}</b><br>${esc(m.details||"Fuata maelekezo ya Admin kuthibitisha malipo.")}</div>`:"<div class='notice error'>Kwa sasa hakuna njia ya malipo iliyowashwa. Wasiliana na Admin.</div>";
+}
+
+async function saveSystemSettings(){
+ if(!adminUser)return;
+ const values={store_name:$("setStoreName").value.trim(),support_phone:$("setSupportPhone").value.trim(),payment_number:$("setPayNumber").value.trim(),payment_name:$("setPayName").value.trim(),payment_instructions:$("setPayInstructions").value.trim(),main_color:$("setMainColor").value};
+ const rows=Object.entries(values).map(([key,value])=>({key,value}));
+ const {error}=await db.from("system_settings").upsert(rows,{onConflict:"key"});
+ $("settingsResult").innerHTML=error?'<div class="notice error">'+esc(error.message)+'</div>':'<div class="notice success">Settings zimehifadhiwa.</div>';
+ if(!error){settingsCache={...settingsCache,...values};document.documentElement.style.setProperty("--navy",values.main_color);document.querySelector(".footer").innerHTML=esc(values.store_name)+" · Huduma kwa mteja: "+esc(values.support_phone);}
+}
+async function loadNetworkControls(){
+ if(!adminUser)return;
+ const {data,error}=await db.from("network_controls").select("*");
+ if(error){$("networkAdminSettings").textContent="Mipangilio ya mitandao haijasomwa. Endesha V4.4 SQL.";return}
+ networkControls={};(data||[]).forEach(x=>{if(x.auto_reopen_at&&new Date(x.auto_reopen_at)<=new Date()){x.is_open=true;x.allow_preorder=true}networkControls[x.network]=x});
+ const nets=["Yas","Vodacom","Airtel","Halotel","Tigo"];
+ $("networkAdminSettings").innerHTML=nets.map(n=>{const x=networkControls[n]||{};return `<div class="card" style="margin:10px 0"><h3>${n}</h3><label><input style="width:auto" type="checkbox" id="net-open-${n}" ${x.is_open!==false?"checked":""}> Huduma/nafasi zinapatikana</label><label>Ujumbe kwa wateja</label><input id="net-msg-${n}" value="${esc(x.reopen_message||"Huduma imefungwa kwa sasa. Tafadhali weka Pre-order.")}"><label>Fungua huduma tena (hiari)</label><input type="datetime-local" id="net-reopen-${n}" value="${x.auto_reopen_at?new Date(x.auto_reopen_at).toISOString().slice(0,16):""}"><small class="muted">Weka muda wa kufunguliwa tena, mfano 00:00.</small><label><input style="width:auto" type="checkbox" id="net-pre-${n}" ${x.allow_preorder!==false?"checked":""}> Ruhusu Pre-order</label></div>`}).join("");
+}
+async function saveNetworkControls(){
+ const rows=["Yas","Vodacom","Airtel","Halotel","Tigo"].map(network=>({network,is_open:$("net-open-"+network).checked,reopen_message:$("net-msg-"+network).value.trim(),allow_preorder:$("net-pre-"+network).checked,auto_reopen_at:$("net-reopen-"+network).value?new Date($("net-reopen-"+network).value).toISOString():null}));
+ const {error}=await db.from("network_controls").upsert(rows,{onConflict:"network"});
+ $("networkSettingsResult").innerHTML=error?'<div class="notice error">'+esc(error.message)+'</div>':'<div class="notice success">Hali za mitandao zimehifadhiwa.</div>';
+ if(!error){networkControls={};rows.forEach(x=>networkControls[x.network]=x);await loadProducts()}
+}
+
+function getVisitorId(){let id=localStorage.getItem("mlb_visitor_id");if(!id){id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():"mlb-"+Date.now()+"-"+Math.random().toString(36).slice(2);localStorage.setItem("mlb_visitor_id",id)}return id}
+async function loadAnnouncementSocial(){
+ if(!currentAnnouncement)return;const aid=currentAnnouncement.id;
+ const [{count:likes,error:le},{data:comments,error:ce}]=await Promise.all([
+  db.from("announcement_likes").select("id",{count:"exact",head:true}).eq("announcement_id",aid),
+  db.from("announcement_comments").select("id,customer_name,comment,reply,created_at").eq("announcement_id",aid).order("created_at",{ascending:false}).limit(50)]);
+ if(le||ce){$("announcementComments").textContent="Maoni/likes hayajasanidiwa. Admin aweke SQL migration ya V4.3.";return}
+ const {data:mine}=await db.from("announcement_likes").select("id").eq("announcement_id",aid).eq("visitor_id",getVisitorId()).maybeSingle();
+ $("announcementLikeBtn").textContent=(mine?"❤️ Ume-like":"🤍 Like")+" "+(likes||0);
+ const replyMap={};const commentIds=(comments||[]).map(c=>c.id);
+ if(commentIds.length){const {data:replies}=await db.from("announcement_comment_replies").select("id,comment_id,customer_name,reply,created_at").in("comment_id",commentIds).order("created_at",{ascending:true});(replies||[]).forEach(r=>(replyMap[r.comment_id]??=[]).push(r))}
+ $("announcementComments").innerHTML=(comments||[]).map(c=>`<div class="notice comment-thread" style="margin:7px 0"><b>${esc(c.customer_name||"Mteja")}</b><p>${esc(c.comment)}</p>${c.reply?`<p class="reply-bubble"><b>Jibu la Admin:</b> ${esc(c.reply)}</p>`:""}${(replyMap[c.id]||[]).map(r=>`<p class="reply-bubble"><b>${esc(r.customer_name||"Mteja")}:</b> ${esc(r.reply)}</p>`).join("")}<div class="small muted">${new Date(c.created_at).toLocaleString("sw-TZ")}</div><label>Jibu / endeleza mazungumzo</label><input id="customer-reply-${c.id}" maxlength="1000" placeholder="Andika jibu lako"><button class="small-action" onclick="sendCustomerCommentReply('${c.id}')">Tuma jibu</button></div>`).join("")||"Bado hakuna maoni. Kuwa wa kwanza kuandika.";
+}
+async function sendCustomerCommentReply(commentId){
+ const input=$("customer-reply-"+commentId),reply=input.value.trim();
+ if(!reply){alert("Andika jibu kwanza.");return}
+ const customer_name=$("commentName")?.value.trim()||"Mteja";
+ const {error}=await db.from("announcement_comment_replies").insert({comment_id:commentId,customer_name,reply,visitor_id:getVisitorId()});
+ if(error){alert("Jibu halikutumwa: "+error.message);return}
+ input.value="";await loadAnnouncementSocial();
+}
+async function likeAnnouncement(){
+ if(!currentAnnouncement)return;const visitor_id=getVisitorId(),announcement_id=currentAnnouncement.id;
+ const {data:existing,error:findErr}=await db.from("announcement_likes").select("id").eq("announcement_id",announcement_id).eq("visitor_id",visitor_id).maybeSingle();
+ if(findErr){alert("Like haipatikani. Hakikisha umeendesha SQL migration ya V4.3.");return}
+ if(existing){alert("Umeshatoa Like kwenye tangazo hili.");return}
+ const {error}=await db.from("announcement_likes").insert({announcement_id,visitor_id});
+ if(error){alert("Like haikuhifadhiwa: "+error.message);return}await loadAnnouncementSocial();
+}
+async function sendAnnouncementComment(){
+ if(!currentAnnouncement)return;const comment=$("commentText").value.trim(),customer_name=$("commentName").value.trim()||"Mteja";
+ if(!comment){$("commentResult").textContent="Andika maoni au swali kwanza.";return}
+ const {error}=await db.from("announcement_comments").insert({announcement_id:currentAnnouncement.id,customer_name,comment});
+ if(error){$("commentResult").textContent="Comment haikutumwa: "+error.message;return}
+ $("commentText").value="";$("commentResult").textContent="Asante! Comment yako imepokelewa.";await loadAnnouncementSocial();
+}
+async function replyAnnouncementComment(id){const reply=$("comment-reply-"+id).value.trim();const {error}=await db.from("announcement_comments").update({reply}).eq("id",id);if(error)alert("Jibu halijahifadhiwa: "+error.message);else{alert("Jibu limehifadhiwa.");await renderAnnouncementAdmin();await loadAnnouncement()}}
+async function showAnnouncement(){if(!adminUser)return;const {error}=await db.from("announcements").update({active:true,updated_at:new Date().toISOString()}).eq("id",1);if(error)alert(error.message);else{await loadAnnouncement();await renderAnnouncementAdmin()}}
+async function deleteAnnouncementComment(id){if(!adminUser||!confirm("Futa comment hii?"))return;const {error}=await db.from("announcement_comments").delete().eq("id",id);if(error)alert(error.message);else await renderAnnouncementAdmin()}
+
+async function publishAnnouncement(){
+ if(!adminUser)return;
+ let title=$("aTitle").value.trim(),message=$("aMessage").value.trim(),files=[...($("aImage").files||[])];
+ if(!title&&!message&&!files.length){alert("Weka kichwa, ujumbe au picha.");return}
+ if(files.length>10){alert("Unaweza kupakia picha zisizozidi 10 kwa tangazo moja.");return}
+ let gallery=[];
+ for(const file of files){if(file.size>5*1024*1024){alert(file.name+" imezidi MB 5.");return}
+  const data=await new Promise((resolve,reject)=>{let rd=new FileReader();rd.onload=()=>resolve(rd.result);rd.onerror=reject;rd.readAsDataURL(file)});gallery.push(data)}
+ let image_data=gallery[0]||null;
+ let {error}=await db.from("announcements").upsert({id:1,title,message,image_data,image_gallery:gallery,active:true,updated_at:new Date().toISOString()},{onConflict:"id"});
+ if(error){alert("Tangazo halikuchapishwa: "+error.message+" — hakikisha V5.12 SQL imeendeshwa.");return}
+ alert("Tangazo limechapishwa kwa wateja wote.");$("aImage").value="";await loadAnnouncement();renderAnnouncementAdmin();
+}
+async function hideAnnouncement(){if(!adminUser)return;let {error}=await db.from("announcements").update({active:false,updated_at:new Date().toISOString()}).eq("id",1);if(error)alert(error.message);else{alert("Tangazo limefichwa.");await loadAnnouncement();renderAnnouncementAdmin()}}
+async function deleteAnnouncement(){if(!adminUser||!confirm("Futa tangazo kabisa?"))return;let {error}=await db.from("announcements").delete().eq("id",1);if(error)alert(error.message);else{alert("Tangazo limefutwa.");await loadAnnouncement();renderAnnouncementAdmin()}}
+async function renderAnnouncementAdmin(){
+ if(!adminUser)return;let {data}=await db.from("announcements").select("title,message,active").eq("id",1).maybeSingle();
+ let {data:comments,error}=await db.from("announcement_comments").select("id,customer_name,comment,reply,created_at").order("created_at",{ascending:false}).limit(100);
+ const ids=(comments||[]).map(c=>c.id);let replyRows=[];
+ if(ids.length){const rr=await db.from("announcement_comment_replies").select("comment_id,customer_name,reply,created_at").in("comment_id",ids).order("created_at",{ascending:true});replyRows=rr.data||[]}
+ $("announcementAdmin").innerHTML=(data?`<div class="notice ${data.active?"success":""}"><b>${esc(data.title||"Tangazo")}</b><br>${esc(data.message||"")}<br>Hali: ${data.active?"Linaonekana kwa wateja":"Limefichwa"}</div>`:'<p class="muted">Hakuna tangazo.</p>')+
+ `<h3>Comments za wateja</h3>`+(error?'<p class="muted">Weka SQL migration ya V4.4 ili kuona comments.</p>':(comments||[]).map(c=>`<div class="notice"><b>${esc(c.customer_name||"Mteja")}</b><br>${esc(c.comment)}${replyRows.filter(r=>r.comment_id===c.id).map(r=>`<p class="reply-bubble"><b>${esc(r.customer_name||"Mteja")}:</b> ${esc(r.reply)}</p>`).join("")}<br><label>Jibu la Admin</label><textarea id="comment-reply-${c.id}">${esc(c.reply||"")}</textarea><div class="actions"><button onclick="replyAnnouncementComment('${c.id}')">Hifadhi jibu</button><button class="red" onclick="deleteAnnouncementComment('${c.id}')">Futa comment</button></div><span class="small muted">${new Date(c.created_at).toLocaleString("sw-TZ")}</span></div>`).join("")||'<p class="muted">Hakuna comments bado.</p>')+
+ (data&&!data.active?'<button class="gold" onclick="showAnnouncement()">Fichua tena tangazo</button>':(data?'<button class="soft" onclick="hideAnnouncement()">Ficha tangazo</button>':''));
+}
+async function unlockAudio(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A){$("bellStatus").textContent="Sauti haitumiki";return false}audioCtx=audioCtx||new A();if(audioCtx.state==="suspended")await audioCtx.resume();return audioCtx.state==="running"}catch(e){$("bellStatus").textContent="Sauti imezuiwa";return false}}
+async function beep(){try{if(!adminSoundOn||!await unlockAudio())return;const type=localStorage.getItem("mlb_admin_ringtone")||"bell";const volume=Math.max(.01,Math.min(1,Number(localStorage.getItem("mlb_admin_volume")||65)/100))*.22;const patterns={bell:[[880,0],[660,180]],chime:[[660,0],[880,150],[1046,300]],alert:[[950,0],[950,140],[950,280]],call:[[700,0],[880,350],[700,700]],ding:[[1046,0]]};(patterns[type]||patterns.bell).forEach(([freq,delay])=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);const t=audioCtx.currentTime+delay/1000;o.frequency.value=freq;g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.025);g.gain.exponentialRampToValueAtTime(.001,t+.18);o.start(t);o.stop(t+.2)})}catch(e){if($("bellStatus"))$("bellStatus").textContent="Tatizo la sauti"}}
+async function testSelectedRingtone(){await unlockAudio();const was=adminSoundOn;adminSoundOn=true;await beep();adminSoundOn=was;if($("bellStatus"))$("bellStatus").textContent="Jaribio la mlio limefanyika";}
+async function requestNotifications(){const audioOK=await unlockAudio();const was=adminSoundOn;adminSoundOn=true;await beep();adminSoundOn=was;let permission="hazipatikani";if("Notification"in window){if(Notification.permission==="default")permission=await Notification.requestPermission();else permission=Notification.permission}$("bellStatus").textContent=(audioOK?"Sauti iko tayari":"Sauti haijawashwa")+" · Taarifa: "+permission;alert("Jaribio la kengele limefanyika. "+(audioOK?"Sauti imewezeshwa.":"Gusa tena kitufe na ruhusu sauti kwenye browser.")+" Taarifa za browser: "+permission)}
+function startOrderAlarm(id,title,body){if(!adminSoundOn)return;pendingOrderIds.add(id);if("Notification"in window&&Notification.permission==="granted")new Notification(title,{body});if(adminSoundOn&&!orderAlarmTimer){if(audioCtx&&audioCtx.state==="running")beep();else if($("bellStatus"))$("bellStatus").textContent="Oda mpya! Gusa Jaribu arifa ili kuwasha sauti";orderAlarmTimer=setInterval(()=>{if(adminSoundOn&&pendingOrderIds.size&&audioCtx&&audioCtx.state==="running")beep();else if(!pendingOrderIds.size)stopOrderAlarmIfClear()},4500)}}
+function stopOrderAlarmIfClear(){if(!pendingOrderIds.size&&orderAlarmTimer){clearInterval(orderAlarmTimer);orderAlarmTimer=null}}
+function incoming(title,body){if("Notification"in window&&Notification.permission==="granted"&&document.hidden)new Notification(title,{body})}
+function subscribeRealtime(){if(realtime)db.removeChannel(realtime);realtime=db.channel("admin-live-orders").on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},payload=>{if(adminUser){startOrderAlarm(payload.new.id,"Oda mpya ya MR LUCKY BUNDLE",payload.new.order_code+" · "+payload.new.customer_name);loadAdminData()}}).on("postgres_changes",{event:"INSERT",schema:"public",table:"inquiries"},payload=>{loadAdminData()}).on("postgres_changes",{event:"*",schema:"public",table:"announcements"},()=>loadAnnouncement()).subscribe(status=>{if($("bellStatus"))$("bellStatus").textContent=status==="SUBSCRIBED"?"Kengele imeunganishwa":"Realtime: "+status})}
+async function loadPublicSettings(){if(!db)return;const {data}=await db.from("system_settings").select("key,value");(data||[]).forEach(x=>settingsCache[x.key]=x.value);if(settingsCache.main_color)document.documentElement.style.setProperty("--navy",settingsCache.main_color);const footer=$(".footer");if(footer)footer.innerHTML=esc(settingsCache.store_name||"MR LUCKY BUNDLE")+" · Huduma kwa mteja: "+esc(settingsCache.support_phone||"");}
+document.addEventListener("visibilitychange",()=>{if(adminUser&&!document.hidden)setAdminPresence(true);refreshPublicAdminPresence()});
+window.addEventListener("focus",()=>{if(adminUser)setAdminPresence(true);refreshPublicAdminPresence()});
+window.addEventListener("pagehide",()=>{if(adminUser){const payload={id:1,is_online:false,last_seen:null,updated_at:new Date().toISOString()};try{db.from("mlb_admin_presence").upsert(payload,{onConflict:"id"})}catch(e){}}});
+setInterval(()=>{if($("replyName")&&$("replyPhone")&&$("replyName").value.trim()&&$("replyPhone").value.trim()&&!$("ask").classList.contains("hidden"))checkMyReplies()},12000);
+(async()=>{if(db){refreshPublicAdminPresence();publicPresenceTimer=setInterval(refreshPublicAdminPresence,20000);loadCustomerOfferPublic();setInterval(loadCustomerOfferPublic,60000)}document.body.dataset.theme=localStorage.getItem("mlb_admin_display_theme")||"light";if($("adminSoundEnabled"))$("adminSoundEnabled").checked=adminSoundOn;if($("adminSoundSetting"))$("adminSoundSetting").checked=adminSoundOn;if(!ready())return;await loadPublicSettings();loadCustomerPrefs();renderSavedCustomerOrders();await loadNetworkControlsPublic();await loadProducts();await loadAnnouncement();let {data}=await db.auth.getSession();if(data.session){let {data:r}=await db.from("admin_users").select("user_id").eq("user_id",data.session.user.id).maybeSingle();if(r){adminUser=data.session.user;$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime()}}})();
+
+async function loadCRM(){
+ if(!adminUser)return;
+ const {data,error}=await db.from("mlb_customers").select("*").order("total_spent",{ascending:false}).limit(500);
+ if(error){$("crmRows").innerHTML='<tr><td colspan="5">CRM haipatikani. Hakikisha V5.0 migration imeendeshwa.</td></tr>';return}
+ const rows=data||[],total=rows.reduce((s,x)=>s+Number(x.total_spent||0),0);
+ $("crmStats").innerHTML=`<div class="card"><b>Wateja</b><h2>${rows.length}</h2></div><div class="card"><b>Matumizi yaliyokamilika</b><h2>${money(total)}</h2></div><div class="card"><b>Wateja waliopotea (siku 30+)</b><h2>${rows.filter(x=>x.last_order_at&&Date.now()-new Date(x.last_order_at).getTime()>2592000000).length}</h2></div>`;
+ $("crmRows").innerHTML=rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${x.total_orders}</td><td>${money(x.total_spent)}</td><td>${x.last_order_at?new Date(x.last_order_at).toLocaleDateString("sw-TZ"):"—"}</td></tr>`).join("")||'<tr><td colspan="5">Bado hakuna rekodi za wateja.</td></tr>';
+}
+async function addCashbookEntry(){
+ if(!adminUser)return;
+ const amount=Number($("cbAmount").value),description=$("cbDescription").value.trim();
+ if(!Number.isFinite(amount)||amount<=0||!description){alert("Weka kiasi na maelezo sahihi.");return}
+ const {error}=await db.from("mlb_cashbook").insert({entry_type:$("cbType").value,amount,description,payment_method:$("cbMethod").value});
+ if(error){alert("Haijahifadhiwa: "+error.message);return}
+ $("cbAmount").value="";$("cbDescription").value="";await loadCashbook();
+}
+async function editCashbookEntry(id,type,amount,method,description,date){
+ if(!adminUser)return;
+ const nt=prompt("Aina: income au expense",type);if(nt===null)return;
+ if(!["income","expense"].includes(nt)){alert("Aina si sahihi.");return}
+ const na=prompt("Kiasi cha TSh",String(amount));if(na===null)return;
+ const n=Number(na);if(!Number.isFinite(n)||n<=0){alert("Weka kiasi sahihi.");return}
+ const nm=prompt("Njia ya malipo",method);if(nm===null)return;
+ const nd=prompt("Maelezo",description);if(nd===null)return;
+ const ndate=prompt("Tarehe (YYYY-MM-DD)",date);if(ndate===null)return;
+ if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(ndate)){alert("Tarehe iwe YYYY-MM-DD.");return}
+ const {error}=await db.from("mlb_cashbook").update({entry_type:nt,amount:n,payment_method:nm,description:nd,entry_date:ndate}).eq("id",id);
+ if(error){alert("Haikuweza kuhariri: "+error.message);return}
+ await loadCashbook();
+}
+async function deleteCashbookEntry(id){
+ if(!confirm("Una uhakika unataka kufuta rekodi hii ya cashbook?"))return;
+ const {error}=await db.from("mlb_cashbook").delete().eq("id",id);
+ if(error)alert(error.message);else loadCashbook();
+}
+async function loadBusinessFinance(){
+ if(!adminUser)return;
+ const [{data:ledger,error:le},{data:cash,error:ce}]=await Promise.all([
+  db.from("mlb_data_ledger").select("entry_type,period,gb_amount,mb_amount,amount,created_at").order("created_at",{ascending:false}).limit(5000),
+  db.from("mlb_cashbook").select("entry_type,amount,entry_date").limit(5000)
+ ]);
+ if(le||ce){$("businessFinanceKpis").innerHTML='<div class="notice">Hesabu hazijapakiwa. Hakikisha migrations za Cashbook/Stock zimewekwa.</div>';return}
+ const rows=ledger||[],cashRows=cash||[];
+ const purchases=rows.filter(x=>x.entry_type==="purchase");
+ const sales=rows.filter(x=>x.entry_type==="sale");
+ const purchaseCost=purchases.reduce((s,x)=>s+Number(x.amount||0),0);
+ const salesRevenue=sales.reduce((s,x)=>s+Number(x.amount||0),0);
+ const boughtMB=purchases.reduce((s,x)=>s+Number(x.mb_amount||0),0);
+ const soldMB=sales.reduce((s,x)=>s+Number(x.mb_amount||0),0);
+ const avgCostPerMB=boughtMB?purchaseCost/boughtMB:0;
+ const costOfSold=soldMB*avgCostPerMB;
+ const gross=salesRevenue-costOfSold;
+ const expenses=cashRows.filter(x=>x.entry_type==="expense").reduce((s,x)=>s+Number(x.amount||0),0);
+ const net=gross-expenses;
+ $("businessFinanceKpis").innerHTML=[
+  ["Purchase",money(purchaseCost),"Ununuzi wa stock"],
+  ["Expenses",money(expenses),"Matumizi yaliyoingizwa Cashbook"],
+  ["Gross profit",money(gross),"Mauzo ukitoa gharama ya stock iliyouzwa"],
+  ["Net profit",money(net),"Gross profit ukitoa expenses"]
+ ].map((x,i)=>`<div class="card finance-kpi kpi-${i}"><b>${x[0]}</b><h2>${x[1]}</h2><small>${x[2]}</small></div>`).join("");
+ const stock=["day","week","month"].map(period=>{
+  const bought=purchases.filter(x=>x.period===period).reduce((s,x)=>s+Number(x.mb_amount||0),0);
+  const sold=sales.filter(x=>x.period===period).reduce((s,x)=>s+Number(x.mb_amount||0),0);
+  return `<div class="card"><b>Stock ya ${period==="day"?"siku":period==="week"?"wiki":"mwezi"}</b><h2>${Math.max(0,bought-sold).toLocaleString("en-US")} MB</h2><small>${(Math.max(0,bought-sold)/1024).toFixed(2)} GB zilizobaki</small></div>`;
+ }).join("");
+ $("businessStockKpis").innerHTML=stock;
+}
+async function loadCashbook(){
+ if(!adminUser)return;
+ const {data,error}=await db.from("mlb_cashbook").select("*").order("entry_date",{ascending:false}).limit(500);
+ if(error){$("cashRows").innerHTML='<tr><td colspan="6">Cashbook haipatikani. Endesha V5.0 migration.</td></tr>';return}
+ const rows=data||[],income=rows.filter(x=>x.entry_type==="income").reduce((s,x)=>s+Number(x.amount),0),expense=rows.filter(x=>x.entry_type==="expense").reduce((s,x)=>s+Number(x.amount),0);
+ $("cashStats").innerHTML=`<div class="card"><b>Mapato</b><h2>${money(income)}</h2></div><div class="card"><b>Matumizi</b><h2>${money(expense)}</h2></div><div class="card"><b>Salio</b><h2>${money(income-expense)}</h2></div>`;
+ $("cashRows").innerHTML=rows.map(x=>`<tr><td>${esc(x.entry_date)}</td><td>${x.entry_type==="income"?"Mapato":"Matumizi"}</td><td>${esc(x.description)}</td><td>${esc(x.payment_method||"—")}</td><td>${money(x.amount)}</td><td><div class="actions"><button onclick="editCashbookEntry('${x.id}',${JSON.stringify(x.entry_type)},${Number(x.amount)},${JSON.stringify(x.payment_method||"")},${JSON.stringify(x.description||"")},${JSON.stringify(x.entry_date||"")})">Hariri</button><button class="red" onclick="deleteCashbookEntry('${x.id}')">Futa</button></div></td></tr>`).join("")||'<tr><td colspan="6">Hakuna rekodi bado.</td></tr>';
+}
+
+
+function openAdminPage(id){
+ ["cashbookPage","crmPage"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
+ document.querySelectorAll("#adminPanel > .section,#adminPanel > .card,#adminPanel > .grid,#adminPanel > .notice,#adminPanel > .admin-module").forEach(x=>x.classList.add("hidden"));
+ $(id).classList.remove("hidden");
+ if(id==="cashbookPage"){loadCashbook();loadStockLedger();loadCapitalTransactions();loadCustomerDebts()}
+}
+function closeAdminPages(){
+ ["cashbookPage","crmPage"].forEach(x=>$(x).classList.add("hidden"));
+ document.querySelectorAll("#adminPanel > .section,#adminPanel > .card,#adminPanel > .grid,#adminPanel > .notice,#adminPanel > .admin-module").forEach(x=>x.classList.remove("hidden"));
+}
+function previewPurchaseGB(){const mb=Number($("stockBuyMB").value||0);$("stockBuyGBPreview").textContent="Sawa na "+(mb/1024).toFixed(4)+" GB (1 GB = 1024 MB)"}
+async function saveStockPurchase(){
+ const period=$("stockBuyPeriod").value,mb=Number($("stockBuyMB").value),gb=mb/1024,amount=Number($("stockBuyCost").value||0);
+ if(!Number.isFinite(mb)||mb<=0||!Number.isInteger(mb)||!Number.isFinite(amount)||amount<0){alert("Weka MB kamili na gharama sahihi.");return}
+ const {error}=await db.from("mlb_data_ledger").insert({entry_type:"purchase",period,gb_amount:gb,mb_amount:mb,amount,description:$("stockBuyNote").value.trim()});
+ if(error){alert("Haijahifadhiwa: "+error.message);return}
+ ["stockBuyMB","stockBuyCost","stockBuyNote"].forEach(id=>$(id).value="");previewPurchaseGB();await loadStockLedger();await loadBusinessFinance();
+}
+async function saveStockSale(){
+ const period=$("stockSellPeriod").value,quantity=Number($("stockSellMB").value),unit=$("stockSellUnit").value,mb=unit==="GB"?quantity*1024:quantity,gb=unit==="GB"?quantity:0,amount=Number($("stockSellAmount").value);
+ if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(amount)||amount<=0){alert("Weka MB kamili na bei sahihi.");return}
+ const {data:rows,error:readError}=await db.from("mlb_data_ledger").select("entry_type,mb_amount").eq("period",period);
+ if(readError){alert(readError.message);return}
+ const available=(rows||[]).reduce((s,x)=>s+(x.entry_type==="purchase"?Number(x.mb_amount): -Number(x.mb_amount)),0);
+ if(mb>available){alert("Stock haitoshi. Iliyobaki: "+Math.max(0,available).toLocaleString()+" MB");return}
+ const {error}=await db.from("mlb_data_ledger").insert({entry_type:"sale",period,gb_amount:gb,mb_amount:mb,amount,description:(unit==="GB"?quantity+" GB":quantity+" MB")+" · "+$("stockSellNote").value.trim(),customer_name:$("stockSellCustomer").value.trim()||null,customer_phone:$("stockSellPhone").value.trim()||null});
+ if(error){alert("Haijahifadhiwa: "+error.message);return}
+ ["stockSellMB","stockSellAmount","stockSellNote","stockSellCustomer","stockSellPhone"].forEach(id=>$(id).value="");await loadStockLedger();await loadCashbook();await loadBusinessFinance();
+}
+async function deleteStockEntry(id){if(!adminUser||!confirm("Una uhakika unataka kufuta rekodi hii ya stock?"))return;const {error}=await db.from("mlb_data_ledger").delete().eq("id",id);if(error){alert("Haijafutwa: "+error.message);return}await loadStockLedger()}
+async function loadStockLedger(){
+ if(!adminUser)return;
+ const {data,error}=await db.from("mlb_data_ledger").select("*").order("created_at",{ascending:false}).limit(500);
+ if(error){$("stockPeriodStats").innerHTML="<div class='card'>Stock ledger haipatikani. Endesha migration mpya ya V5.1.</div>";return}
+ const rows=data||[],names={day:"Siku",week:"Wiki",month:"Mwezi"};
+ $("stockPeriodStats").innerHTML=["day","week","month"].map(p=>{
+  const bought=rows.filter(x=>x.period===p&&x.entry_type==="purchase").reduce((s,x)=>s+Number(x.mb_amount),0);
+  const sold=rows.filter(x=>x.period===p&&x.entry_type==="sale").reduce((s,x)=>s+Number(x.mb_amount),0);
+  const remain=bought-sold;
+  return `<div class="card"><b>Bando la ${names[p]}</b><p>Umenunua: ${bought.toLocaleString()} MB (${(bought/1024).toFixed(2)} GB)</p><p>Umeuza: ${sold.toLocaleString()} MB</p><h2>${Math.max(0,remain).toLocaleString()} MB</h2><small>Salio: ${(remain/1024).toFixed(2)} GB</small></div>`;
+ }).join("");
+ const todayKey=new Date().toLocaleDateString("en-CA");
+ const todaySales=rows.filter(x=>x.entry_type==="sale"&&new Date(x.created_at).toLocaleDateString("en-CA")===todayKey);
+ const todayRevenue=todaySales.reduce((s,x)=>s+Number(x.amount||0),0);
+ const todayCustomers=new Set(todaySales.map(x=>x.customer_phone||x.customer_name||x.id)).size;
+ $("dailySalesStats").innerHTML=`<div class="card"><b>Mauzo ya leo</b><h2>${money(todayRevenue)}</h2></div><div class="card"><b>Huduma zilizorekodiwa</b><h2>${todaySales.length}</h2></div><div class="card"><b>Wateja tofauti</b><h2>${todayCustomers}</h2></div>`;
+ $("dailySalesRows").innerHTML=todaySales.map(x=>`<tr><td>${new Date(x.created_at).toLocaleTimeString("sw-TZ")}</td><td>${esc(x.customer_name||"Mteja")}</td><td>${esc(x.customer_phone||"—")}</td><td>${esc(x.description||"")}</td><td>${money(x.amount)}</td></tr>`).join("")||'<tr><td colspan="5">Bado hujaingiza mauzo ya leo.</td></tr>';
+ $("stockLedgerRows").innerHTML=rows.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("sw-TZ")}</td><td>${x.entry_type==="purchase"?"Ununuzi":"Mauzo"}</td><td>${names[x.period]||x.period}</td><td>${Number(x.gb_amount||0).toFixed(2)}</td><td>${Number(x.mb_amount||0).toLocaleString()}</td><td>${money(x.amount)}</td><td>${esc(x.description||"—")}</td><td><button onclick="deleteStockEntry('${x.id}')">Futa</button></td></tr>`).join("")||'<tr><td colspan="8">Bado hakuna rekodi.</td></tr>';
+}
+
+
+function toggleAdminModule(id,button){
+ const box=$(id);if(!box)return;
+ const content=box.querySelector(".module-content");const opening=content.classList.contains("hidden");
+ content.classList.toggle("hidden",!opening);
+ button.textContent=opening?"Funga sehemu":"Fungua sehemu";
+ if(opening){
+  if(id==="networkModule")loadNetworkControls();
+  if(id==="settingsModule")loadSystemSettings();
+  if(id==="announcementModule"){renderAnnouncementAdmin();loadAnnouncement()}
+  if(id==="ordersModule"||id==="inquiriesModule"||id==="productsModule")loadAdminData();
+ }
+}
+
+
+// MAISHA YANGU — authenticated private vault
+let lifePatterns={setup:[],unlock:[]},lifePatternRounds={setup:[],unlock:[]},lifeVaultUnlocked=false,lifeAutoLockTimer=null;
+const lifeHash=async(value,salt)=>{const enc=new TextEncoder(),key=await crypto.subtle.importKey("raw",enc.encode(value),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:enc.encode(salt),iterations:210000,hash:"SHA-256"},key,256);return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,"0")).join("")};
+const lifeSalt=()=>crypto.randomUUID();
+function lifePatternBuild(which){const el=$("life"+(which==="setup"?"Setup":"Unlock")+"Pattern");el.innerHTML=Array.from({length:9},(_,i)=>`<button type="button" data-dot="${i+1}" onclick="lifeDot('${which}',${i+1})">${i+1}</button>`).join("")}
+function lifeDot(which,n){const arr=lifePatterns[which];if(arr.includes(n))return;arr.push(n);const el=$("life"+(which==="setup"?"Setup":"Unlock")+"Pattern");el.querySelector(`[data-dot="${n}"]`).classList.add("selected");if(arr.length>=4){const rounds=lifePatternRounds[which];if(!rounds.length||rounds.every(x=>x===arr.join("-"))){rounds.push(arr.join("-"));}else{lifePatternRounds[which]=[];lifePatternRounds[which].push(arr.join("-"));}lifePatterns[which]=[];el.querySelectorAll("button").forEach(b=>b.classList.remove("selected"));const count=lifePatternRounds[which].length;$("life"+(which==="setup"?"Setup":"Unlock")+"Count").textContent=`Pattern ${count}/5`;if(count>=5){el.querySelectorAll("button").forEach(b=>b.disabled=true)}}}
+function lifeClearPattern(which){lifePatterns[which]=[];lifePatternRounds[which]=[];const el=$("life"+(which==="setup"?"Setup":"Unlock")+"Pattern");el.querySelectorAll("button").forEach(b=>{b.classList.remove("selected");b.disabled=false});$("life"+(which==="setup"?"Setup":"Unlock")+"Count").textContent="Pattern 0/5"}
+async function lifeInit(){if(!adminUser||!db)return;lifeVaultUnlocked=false;$("lifeWorkspace").classList.add("hidden");$("lifeGate").classList.remove("hidden");lifePatternBuild("setup");lifePatternBuild("unlock");const {data,error}=await db.from("mlb_life_vault_auth").select("id").eq("user_id",adminUser.id).maybeSingle();if(error){$("lifeGateMessage").textContent="Endesha migration ya MAISHA YANGU ili kuanzisha hifadhi salama: "+error.message;return}$("lifeSetup").classList.toggle("hidden",!!data);$("lifeUnlock").classList.toggle("hidden",!data)}
+async function lifeSaveSetup(){if(!adminUser)return;const pin=$("lifePinNew").value,pass=$("lifePassNew").value,rounds=lifePatternRounds.setup;if(!/^\d{4,8}$/.test(pin)||pass.length<10||rounds.length!==5||!rounds.every(x=>x===rounds[0])){alert("Weka PIN ya tarakimu 4–8, password ya herufi 10+, na pattern ileile mara 5.");return}const salt=lifeSalt(),pinHash=await lifeHash(pin,salt),passSalt=lifeSalt(),passHash=await lifeHash(pass,passSalt),patternSalt=lifeSalt(),patternHash=await lifeHash(rounds[0],patternSalt);const {error}=await db.from("mlb_life_vault_auth").insert({user_id:adminUser.id,pin_salt:salt,pin_hash:pinHash,password_salt:passSalt,password_hash:passHash,pattern_salt:patternSalt,pattern_hash:patternHash});if(error){alert("Imeshindikana kuhifadhi ulinzi: "+error.message);return}alert("Ulinzi umehifadhiwa. MAISHA YANGU inafunguka sasa.");lifeClearPattern("setup");$("lifeSetup").classList.add("hidden");$("lifeUnlock").classList.remove("hidden");lifeVaultUnlocked=true;$("lifeGate").classList.add("hidden");$("lifeWorkspace").classList.remove("hidden");await lifeLoadRecords();await lifeLoadFiles();lifeResetAutoLock()}
+async function lifeUnlock(){if(!adminUser)return;const {data,error}=await db.from("mlb_life_vault_auth").select("*").eq("user_id",adminUser.id).maybeSingle();if(error||!data){alert("Mipangilio ya usalama haipatikani.");return}const rounds=lifePatternRounds.unlock;if(!/^\d{4,8}$/.test($("lifePin").value)||$("lifePass").value.length<1||rounds.length!==5||!rounds.every(x=>x===rounds[0])){alert("Jaza PIN, password na pattern ileile mara tano.");return}const [ph,wh,gh]=await Promise.all([lifeHash($("lifePin").value,data.pin_salt),lifeHash($("lifePass").value,data.password_salt),lifeHash(rounds[0],data.pattern_salt)]);if(ph!==data.pin_hash||wh!==data.password_hash||gh!==data.pattern_hash){lifeClearPattern("unlock");$("lifePin").value="";$("lifePass").value="";$("lifeGateMessage").textContent="Siri si sahihi. Jaribu tena.";return}lifeVaultUnlocked=true;$("lifeGate").classList.add("hidden");$("lifeWorkspace").classList.remove("hidden");$("lifePin").value="";$("lifePass").value="";lifeClearPattern("unlock");await lifeLoadRecords();await lifeLoadFiles();lifeResetAutoLock()}
+function lifeResetAutoLock(){clearTimeout(lifeAutoLockTimer);lifeAutoLockTimer=setTimeout(lifeLockNow,5*60*1000)}
+function lifeOpenVault(){if(!adminUser)return; $("lifeOpenBtn").classList.add("hidden");$("lifeVault").classList.remove("hidden");lifeInit()}
+function lifeLockNow(){lifeVaultUnlocked=false;clearTimeout(lifeAutoLockTimer);$("lifeWorkspace")?.classList.add("hidden");$("lifeVault")?.classList.add("hidden");$("lifeOpenBtn")?.classList.remove("hidden");if(adminUser){$("lifeGate")?.classList.remove("hidden");$("lifePin").value="";$("lifePass").value="";lifeClearPattern("unlock")}}
+async function lifeSaveRecord(){if(!lifeVaultUnlocked)return;const title=$("lifeTitle").value.trim();if(!title){alert("Weka kichwa au jina.");return}const row={user_id:adminUser.id,record_type:$("lifeType").value,title,amount:Number($("lifeAmount").value)||0,due_date:$("lifeDue").value||null,body:$("lifeBody").value.trim()};const {error}=await db.from("mlb_life_records").insert(row);if(error){alert("Haijahifadhiwa: "+error.message);return}["lifeTitle","lifeAmount","lifeDue","lifeBody"].forEach(id=>$(id).value="");await lifeLoadRecords()}
+async function lifeLoadRecords(){if(!lifeVaultUnlocked)return;const {data,error}=await db.from("mlb_life_records").select("*").eq("user_id",adminUser.id).order("created_at",{ascending:false}).limit(200);if(error){$("lifeRecords").textContent=error.message;return}const labels={note:"Kumbukumbu",loan_given:"Nimkopesha",loan_taken:"Nimekopa",income:"Mapato binafsi",expense:"Matumizi binafsi",reminder:"Kikumbusho"};$("lifeRecords").innerHTML=(data||[]).map(r=>`<div class="life-record"><b>${esc(r.title)}</b> <span class="life-chip">${labels[r.record_type]||r.record_type}</span>${Number(r.amount)>0?`<div>${money(r.amount)}</div>`:""}${r.due_date?`<div class="life-muted small">Tarehe: ${esc(r.due_date)}</div>`:""}<p>${esc(r.body||"")}</p><button class="soft" onclick="lifeDeleteRecord('${r.id}')">Futa</button></div>`).join("")||"Bado hakuna kumbukumbu."}
+async function lifeDeleteRecord(id){if(!lifeVaultUnlocked||!confirm("Futa rekodi hii?"))return;const {error}=await db.from("mlb_life_records").delete().eq("id",id).eq("user_id",adminUser.id);if(error)alert(error.message);else lifeLoadRecords()}
+async function lifeUploadFiles(){if(!lifeVaultUnlocked)return;const files=[...$("lifeFile").files];if(!files.length)return alert("Chagua picha au nyaraka.");for(const f of files){if(f.size>10*1024*1024){alert(f.name+" imezidi 10 MB.");continue}const path=`${adminUser.id}/${crypto.randomUUID()}-${f.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`;const {error}=await db.storage.from("mlb-life-vault").upload(path,f,{upsert:false,contentType:f.type||"application/octet-stream"});if(error){alert("Faili "+f.name+": "+error.message);continue}const {error:ie}=await db.from("mlb_life_files").insert({user_id:adminUser.id,storage_path:path,file_name:f.name,mime_type:f.type||"application/octet-stream",size_bytes:f.size});if(ie)alert(ie.message)}$("lifeFile").value="";await lifeLoadFiles()}
+async function lifeLoadFiles(){if(!lifeVaultUnlocked)return;const {data,error}=await db.from("mlb_life_files").select("*").eq("user_id",adminUser.id).order("created_at",{ascending:false});if(error){$("lifeFiles").textContent=error.message;return}$("lifeFiles").innerHTML=await Promise.all((data||[]).map(async f=>{const {data:u}=await db.storage.from("mlb-life-vault").createSignedUrl(f.storage_path,300);return `<div class="life-record"><a href="${u?.signedUrl||"#"}" target="_blank" rel="noopener">${esc(f.file_name)}</a> · ${(f.size_bytes/1024/1024).toFixed(2)} MB <button class="soft" onclick="lifeDeleteFile('${f.id}','${esc(f.storage_path)}')">Futa</button></div>`})).then(a=>a.join(""))||"Bado hakuna picha au nyaraka."}
+async function lifeDeleteFile(id,path){if(!lifeVaultUnlocked||!confirm("Futa faili hili?"))return;await db.storage.from("mlb-life-vault").remove([path]);const {error}=await db.from("mlb_life_files").delete().eq("id",id).eq("user_id",adminUser.id);if(error)alert(error.message);else lifeLoadFiles()}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)lifeLockNow()});
+window.addEventListener("pagehide",()=>lifeLockNow());
+window.addEventListener("beforeunload",()=>lifeLockNow());
+document.addEventListener("click",ev=>{const vault=$("lifeVault"),opener=$("lifeOpenBtn");if(lifeVaultUnlocked&&vault&&!vault.contains(ev.target)&&ev.target!==opener)lifeLockNow()},true);
+
+async function saveCapitalTransaction(){if(!adminUser)return;const amount=Number($("capitalAmount").value),line=$("capitalLine").value.trim(),note=$("capitalNote").value.trim();if(!(amount>0)||!line||!note)return alert("Jaza kiasi, line/akaunti na maelezo.");const {error}=await db.from("mlb_business_capital_transactions").insert({transaction_type:$("capitalType").value,amount,line_name:line,notes:note,admin_user_id:adminUser.id});if(error)return alert(error.message);$("capitalAmount").value="";$("capitalNote").value="";await loadCapitalTransactions()}
+async function loadCapitalTransactions(){if(!adminUser)return;const {data,error}=await db.from("mlb_business_capital_transactions").select("*").order("created_at",{ascending:false}).limit(200);if(error){$("capitalSummary").textContent="Endesha V5.12 SQL: "+error.message;return}const rows=data||[],inflow=rows.filter(x=>x.transaction_type==="capital_in").reduce((a,x)=>a+Number(x.amount),0),draw=rows.filter(x=>x.transaction_type==="profit_withdrawal").reduce((a,x)=>a+Number(x.amount),0);$("capitalSummary").innerHTML=`<div class="card"><b>Mtaji ulioingizwa</b><h3>${money(inflow)}</h3></div><div class="card"><b>Faida iliyotolewa</b><h3>${money(draw)}</h3></div>`;$("capitalRows").innerHTML=rows.map(x=>`<div class="notice">${esc(x.transaction_type==="capital_in"?"Mtaji umeongezwa":"Faida imetolewa")} · ${money(x.amount)} · ${esc(x.line_name)} · ${esc(x.notes||"")}</div>`).join("")}
+async function saveCustomerDebt(){if(!adminUser)return;const name=$("debtName").value.trim(),amount=Number($("debtAmount").value);if(!name||!(amount>0)||!$("debtProduct").value.trim())return alert("Jaza jina, huduma na kiasi cha deni.");const {error}=await db.from("mlb_customer_debts").insert({customer_name:name,customer_phone:$("debtPhone").value.trim(),product_name:$("debtProduct").value.trim(),debt_amount:amount,paid_amount:0,notes:$("debtNote").value.trim(),admin_user_id:adminUser.id});if(error)return alert(error.message);["debtName","debtPhone","debtProduct","debtAmount","debtNote"].forEach(id=>$(id).value="");await loadCustomerDebts()}
+async function loadCustomerDebts(){if(!adminUser)return;const {data,error}=await db.from("mlb_customer_debts").select("*").order("created_at",{ascending:false}).limit(300);if(error){$("debtSummary").textContent="Endesha V5.12 SQL: "+error.message;return}const rows=data||[],owed=rows.reduce((a,x)=>a+Number(x.debt_amount)-Number(x.paid_amount),0);$("debtSummary").innerHTML=`<div class="card"><b>Madeni yaliyobaki</b><h3>${money(owed)}</h3></div>`;$("debtRows").innerHTML=rows.map(x=>{const bal=Number(x.debt_amount)-Number(x.paid_amount);return `<div class="notice"><b>${esc(x.customer_name)}</b> · ${esc(x.product_name)}<br>Deni: ${money(x.debt_amount)} · Amelipa: ${money(x.paid_amount)} · Baki: <b>${money(bal)}</b> · ${bal<=0?"LIMELIPWA":"BADO ANADAIWA"}<br>${esc(x.customer_phone||"")} ${esc(x.notes||"")} ${bal>0?`<button onclick="receiveCustomerDebt('${x.id}',${bal})">Pokea malipo</button>`:""}</div>`}).join("")}
+async function receiveCustomerDebt(id,balance){const amount=Number(prompt("Ingiza kiasi alicholipa (baki "+balance+")"));if(!(amount>0)||amount>balance)return alert("Kiasi si sahihi.");const {data,error}=await db.from("mlb_customer_debts").select("paid_amount").eq("id",id).single();if(error)return alert(error.message);const {error:e}=await db.from("mlb_customer_debts").update({paid_amount:Number(data.paid_amount)+amount}).eq("id",id);if(e)return alert(e.message);await loadCustomerDebts()}
+</script></body></html>
