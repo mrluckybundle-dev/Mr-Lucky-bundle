@@ -2,7 +2,7 @@
 <html lang="sw">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101d3a"><title>MR LUCKY BUNDLE V5.14</title>
+<meta name="theme-color" content="#101d3a"><title>MR LUCKY BUNDLE V5.15</title>
 <style>
 :root{--navy:#102a43;--gold:#f4b942;--bg:#f1f7f8;--ink:#172b3a;--muted:#607486;--line:#dce8ec;--green:#16834a;--red:#c93636;--teal:#0f9d9a;--surface:#ffffff;--soft-surface:#e8edf5}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,Arial,sans-serif;transition:background .2s,color .2s}
@@ -132,6 +132,8 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
 /* V5.14: admin toolbar and dashboard headers flow with the page while scrolling */
 #adminPanel .section,#adminPanel .admin-tools,#adminPanel .finance-dashboard{position:static!important;top:auto!important;bottom:auto!important;transform:none!important}
 #adminPanel{overflow:visible!important}#adminPanel .section{z-index:auto!important}
+#adminReauthOverlay.hidden{display:none!important}
+#adminReauthOverlay:not(.hidden){display:flex!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -150,7 +152,15 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
 <section id="track" class="hidden"><div class="card"><h2>Fuatilia oda</h2><label>Namba ya oda</label><input id="trackCode" placeholder="MLB-XXXXXXXX"><label>Namba ya mawasiliano (au namba ya kuungiwa ikiwa hukuandika mawasiliano)</label><input id="trackPhone" placeholder="07XXXXXXXX"><div class="actions"><button onclick="trackOrder()">Tafuta oda</button></div><div id="trackResult"></div><div class="card" style="margin-top:12px"><h3>Oda nilizowahi kufuatilia kwenye kifaa hiki</h3><div id="savedCustomerOrders" class="small muted">Hakuna oda zilizohifadhiwa bado.</div></div><div class="small muted" style="margin-top:10px">Hifadhi namba ya oda na simu yako ili kuangalia hatua za oda wakati wowote. Admin akifungua oda, utaona muda wa kuifungua.</div></div></section>
 <section id="admin" class="hidden">
 <div id="loginBox" class="card"><h2>Admin Login</h2><p class="muted">Ingia kwa akaunti ya Admin iliyoundwa kwenye Supabase. Hakuna nenosiri la pamoja la 1234.</p><label>Email ya Admin</label><input id="adminEmail" type="email" autocomplete="username"><label>Nenosiri</label><input id="adminPassword" type="password" autocomplete="current-password"><div class="actions"><button onclick="adminLogin()">Ingia</button></div><div id="loginResult"></div></div>
-<div id="adminPanel" class="hidden">
+<div id="adminPanel" class="hidden"><div id="adminReauthOverlay" class="hidden" style="position:fixed;inset:0;z-index:2000000;background:rgba(3,8,20,.96);align-items:center;justify-content:center;padding:22px">
+ <div class="card" style="width:min(100%,440px);padding:24px">
+  <h2>Admin imefungwa kwa muda</h2><p class="muted">Hakukuwa na matumizi kwa dakika 3. Ingiza password ya Admin ili kuendelea.</p>
+  <label>Password ya Admin</label><input id="adminReauthPassword" type="password" autocomplete="current-password" placeholder="Ingiza password" onkeydown="if(event.key==='Enter')adminReauthenticate()">
+  <div class="actions"><button onclick="adminReauthenticate()">Fungua Admin</button><button class="soft" onclick="adminLogout()">Toka</button></div>
+  <div id="adminReauthMessage" class="notice hidden"></div>
+ </div>
+</div>
+
 
 <button id="lifeOpenBtn" class="life-open-btn" onclick="lifeOpenVault()">MAISHA YANGU</button><div id="lifeVault" class="life-shell hidden">
  <div class="section" style="margin-top:0">
@@ -323,8 +333,8 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
   <div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Maelezo</th><th>Njia</th><th>Kiasi</th><th>Kitendo</th></tr></thead><tbody id="cashRows"></tbody></table></div>
  </div>
  <div class="card"><h3>6. Historia ya ununuzi na mauzo ya GB/MB</h3><div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Simu</th><th>Muda</th><th>Malipo</th><th>Deni</th><th>GB</th><th>MB</th><th>TSh</th><th>Maelezo</th><th>Action</th></tr></thead><tbody id="stockLedgerRows"></tbody></table></div></div>
-<div class="card"><h3>7. Mtaji wa biashara na kutoa faida</h3><p class="muted">Rekodi mtaji unaoweka kwenye line ya kupokea fedha na faida unayoitoa. Utoaji wa faida si gharama ya biashara.</p><div class="row"><div><label>Aina ya muamala</label><select id="capitalType"><option value="capital_in">Ongeza mtaji</option><option value="capital_out">Punguza mtaji</option><option value="profit_withdrawal">Nimetoa faida</option></select></div><div><label>Line / akaunti</label><input id="capitalLine" placeholder="Mfano M-Pesa 061..."></div></div><div class="row"><div><label>Kiasi TSh</label><input id="capitalAmount" type="number" min="1"></div><div><label>Maelezo</label><input id="capitalNote" placeholder="Maelezo ya muamala"></div></div><button onclick="saveCapitalTransaction()">Hifadhi muamala</button><div id="capitalSummary" class="grid"></div><div id="capitalRows"></div></div>
-<div class="card"><h3>8. Madeni ya wateja</h3><p class="muted">Rekodi mauzo ya mkopo na fuatilia malipo ya deni.</p><div class="row"><div><label>Jina la mteja</label><input id="debtName" placeholder="Jina"></div><div><label>Simu</label><input id="debtPhone" placeholder="07XXXXXXXX"></div></div><div class="row"><div><label>Huduma / GB</label><input id="debtProduct" placeholder="Mfano 5 GB"></div><div><label>Kiasi cha deni TSh</label><input id="debtAmount" type="number" min="1"></div></div><label>Maelezo</label><input id="debtNote" placeholder="Maelezo ya mkopo"><button onclick="saveCustomerDebt()">Hifadhi deni</button><div id="debtSummary" class="grid"></div><div id="debtRows"></div></div>
+<div class="card"><h3>7. Mtaji, faida na fedha zilizotolewa</h3><p class="muted">Rekodi kuongeza/kupunguza mtaji na kutoa faida. Salio la mtaji na faida inayobaki vitaonyeshwa hapa. Madeni yanaandikwa moja kwa moja unapouza bundle, na malipo yake hayahesabiwi kama mauzo mapya.</p><div class="row"><div><label>Aina ya muamala</label><select id="capitalType"><option value="capital_in">Ongeza mtaji</option><option value="capital_out">Punguza mtaji</option><option value="profit_withdrawal">Nimetoa faida</option></select></div><div><label>Line / akaunti</label><input id="capitalLine" placeholder="Mfano M-Pesa 061..."></div></div><div class="row"><div><label>Kiasi TSh</label><input id="capitalAmount" type="number" min="1"></div><div><label>Maelezo</label><input id="capitalNote" placeholder="Maelezo ya muamala"></div></div><button onclick="saveCapitalTransaction()">Hifadhi muamala</button><div id="capitalSummary" class="grid"></div><div id="capitalRows"></div></div>
+
 </div>
 <div id="crmPage" class="admin-subpage hidden">
  <div class="section"><button class="soft" onclick="closeAdminPages()">← Rudi Dashboard</button><h2>Wateja / CRM</h2><button class="soft" onclick="loadCRM()">Sasisha</button></div>
@@ -341,7 +351,7 @@ const SUPABASE_URL = "https://mdiiobrijxggaisisjvu.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_UFL-UZJqAMqugNDDLIsQ1A_NLGYDYmX";
 const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("_HAPA") && !SUPABASE_ANON_KEY.includes("_HAPA");
 const db = configured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}}) : null;
-let adminUser=null,knownOrderIds=new Set(),knownInquiryIds=new Set(),realtime=null,audioCtx=null,adminPresenceTimer=null,publicPresenceTimer=null;
+let adminIdleTimer=null,adminIdleLocked=false;let adminUser=null,knownOrderIds=new Set(),knownInquiryIds=new Set(),realtime=null,audioCtx=null,adminPresenceTimer=null,publicPresenceTimer=null;
 let pendingOrderIds=new Set(),orderAlarmTimer=null;
 let adminSoundOn=localStorage.getItem("mlb_admin_sound")!=="off";
 const $=id=>document.getElementById(id);
@@ -498,10 +508,18 @@ function startAdminPresenceHeartbeat(){
  setAdminPresence(true);
  adminPresenceTimer=setInterval(()=>{if(adminUser&&!document.hidden)setAdminPresence(true)},15000);
 }
+const ADMIN_IDLE_LIMIT=180000;
+function clearAdminIdleTimer(){if(adminIdleTimer){clearTimeout(adminIdleTimer);adminIdleTimer=null}}
+function armAdminIdleTimer(){clearAdminIdleTimer();if(!adminUser||adminIdleLocked||$("adminPanel").classList.contains("hidden"))return;adminIdleTimer=setTimeout(lockAdminForIdle,ADMIN_IDLE_LIMIT)}
+function resetAdminIdleTimer(){if(!adminUser||adminIdleLocked)return;armAdminIdleTimer()}
+function lockAdminForIdle(){if(!adminUser)return;adminIdleLocked=true;clearAdminIdleTimer();$("adminReauthPassword").value="";$("adminReauthMessage").classList.add("hidden");$("adminReauthOverlay").classList.remove("hidden")}
+async function adminReauthenticate(){if(!adminUser||!db)return;const password=$("adminReauthPassword").value;if(!password){$("adminReauthMessage").textContent="Ingiza password."; $("adminReauthMessage").classList.remove("hidden");return}const {data,error}=await db.auth.signInWithPassword({email:adminUser.email,password});if(error||!data.user||data.user.id!==adminUser.id){$("adminReauthMessage").textContent="Password si sahihi. Jaribu tena.";$("adminReauthMessage").classList.remove("hidden");$("adminReauthPassword").value="";return}adminIdleLocked=false;$("adminReauthOverlay").classList.add("hidden");$("adminReauthPassword").value="";armAdminIdleTimer()}
+["pointerdown","keydown","touchstart","scroll","click"].forEach(evt=>document.addEventListener(evt,()=>{if(!adminIdleLocked)resetAdminIdleTimer()},{passive:true}));
+document.addEventListener("visibilitychange",()=>{if(document.hidden)clearAdminIdleTimer();else if(adminUser&&!adminIdleLocked)armAdminIdleTimer()});
 async function adminLogin(){unlockAudio();if(!ready())return;let {data,error}=await db.auth.signInWithPassword({email:$("adminEmail").value.trim(),password:$("adminPassword").value});if(error){$("loginResult").innerHTML='<div class="notice error">Imeshindikana kuingia. Hakikisha akaunti imeundwa na kupewa ruhusa ya Admin.</div>';return}
 let {data:role,error:roleErr}=await db.from("admin_users").select("user_id").eq("user_id",data.user.id).maybeSingle();if(roleErr||!role){await db.auth.signOut();$("loginResult").innerHTML='<div class="notice error">Akaunti hii haina ruhusa ya Admin.</div>';return}
-adminUser=data.user;pendingOrderIds.clear();if(orderAlarmTimer){clearInterval(orderAlarmTimer);orderAlarmTimer=null}syncBellControls();if($("bellStatus"))$("bellStatus").textContent="Umeingia Admin — kengele imesitishwa; italia oda mpya";await db.from("orders").update({admin_seen:true}).eq("admin_seen",false);$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime();requestNotifications()}
-async function adminLogout(){if(adminPresenceTimer){clearInterval(adminPresenceTimer);adminPresenceTimer=null}await setAdminPresence(false);await refreshPublicAdminPresence();if(db)await db.auth.signOut();if(realtime)db.removeChannel(realtime);realtime=null;lifeLockNow();lifeLockNow();adminUser=null;$("adminPanel").classList.add("hidden");$("loginBox").classList.remove("hidden")}
+adminUser=data.user;pendingOrderIds.clear();if(orderAlarmTimer){clearInterval(orderAlarmTimer);orderAlarmTimer=null}syncBellControls();if($("bellStatus"))$("bellStatus").textContent="Umeingia Admin — kengele imesitishwa; italia oda mpya";await db.from("orders").update({admin_seen:true}).eq("admin_seen",false);$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");adminIdleLocked=false;armAdminIdleTimer();startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime();requestNotifications()}
+async function adminLogout(){clearAdminIdleTimer();adminIdleLocked=false;$("adminReauthOverlay")?.classList.add("hidden");if(adminPresenceTimer){clearInterval(adminPresenceTimer);adminPresenceTimer=null}await setAdminPresence(false);await refreshPublicAdminPresence();if(db)await db.auth.signOut();if(realtime)db.removeChannel(realtime);realtime=null;lifeLockNow();adminUser=null;$("adminPanel").classList.add("hidden");$("loginBox").classList.remove("hidden")}
 async function loadAdminData(){if(!adminUser)return;let [{data:os,error:oe},{data:qs,error:qe}]=await Promise.all([db.from("orders").select("*").order("created_at",{ascending:false}).limit(200),db.from("inquiries").select("*").order("created_at",{ascending:false}).limit(200)]);if(oe||qe){alert("Imeshindikana kusoma data. Hakikisha SQL/RLS imesanidiwa.");return}const unseenCount=(os||[]).filter(x=>x.admin_seen===false).length;if($("orderCountBadge")){$("orderCountBadge").textContent=unseenCount+" oda mpya";$("orderCountBadge").classList.toggle("hidden",unseenCount===0);}
  $("stats").innerHTML=[["Oda zote",os.length],["Zinasubiri",os.filter(x=>x.status==="Inasubiri").length],["Zimekamilika",os.filter(x=>x.status==="Imekamilika").length],["Maombi",qs.length]].map(x=>`<div class="card"><div class="muted">${x[0]}</div><div class="stat">${x[1]}</div></div>`).join("");
 const {data:paymentChoiceRows}=await db.from("mlb_order_payment_choices").select("order_code,method_name,screenshot_path,sender_name");
@@ -697,7 +715,7 @@ document.addEventListener("visibilitychange",()=>{if(adminUser&&!document.hidden
 window.addEventListener("focus",()=>{if(adminUser)setAdminPresence(true);refreshPublicAdminPresence()});
 window.addEventListener("pagehide",()=>{if(adminUser){const payload={id:1,is_online:false,last_seen:null,updated_at:new Date().toISOString()};try{db.from("mlb_admin_presence").upsert(payload,{onConflict:"id"})}catch(e){}}});
 setInterval(()=>{if($("replyName")&&$("replyPhone")&&$("replyName").value.trim()&&$("replyPhone").value.trim()&&!$("ask").classList.contains("hidden"))checkMyReplies()},12000);
-(async()=>{if(db){refreshPublicAdminPresence();publicPresenceTimer=setInterval(refreshPublicAdminPresence,20000);loadCustomerOfferPublic();setInterval(loadCustomerOfferPublic,60000)}document.body.dataset.theme=localStorage.getItem("mlb_admin_display_theme")||"light";if($("adminSoundEnabled"))$("adminSoundEnabled").checked=adminSoundOn;if($("adminSoundSetting"))$("adminSoundSetting").checked=adminSoundOn;if(!ready())return;await loadPublicSettings();loadCustomerPrefs();renderSavedCustomerOrders();await loadNetworkControlsPublic();await loadProducts();await loadAnnouncement();let {data}=await db.auth.getSession();if(data.session){let {data:r}=await db.from("admin_users").select("user_id").eq("user_id",data.session.user.id).maybeSingle();if(r){adminUser=data.session.user;$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime()}}})();
+(async()=>{if(db){refreshPublicAdminPresence();publicPresenceTimer=setInterval(refreshPublicAdminPresence,20000);loadCustomerOfferPublic();setInterval(loadCustomerOfferPublic,60000)}document.body.dataset.theme=localStorage.getItem("mlb_admin_display_theme")||"light";if($("adminSoundEnabled"))$("adminSoundEnabled").checked=adminSoundOn;if($("adminSoundSetting"))$("adminSoundSetting").checked=adminSoundOn;if(!ready())return;await loadPublicSettings();loadCustomerPrefs();renderSavedCustomerOrders();await loadNetworkControlsPublic();await loadProducts();await loadAnnouncement();let {data}=await db.auth.getSession();if(data.session){let {data:r}=await db.from("admin_users").select("user_id").eq("user_id",data.session.user.id).maybeSingle();if(r){adminUser=data.session.user;$("loginBox").classList.add("hidden");$("adminPanel").classList.remove("hidden");adminIdleLocked=false;armAdminIdleTimer();startAdminPresenceHeartbeat();await loadAdminData();await loadBusinessFinance();subscribeRealtime()}}})();
 
 async function loadCRM(){
  if(!adminUser)return;
