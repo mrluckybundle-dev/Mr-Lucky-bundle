@@ -2,7 +2,7 @@
 <html lang="sw">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#101d3a"><title>MR LUCKY BUNDLE V4.10</title>
+<meta name="theme-color" content="#101d3a"><title>MR LUCKY BUNDLE V5.14</title>
 <style>
 :root{--navy:#102a43;--gold:#f4b942;--bg:#f1f7f8;--ink:#172b3a;--muted:#607486;--line:#dce8ec;--green:#16834a;--red:#c93636;--teal:#0f9d9a;--surface:#ffffff;--soft-surface:#e8edf5}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,Arial,sans-serif;transition:background .2s,color .2s}
@@ -128,6 +128,10 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
 .announcement-gallery{display:flex;align-items:center;gap:8px;margin:12px 0}.announcement-gallery img{flex:1;max-width:80%;max-height:300px;object-fit:contain;cursor:zoom-in}.announcement-thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 0}.announcement-thumbs img{width:76px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer}.announcement-lightbox{display:none;position:fixed;inset:0;z-index:99999;background:#050914f2;align-items:center;justify-content:center;gap:10px;padding:16px}.announcement-lightbox.show{display:flex}.announcement-lightbox img{max-width:82vw;max-height:85vh;object-fit:contain}.announcement-lightbox button{font-size:24px}.announcement-lightbox .close-lightbox{position:absolute;right:18px;top:18px}
 
 .life-nav{display:flex;gap:8px;overflow-x:auto;padding:8px 0 14px}.life-nav button{white-space:nowrap;background:#25375c;color:white;border:1px solid #52688f;border-radius:12px;padding:12px}.life-navcard{text-align:left;cursor:pointer;min-height:130px}.life-navcard span{color:#b8c6df}.life-page{display:block}.life-page.hidden{display:none!important}.life-page .life-card{margin:12px 0}.life-grid .life-record{min-width:0}.life-files-thumb{width:100%;max-height:190px;object-fit:cover;border-radius:12px}.life-step-dots{display:none}
+
+/* V5.14: admin toolbar and dashboard headers flow with the page while scrolling */
+#adminPanel .section,#adminPanel .admin-tools,#adminPanel .finance-dashboard{position:static!important;top:auto!important;bottom:auto!important;transform:none!important}
+#adminPanel{overflow:visible!important}#adminPanel .section{z-index:auto!important}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -187,7 +191,7 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
 <div class="finance-dashboard card">
  <div class="section"><div><h3>Muhtasari wa biashara</h3><span class="small muted">Fedha na stock ya data</span></div><button class="soft" onclick="loadBusinessFinance()">Sasisha</button></div>
  <div class="grid finance-kpis" id="businessFinanceKpis"><div class="card">Inapakia hesabu...</div></div>
- <div class="grid finance-stock" id="businessStockKpis"></div>
+ <div class="grid finance-stock" id="businessStockKpis"></div><div class="card"><h3>Mtaji wa fedha kwenye simu</h3><div class="grid" id="capitalBalanceKpis"></div><p class="small muted">Salio la mtaji = mtaji ulioongezwa + fedha za mauzo zilizopokelewa + malipo ya madeni − ununuzi wa stock − matumizi/utoaji wa mtaji.</p></div>
  <p class="small muted">Gross profit = mauzo ya stock ukitoa gharama ya MB zilizouzwa kwa wastani wa gharama ya ununuzi. Net profit = gross profit ukitoa expenses.</p>
 </div>
 
@@ -270,22 +274,22 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
  <div class="section"><button class="soft" onclick="closeAdminPages()">← Rudi Dashboard</button><h2>Cashbook & Stock ya Internet</h2></div>
  <div class="card">
   <h3>1. Nunua GB</h3>
-  <p class="muted">Rekodi jumla ya GB ulizonunua, gharama yake, na muda wa bando.</p>
+  <p class="muted">Chagua simu kubwa/ndogo, muda wa bando na kiasi cha MB. Ununuzi unapunguza mtaji wa fedha uliopo kwenye simu.</p>
   <div class="row">
-   <div><label>Muda wa bando</label><select id="stockBuyPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi</option></select></div>
+   <div><label>Aina ya simu</label><select id="stockBuyDevice"><option value="big">Simu kubwa</option><option value="small">Simu ndogo</option></select></div><div><label>Muda wa bando</label><select id="stockBuyPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi 1</option><option value="two_months">Miezi 2</option></select></div>
    <div><label>Jumla ya MB ulizonunua</label><input id="stockBuyMB" type="number" min="1" step="1" placeholder="Mfano 12600" oninput="previewPurchaseGB()"><small id="stockBuyGBPreview" class="muted">Sawa na 0.0000 GB</small></div>
    <div><label>Umenunua kwa TSh</label><input id="stockBuyCost" type="number" min="0" step="1" placeholder="Mfano 50000"></div>
   </div>
-  <label>Maelezo (hiari)</label><input id="stockBuyNote" maxlength="180" placeholder="Chanzo / kumbukumbu">
+  <label>Line/akaunti uliyotumia kununua</label><input id="stockBuyLine" maxlength="80" placeholder="Mfano M-Pesa ya mtaji"><label>Maelezo (hiari)</label><input id="stockBuyNote" maxlength="180" placeholder="Chanzo / kumbukumbu">
   <button onclick="saveStockPurchase()">Hifadhi ununuzi wa MB</button>
  </div>
  <div class="card">
   <h3>2. Uza MB</h3>
-  <p class="muted">Andika GB au MB ulizouza na kiasi cha fedha ulichopokea. Mauzo yanapunguza stock ya muda husika.</p>
+  <p class="muted">Chagua simu kubwa/ndogo. Rekodi bei kamili na kiasi alicholipa. Mkopo au malipo ya awali yataonyesha deni lililobaki.</p>
   <div class="row">
-   <div><label>Muda wa bando lililouzwa</label><select id="stockSellPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi</option></select></div>
+   <div><label>Aina ya simu</label><select id="stockSellDevice"><option value="big">Simu kubwa</option><option value="small">Simu ndogo</option></select></div><div><label>Muda wa bando lililouzwa</label><select id="stockSellPeriod"><option value="day">Siku</option><option value="week">Wiki</option><option value="month">Mwezi 1</option><option value="two_months">Miezi 2</option></select></div>
    <div><label>Kiasi ulicyouza</label><input id="stockSellMB" type="number" min="0.01" step="0.01" placeholder="Mfano 0.5"></div><div><label>Unauza kwa kipimo gani?</label><select id="stockSellUnit"><option value="MB">MB</option><option value="GB">GB</option></select></div>
-   <div><label>Umeuza kwa TSh</label><input id="stockSellAmount" type="number" min="1" step="1" placeholder="Mfano 2500"></div>
+   <div><label>Bei ya huduma TSh</label><input id="stockSellAmount" type="number" min="1" step="1" placeholder="Mfano 2500"></div><div><label>Hali ya malipo</label><select id="stockSellPaymentState" onchange="syncSalePaidField()"><option value="paid">Amelipa yote</option><option value="partial">Amelipa sehemu</option><option value="unpaid">Hajatoa kabisa (mkopo)</option></select></div><div><label>Ametoa kiasi gani? TSh</label><input id="stockSellPaid" type="number" min="0" step="1" value="0" placeholder="Kiasi alicholipa"></div>
   </div>
   <div class="row">
    <div><label>Jina la mteja (hiari)</label><input id="stockSellCustomer" maxlength="100" placeholder="Jina la mteja"></div>
@@ -298,7 +302,7 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
   <h3>3. Mauzo ya leo — mapato ya huduma kwa wateja</h3>
   <p class="muted">Kila unapomhudumia mteja, jaza mauzo hapo juu. Hapa utaona jumla ya fedha ulizoingiza leo na rekodi za wateja.</p>
   <div class="grid" id="dailySalesStats"></div>
-  <div class="tablewrap"><table><thead><tr><th>Muda</th><th>Mteja</th><th>Simu</th><th>Kiasi cha GB/MB</th><th>Mapato</th></tr></thead><tbody id="dailySalesRows"></tbody></table></div>
+  <div class="tablewrap"><table><thead><tr><th>Muda</th><th>Mteja</th><th>Simu</th><th>Simu</th><th>Kiasi cha GB/MB</th><th>Bei</th><th>Amelipa</th><th>Deni</th></tr></thead><tbody id="dailySalesRows"></tbody></table></div>
  </div>
  <div class="card">
   <h3>4. Stock iliyobaki</h3>
@@ -318,8 +322,8 @@ body.life-page-open #lifeVault #lifeWorkspace{max-width:900px;margin:0 auto}
   <div class="grid" id="cashStats"></div>
   <div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Maelezo</th><th>Njia</th><th>Kiasi</th><th>Kitendo</th></tr></thead><tbody id="cashRows"></tbody></table></div>
  </div>
- <div class="card"><h3>6. Historia ya ununuzi na mauzo ya GB/MB</h3><div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Muda</th><th>GB</th><th>MB</th><th>TSh</th><th>Maelezo</th><th>Action</th></tr></thead><tbody id="stockLedgerRows"></tbody></table></div></div>
-<div class="card"><h3>7. Mtaji wa biashara na kutoa faida</h3><p class="muted">Rekodi mtaji unaoweka kwenye line ya kupokea fedha na faida unayoitoa. Utoaji wa faida si gharama ya biashara.</p><div class="row"><div><label>Aina ya muamala</label><select id="capitalType"><option value="capital_in">Ongeza mtaji</option><option value="profit_withdrawal">Nimetoa faida</option></select></div><div><label>Line / akaunti</label><input id="capitalLine" placeholder="Mfano M-Pesa 061..."></div></div><div class="row"><div><label>Kiasi TSh</label><input id="capitalAmount" type="number" min="1"></div><div><label>Maelezo</label><input id="capitalNote" placeholder="Maelezo ya muamala"></div></div><button onclick="saveCapitalTransaction()">Hifadhi muamala</button><div id="capitalSummary" class="grid"></div><div id="capitalRows"></div></div>
+ <div class="card"><h3>6. Historia ya ununuzi na mauzo ya GB/MB</h3><div class="tablewrap"><table><thead><tr><th>Tarehe</th><th>Aina</th><th>Simu</th><th>Muda</th><th>Malipo</th><th>Deni</th><th>GB</th><th>MB</th><th>TSh</th><th>Maelezo</th><th>Action</th></tr></thead><tbody id="stockLedgerRows"></tbody></table></div></div>
+<div class="card"><h3>7. Mtaji wa biashara na kutoa faida</h3><p class="muted">Rekodi mtaji unaoweka kwenye line ya kupokea fedha na faida unayoitoa. Utoaji wa faida si gharama ya biashara.</p><div class="row"><div><label>Aina ya muamala</label><select id="capitalType"><option value="capital_in">Ongeza mtaji</option><option value="capital_out">Punguza mtaji</option><option value="profit_withdrawal">Nimetoa faida</option></select></div><div><label>Line / akaunti</label><input id="capitalLine" placeholder="Mfano M-Pesa 061..."></div></div><div class="row"><div><label>Kiasi TSh</label><input id="capitalAmount" type="number" min="1"></div><div><label>Maelezo</label><input id="capitalNote" placeholder="Maelezo ya muamala"></div></div><button onclick="saveCapitalTransaction()">Hifadhi muamala</button><div id="capitalSummary" class="grid"></div><div id="capitalRows"></div></div>
 <div class="card"><h3>8. Madeni ya wateja</h3><p class="muted">Rekodi mauzo ya mkopo na fuatilia malipo ya deni.</p><div class="row"><div><label>Jina la mteja</label><input id="debtName" placeholder="Jina"></div><div><label>Simu</label><input id="debtPhone" placeholder="07XXXXXXXX"></div></div><div class="row"><div><label>Huduma / GB</label><input id="debtProduct" placeholder="Mfano 5 GB"></div><div><label>Kiasi cha deni TSh</label><input id="debtAmount" type="number" min="1"></div></div><label>Maelezo</label><input id="debtNote" placeholder="Maelezo ya mkopo"><button onclick="saveCustomerDebt()">Hifadhi deni</button><div id="debtSummary" class="grid"></div><div id="debtRows"></div></div>
 </div>
 <div id="crmPage" class="admin-subpage hidden">
@@ -472,7 +476,7 @@ async function loadCustomerOfferPublic(){if(!db)return;let {data,error}=await db
 async function setAdminPresence(online){
  if(!adminUser||!db)return false;
  const now=new Date().toISOString();
- const {error}=await db.from("mlb_admin_presence").upsert({id:1,is_online:!!online,last_seen:online?now:null,updated_at:now},{onConflict:"id"});
+ const {error}=await db.from("mlb_admin_presence").upsert({id:1,is_online:!!online,last_seen:now,updated_at:now},{onConflict:"id"});
  if(error){console.warn("Admin presence update failed:",error.message);return false}
  return true;
 }
@@ -480,10 +484,13 @@ async function refreshPublicAdminPresence(){
  if(!db)return;
  const {data,error}=await db.from("mlb_admin_presence").select("is_online,last_seen,updated_at").eq("id",1).maybeSingle();
  const stamp=data?.last_seen||data?.updated_at;
- const fresh=stamp&&Number.isFinite(new Date(stamp).getTime())&&(Date.now()-new Date(stamp).getTime()<45000);
+ const stampMs=stamp&&Number.isFinite(new Date(stamp).getTime())?new Date(stamp).getTime():null;
+ const ageMs=stampMs?Math.max(0,Date.now()-stampMs):null;
+ const fresh=ageMs!==null&&ageMs<45000;
  const online=!error&&data?.is_online===true&&!!fresh;
+ let ago="";if(ageMs!==null){const mins=Math.floor(ageMs/60000);if(mins<1)ago="chini ya dakika moja iliyopita";else if(mins<60)ago=`dakika ${mins} zilizopita`;else if(mins<1440)ago=`saa ${Math.floor(mins/60)} zilizopita`;else ago=`siku ${Math.floor(mins/1440)} zilizopita`;}
  const el=$("publicAdminStatusText"),dot=document.querySelector("#publicAdminStatus .status-dot");
- if(el)el.textContent=online?"Admin: Yupo mtandaoni":"Admin: Hayupo mtandaoni";
+ if(el)el.textContent=online?"Admin: Yupo mtandaoni":(stampMs?`Admin: Hayupo mtandaoni — mara ya mwisho ${ago}`:"Admin: Hajawahi kuonekana mtandaoni");
  if(dot)dot.className="status-dot "+(online?"online":"offline");
 }
 function startAdminPresenceHeartbeat(){
@@ -774,50 +781,61 @@ function openAdminPage(id){
  ["cashbookPage","crmPage"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
  document.querySelectorAll("#adminPanel > .section,#adminPanel > .card,#adminPanel > .grid,#adminPanel > .notice,#adminPanel > .admin-module").forEach(x=>x.classList.add("hidden"));
  $(id).classList.remove("hidden");
- if(id==="cashbookPage"){loadCashbook();loadStockLedger();loadCapitalTransactions();loadCustomerDebts();loadCostOfGoodsSold()}
+ if(id==="cashbookPage"){loadCashbook();loadStockLedger();loadCapitalTransactions();loadCustomerDebts();loadCapitalBalance();loadCostOfGoodsSold()}
 }
 function closeAdminPages(){
  ["cashbookPage","crmPage"].forEach(x=>$(x).classList.add("hidden"));
  document.querySelectorAll("#adminPanel > .section,#adminPanel > .card,#adminPanel > .grid,#adminPanel > .notice,#adminPanel > .admin-module").forEach(x=>x.classList.remove("hidden"));
 }
 function previewPurchaseGB(){const mb=Number($("stockBuyMB").value||0);$("stockBuyGBPreview").textContent="Sawa na "+(mb/1024).toFixed(4)+" GB (1 GB = 1024 MB)"}
+function periodLabel(p){return ({day:"Siku",week:"Wiki",month:"Mwezi 1",two_months:"Miezi 2"})[p]||p}
+async function addCapitalMovement(type,amount,line,notes,referenceId=null){
+ const {error}=await db.from("mlb_business_capital_transactions").insert({transaction_type:type,amount,line_name:line||"Line ya mtaji",notes:notes||"",admin_user_id:adminUser?.id||null,reference_id:referenceId});
+ if(error)throw error;
+}
+function syncSalePaidField(){const state=$("stockSellPaymentState").value,price=Number($("stockSellAmount").value||0),paid=$("stockSellPaid");if(state==="paid")paid.value=price;else if(state==="unpaid")paid.value=0;paid.readOnly=state!=="partial";}
 async function saveStockPurchase(){
- const period=$("stockBuyPeriod").value,mb=Number($("stockBuyMB").value),gb=mb/1024,amount=Number($("stockBuyCost").value||0);
- if(!Number.isFinite(mb)||mb<=0||!Number.isInteger(mb)||!Number.isFinite(amount)||amount<0){alert("Weka MB kamili na gharama sahihi.");return}
- const {error}=await db.from("mlb_data_ledger").insert({entry_type:"purchase",period,gb_amount:gb,mb_amount:mb,amount,description:$("stockBuyNote").value.trim()});
- if(error){alert("Haijahifadhiwa: "+error.message);return}
- ["stockBuyMB","stockBuyCost","stockBuyNote"].forEach(id=>$(id).value="");previewPurchaseGB();await loadStockLedger();await loadBusinessFinance();
+ const period=$("stockBuyPeriod").value,device=$("stockBuyDevice").value,mb=Number($("stockBuyMB").value),gb=mb/1024,amount=Number($("stockBuyCost").value||0),line=$("stockBuyLine").value.trim()||"Mtaji wa simu";
+ if(!Number.isFinite(mb)||mb<=0||!Number.isInteger(mb)||!Number.isFinite(amount)||amount<=0){alert("Weka MB kamili na gharama halali ya ununuzi.");return}
+ const {data:capitalRows,error:capErr}=await db.from("mlb_business_capital_transactions").select("transaction_type,amount");if(capErr){alert("Imeshindwa kusoma mtaji: "+capErr.message);return}
+ const bal=(capitalRows||[]).reduce((v,x)=>v+(x.transaction_type==="capital_in"||x.transaction_type==="sales_in"||x.transaction_type==="debt_payment_in"?Number(x.amount):-Number(x.amount)),0);
+ if(amount>bal){if(!confirm(`Mtaji ulioandikishwa ni ${money(bal)}. Ununuzi ni ${money(amount)}. Endelea na kufanya salio la mtaji kuwa hasi?`))return}
+ const {data:entry,error}=await db.from("mlb_data_ledger").insert({entry_type:"purchase",period,device_size:device,gb_amount:gb,mb_amount:mb,amount,description:$("stockBuyNote").value.trim()||"Ununuzi wa stock"}).select("id").single();
+ if(error){alert("Ununuzi haujahifadhiwa: "+error.message);return}
+ try{await addCapitalMovement("capital_out",amount,line,`Ununuzi ${mb.toLocaleString()} MB (${device==="big"?"Simu kubwa":"Simu ndogo"}, ${periodLabel(period)})`,entry.id)}catch(e){await db.from("mlb_data_ledger").delete().eq("id",entry.id);alert("Ununuzi umebatilishwa kwa sababu mtaji haukuweza kusasishwa: "+e.message);return}
+ ["stockBuyMB","stockBuyCost","stockBuyNote","stockBuyLine"].forEach(id=>$(id).value="");previewPurchaseGB();await loadStockLedger();await loadBusinessFinance();await loadCapitalBalance();
 }
 async function saveStockSale(){
- const period=$("stockSellPeriod").value,quantity=Number($("stockSellMB").value),unit=$("stockSellUnit").value,mb=unit==="GB"?quantity*1024:quantity,gb=unit==="GB"?quantity:0,amount=Number($("stockSellAmount").value);
- if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(amount)||amount<=0){alert("Weka MB kamili na bei sahihi.");return}
- const {data:rows,error:readError}=await db.from("mlb_data_ledger").select("entry_type,mb_amount").eq("period",period);
+ const period=$("stockSellPeriod").value,device=$("stockSellDevice").value,quantity=Number($("stockSellMB").value),unit=$("stockSellUnit").value,mb=unit==="GB"?quantity*1024:quantity,gb=unit==="GB"?quantity:quantity/1024,amount=Number($("stockSellAmount").value),state=$("stockSellPaymentState").value,paid=Number($("stockSellPaid").value||0);
+ if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(amount)||amount<=0||!Number.isFinite(paid)||paid<0||paid>amount){alert("Hakikisha kiasi, bei na malipo ni sahihi. Malipo hayawezi kuzidi bei.");return}
+ if(state==="paid"&&paid!==amount){alert("Kwa chaguo Amelipa yote, kiasi alicholipa lazima kiwe sawa na bei.");return}if(state==="unpaid"&&paid!==0){alert("Kwa mkopo bila malipo ya awali, weka kiasi 0.");return}if(state==="partial"&&(paid<=0||paid>=amount)){alert("Kwa Amelipa sehemu, weka kiasi zaidi ya 0 na chini ya bei.");return}
+ const {data:rows,error:readError}=await db.from("mlb_data_ledger").select("entry_type,mb_amount").eq("period",period).eq("device_size",device);
  if(readError){alert(readError.message);return}
- const available=(rows||[]).reduce((s,x)=>s+(x.entry_type==="purchase"?Number(x.mb_amount): -Number(x.mb_amount)),0);
- if(mb>available){alert("Stock haitoshi. Iliyobaki: "+Math.max(0,available).toLocaleString()+" MB");return}
- const {error}=await db.from("mlb_data_ledger").insert({entry_type:"sale",period,gb_amount:gb,mb_amount:mb,amount,description:(unit==="GB"?quantity+" GB":quantity+" MB")+" · "+$("stockSellNote").value.trim(),customer_name:$("stockSellCustomer").value.trim()||null,customer_phone:$("stockSellPhone").value.trim()||null});
- if(error){alert("Haijahifadhiwa: "+error.message);return}
- ["stockSellMB","stockSellAmount","stockSellNote","stockSellCustomer","stockSellPhone"].forEach(id=>$(id).value="");await loadStockLedger();await loadCashbook();await loadBusinessFinance();
+ const available=(rows||[]).reduce((sum,x)=>sum+(x.entry_type==="purchase"?Number(x.mb_amount):-Number(x.mb_amount)),0);
+ if(mb>available){alert(`Stock ya ${device==="big"?"simu kubwa":"simu ndogo"} ya ${periodLabel(period)} haitoshi. Iliyobaki: ${Math.max(0,available).toLocaleString()} MB`);return}
+ const due=amount-paid;
+ const desc=`${unit==="GB"?quantity+" GB":quantity+" MB"} · ${device==="big"?"Simu kubwa":"Simu ndogo"} · ${state==="paid"?"Amelipa yote":state==="partial"?"Amelipa sehemu":"Mkopo"} · ${$("stockSellNote").value.trim()}`;
+ const {data:entry,error}=await db.from("mlb_data_ledger").insert({entry_type:"sale",period,device_size:device,gb_amount:gb,mb_amount:mb,amount,paid_amount:paid,payment_state:state,customer_name:$("stockSellCustomer").value.trim()||null,customer_phone:$("stockSellPhone").value.trim()||null,description:desc}).select("id").single();
+ if(error){alert("Mauzo hayajahifadhiwa: "+error.message);return}
+ if(paid>0){try{await addCapitalMovement("sales_in",paid,"Line ya kupokea malipo",`Malipo ya mauzo; bei ${money(amount)}, deni ${money(due)}`,entry.id)}catch(e){await db.from("mlb_data_ledger").delete().eq("id",entry.id);alert("Mauzo yamebatilishwa kwa sababu salio la mtaji halikuweza kusasishwa: "+e.message);return}}
+ ["stockSellMB","stockSellAmount","stockSellPaid","stockSellNote","stockSellCustomer","stockSellPhone"].forEach(id=>$(id).value="");$("stockSellPaymentState").value="paid";syncSalePaidField();await loadStockLedger();await loadCashbook();await loadBusinessFinance();await loadCapitalBalance();
 }
+async function loadCapitalBalance(){if(!adminUser)return;const [{data,error},{data:cash,error:cashErr}]=await Promise.all([db.from("mlb_business_capital_transactions").select("transaction_type,amount,line_name,notes,created_at").order("created_at",{ascending:false}).limit(1000),db.from("mlb_cashbook").select("entry_type,amount").limit(1000)]);if(error||cashErr){$("capitalBalanceKpis").innerHTML=`<div class="notice error">Mtaji haujasomwa: ${esc((error||cashErr).message)}</div>`;return}const rows=data||[],cashRows=cash||[];const sum=t=>rows.filter(x=>x.transaction_type===t).reduce((a,x)=>a+Number(x.amount||0),0);const added=sum("capital_in"),sales=sum("sales_in"),debt=sum("debt_payment_in"),out=sum("capital_out"),profitOut=sum("profit_withdrawal"),otherIncome=cashRows.filter(x=>x.entry_type==="income").reduce((a,x)=>a+Number(x.amount||0),0),expenses=cashRows.filter(x=>x.entry_type==="expense").reduce((a,x)=>a+Number(x.amount||0),0),balance=added+sales+debt+otherIncome-out-profitOut-expenses;$("capitalBalanceKpis").innerHTML=[["Mtaji ulioongezwa",added],["Fedha za mauzo zilizopokelewa",sales],["Malipo ya madeni",debt],["Mapato mengine",otherIncome],["Ununuzi wa stock",out],["Matumizi ya cashbook",expenses],["Faida iliyotolewa",profitOut],["SALIO LA MTaji",balance]].map(([k,v])=>`<div class="card"><b>${k}</b><h3>${money(v)}</h3></div>`).join("")}
+async function receiveStockDebt(id,total,alreadyPaid){if(!adminUser)return;const balance=Number(total)-Number(alreadyPaid);const amount=Number(prompt(`Deni lililobaki ${money(balance)}. Ingiza kiasi alicholipa sasa:`));if(!Number.isFinite(amount)||amount<=0||amount>balance){alert("Kiasi si sahihi.");return}const next=Number(alreadyPaid)+amount,state=next>=Number(total)?"paid":"partial";const {error}=await db.from("mlb_data_ledger").update({paid_amount:next,payment_state:state}).eq("id",id);if(error){alert("Malipo hayajahifadhiwa: "+error.message);return}try{await addCapitalMovement("debt_payment_in",amount,"Line ya kupokea malipo",`Malipo ya deni la mauzo ${id}`,id)}catch(e){await db.from("mlb_data_ledger").update({paid_amount:alreadyPaid,payment_state:alreadyPaid>0?"partial":"unpaid"}).eq("id",id);alert("Malipo hayakuingizwa kwenye mtaji: "+e.message);return}await loadStockLedger();await loadCapitalBalance();await loadBusinessFinance()}
 async function deleteStockEntry(id){if(!adminUser||!confirm("Una uhakika unataka kufuta rekodi hii ya stock?"))return;const {error}=await db.from("mlb_data_ledger").delete().eq("id",id);if(error){alert("Haijafutwa: "+error.message);return}await loadStockLedger()}
 async function loadStockLedger(){
  if(!adminUser)return;
  const {data,error}=await db.from("mlb_data_ledger").select("*").order("created_at",{ascending:false}).limit(500);
  if(error){$("stockPeriodStats").innerHTML="<div class='card'>Stock ledger haipatikani. Endesha migration mpya ya V5.1.</div>";return}
- const rows=data||[],names={day:"Siku",week:"Wiki",month:"Mwezi"};
- $("stockPeriodStats").innerHTML=["day","week","month"].map(p=>{
-  const bought=rows.filter(x=>x.period===p&&x.entry_type==="purchase").reduce((s,x)=>s+Number(x.mb_amount),0);
-  const sold=rows.filter(x=>x.period===p&&x.entry_type==="sale").reduce((s,x)=>s+Number(x.mb_amount),0);
-  const remain=bought-sold;
-  return `<div class="card"><b>Bando la ${names[p]}</b><p>Umenunua: ${bought.toLocaleString()} MB (${(bought/1024).toFixed(2)} GB)</p><p>Umeuza: ${sold.toLocaleString()} MB</p><h2>${Math.max(0,remain).toLocaleString()} MB</h2><small>Salio: ${(remain/1024).toFixed(2)} GB</small></div>`;
- }).join("");
+ const rows=data||[],names={day:"Siku",week:"Wiki",month:"Mwezi 1",two_months:"Miezi 2"};
+ $("stockPeriodStats").innerHTML=["big","small"].map(device=>`<div class="card"><h3>${device==="big"?"📱 Simu kubwa":"📞 Simu ndogo"}</h3>${["day","week","month","two_months"].map(p=>{const bought=rows.filter(x=>x.period===p&&x.device_size===device&&x.entry_type==="purchase").reduce((a,x)=>a+Number(x.mb_amount),0),sold=rows.filter(x=>x.period===p&&x.device_size===device&&x.entry_type==="sale").reduce((a,x)=>a+Number(x.mb_amount),0),remain=bought-sold;return `<div class="notice"><b>${names[p]}</b><br>Umenunua: ${bought.toLocaleString()} MB · Umeuza: ${sold.toLocaleString()} MB<br><strong>Salio: ${Math.max(0,remain).toLocaleString()} MB (${(Math.max(0,remain)/1024).toFixed(2)} GB)</strong></div>`}).join("")}</div>`).join("");
  const todayKey=new Date().toLocaleDateString("en-CA");
  const todaySales=rows.filter(x=>x.entry_type==="sale"&&new Date(x.created_at).toLocaleDateString("en-CA")===todayKey);
  const todayRevenue=todaySales.reduce((s,x)=>s+Number(x.amount||0),0);
  const todayCustomers=new Set(todaySales.map(x=>x.customer_phone||x.customer_name||x.id)).size;
  $("dailySalesStats").innerHTML=`<div class="card"><b>Mauzo ya leo</b><h2>${money(todayRevenue)}</h2></div><div class="card"><b>Huduma zilizorekodiwa</b><h2>${todaySales.length}</h2></div><div class="card"><b>Wateja tofauti</b><h2>${todayCustomers}</h2></div>`;
- $("dailySalesRows").innerHTML=todaySales.map(x=>`<tr><td>${new Date(x.created_at).toLocaleTimeString("sw-TZ")}</td><td>${esc(x.customer_name||"Mteja")}</td><td>${esc(x.customer_phone||"—")}</td><td>${esc(x.description||"")}</td><td>${money(x.amount)}</td></tr>`).join("")||'<tr><td colspan="5">Bado hujaingiza mauzo ya leo.</td></tr>';
- $("stockLedgerRows").innerHTML=rows.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("sw-TZ")}</td><td>${x.entry_type==="purchase"?"Ununuzi":"Mauzo"}</td><td>${names[x.period]||x.period}</td><td>${Number(x.gb_amount||0).toFixed(2)}</td><td>${Number(x.mb_amount||0).toLocaleString()}</td><td>${money(x.amount)}</td><td>${esc(x.description||"—")}</td><td><button onclick="deleteStockEntry('${x.id}')">Futa</button></td></tr>`).join("")||'<tr><td colspan="8">Bado hakuna rekodi.</td></tr>';
+ $("dailySalesRows").innerHTML=todaySales.map(x=>`<tr><td>${new Date(x.created_at).toLocaleTimeString("sw-TZ")}</td><td>${esc(x.customer_name||"Mteja")}</td><td>${esc(x.customer_phone||"—")}</td><td>${esc(x.description||"")}</td><td>${money(x.amount)}</td><td>${money(x.paid_amount||0)}</td><td>${money(Math.max(0,Number(x.amount||0)-Number(x.paid_amount||0)))}</td></tr>`).join("")||'<tr><td colspan="5">Bado hujaingiza mauzo ya leo.</td></tr>';
+ $("stockLedgerRows").innerHTML=rows.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString("sw-TZ")}</td><td>${x.entry_type==="purchase"?"Ununuzi":"Mauzo"}</td><td>${x.device_size==="big"?"Simu kubwa":x.device_size==="small"?"Simu ndogo":"Haijaainishwa"}</td><td>${names[x.period]||x.period}</td><td>${x.entry_type==="sale"?(x.payment_state==="unpaid"?"Mkopo bila malipo":x.payment_state==="partial"?"Amelipa sehemu":"Amelipa yote"):"—"}</td><td>${x.entry_type==="sale"?money(Math.max(0,Number(x.amount||0)-Number(x.paid_amount||0))):"—"}</td><td>${Number(x.gb_amount||0).toFixed(2)}</td><td>${Number(x.mb_amount||0).toLocaleString()}</td><td>${money(x.amount)}</td><td>${esc(x.description||"—")}</td><td>${x.entry_type==="sale"&&Number(x.amount||0)>Number(x.paid_amount||0)?`<button class="soft" onclick="receiveStockDebt('${x.id}',${Number(x.amount||0)},${Number(x.paid_amount||0)})">Pokea deni</button>`:""}<button onclick="deleteStockEntry('${x.id}')">Futa</button></td></tr>`).join("")||'<tr><td colspan="11">Bado hakuna rekodi.</td></tr>';
 }
 
 
@@ -868,8 +886,8 @@ window.addEventListener("popstate",()=>{if(document.body.classList.contains("lif
 window.addEventListener("beforeunload",()=>lifeLockNow());
 
 
-async function saveCapitalTransaction(){if(!adminUser)return;const amount=Number($("capitalAmount").value),line=$("capitalLine").value.trim(),note=$("capitalNote").value.trim();if(!(amount>0)||!line||!note)return alert("Jaza kiasi, line/akaunti na maelezo.");const {error}=await db.from("mlb_business_capital_transactions").insert({transaction_type:$("capitalType").value,amount,line_name:line,notes:note,admin_user_id:adminUser.id});if(error)return alert(error.message);$("capitalAmount").value="";$("capitalNote").value="";await loadCapitalTransactions()}
-async function loadCapitalTransactions(){if(!adminUser)return;const {data,error}=await db.from("mlb_business_capital_transactions").select("*").order("created_at",{ascending:false}).limit(200);if(error){$("capitalSummary").textContent="Endesha V5.12 SQL: "+error.message;return}const rows=data||[],inflow=rows.filter(x=>x.transaction_type==="capital_in").reduce((a,x)=>a+Number(x.amount),0),draw=rows.filter(x=>x.transaction_type==="profit_withdrawal").reduce((a,x)=>a+Number(x.amount),0);$("capitalSummary").innerHTML=`<div class="card"><b>Mtaji ulioingizwa</b><h3>${money(inflow)}</h3></div><div class="card"><b>Faida iliyotolewa</b><h3>${money(draw)}</h3></div>`;$("capitalRows").innerHTML=rows.map(x=>`<div class="notice">${esc(x.transaction_type==="capital_in"?"Mtaji umeongezwa":"Faida imetolewa")} · ${money(x.amount)} · ${esc(x.line_name)} · ${esc(x.notes||"")}</div>`).join("")}
+async function saveCapitalTransaction(){if(!adminUser)return;const amount=Number($("capitalAmount").value),line=$("capitalLine").value.trim(),note=$("capitalNote").value.trim();if(!(amount>0)||!line||!note)return alert("Jaza kiasi, line/akaunti na maelezo.");const {error}=await db.from("mlb_business_capital_transactions").insert({transaction_type:$("capitalType").value,amount,line_name:line,notes:note,admin_user_id:adminUser.id});if(error)return alert(error.message);$("capitalAmount").value="";$("capitalNote").value="";await loadCapitalTransactions();await loadCapitalBalance()}
+async function loadCapitalTransactions(){if(!adminUser)return;const {data,error}=await db.from("mlb_business_capital_transactions").select("*").order("created_at",{ascending:false}).limit(200);if(error){$("capitalSummary").textContent="Endesha V5.12 SQL: "+error.message;return}const rows=data||[],inflow=rows.filter(x=>x.transaction_type==="capital_in").reduce((a,x)=>a+Number(x.amount),0),draw=rows.filter(x=>x.transaction_type==="profit_withdrawal").reduce((a,x)=>a+Number(x.amount),0);$("capitalSummary").innerHTML=`<div class="card"><b>Mtaji ulioingizwa</b><h3>${money(inflow)}</h3></div><div class="card"><b>Faida iliyotolewa</b><h3>${money(draw)}</h3></div>`;$("capitalRows").innerHTML=rows.map(x=>`<div class="notice">${esc(({capital_in:"Mtaji umeongezwa",capital_out:"Mtaji umepunguzwa",profit_withdrawal:"Faida imetolewa",sales_in:"Fedha za mauzo zimepokelewa",debt_payment_in:"Malipo ya deni yamepokelewa"})[x.transaction_type]||x.transaction_type)} · ${money(x.amount)} · ${esc(x.line_name)} · ${esc(x.notes||"")}</div>`).join("")}
 async function saveCustomerDebt(){if(!adminUser)return;const name=$("debtName").value.trim(),amount=Number($("debtAmount").value);if(!name||!(amount>0)||!$("debtProduct").value.trim())return alert("Jaza jina, huduma na kiasi cha deni.");const {error}=await db.from("mlb_customer_debts").insert({customer_name:name,customer_phone:$("debtPhone").value.trim(),product_name:$("debtProduct").value.trim(),debt_amount:amount,paid_amount:0,notes:$("debtNote").value.trim(),admin_user_id:adminUser.id});if(error)return alert(error.message);["debtName","debtPhone","debtProduct","debtAmount","debtNote"].forEach(id=>$(id).value="");await loadCustomerDebts()}
 async function loadCustomerDebts(){if(!adminUser)return;const {data,error}=await db.from("mlb_customer_debts").select("*").order("created_at",{ascending:false}).limit(300);if(error){$("debtSummary").textContent="Endesha V5.12 SQL: "+error.message;return}const rows=data||[],owed=rows.reduce((a,x)=>a+Number(x.debt_amount)-Number(x.paid_amount),0);$("debtSummary").innerHTML=`<div class="card"><b>Madeni yaliyobaki</b><h3>${money(owed)}</h3></div>`;$("debtRows").innerHTML=rows.map(x=>{const bal=Number(x.debt_amount)-Number(x.paid_amount);return `<div class="notice"><b>${esc(x.customer_name)}</b> · ${esc(x.product_name)}<br>Deni: ${money(x.debt_amount)} · Amelipa: ${money(x.paid_amount)} · Baki: <b>${money(bal)}</b> · ${bal<=0?"LIMELIPWA":"BADO ANADAIWA"}<br>${esc(x.customer_phone||"")} ${esc(x.notes||"")} ${bal>0?`<button onclick="receiveCustomerDebt('${x.id}',${bal})">Pokea malipo</button>`:""}</div>`}).join("")}
 async function receiveCustomerDebt(id,balance){const amount=Number(prompt("Ingiza kiasi alicholipa (baki "+balance+")"));if(!(amount>0)||amount>balance)return alert("Kiasi si sahihi.");const {data,error}=await db.from("mlb_customer_debts").select("paid_amount").eq("id",id).single();if(error)return alert(error.message);const {error:e}=await db.from("mlb_customer_debts").update({paid_amount:Number(data.paid_amount)+amount}).eq("id",id);if(e)return alert(e.message);await loadCustomerDebts()}
