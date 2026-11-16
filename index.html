@@ -785,18 +785,20 @@ async function deleteCashbookEntry(id){
 async function loadCostOfGoodsSold(){if(!adminUser)return;const [{data,error},{data:opening,error:openingError}]=await Promise.all([db.from("mlb_data_ledger").select("entry_type,period,device_size,mb_amount,amount,paid_amount,created_at").order("created_at",{ascending:false}).range(0,9999),db.from("mlb_stock_opening_balances").select("opening_mb,opening_cost")]);if(error||openingError)return;const rows=data||[],purchases=rows.filter(x=>x.entry_type==="purchase"),sales=rows.filter(x=>x.entry_type==="sale");const boughtMB=purchases.reduce((a,x)=>a+Number(x.mb_amount||0),0),purchaseCost=purchases.reduce((a,x)=>a+Number(x.amount||0),0),openingMB=(opening||[]).reduce((a,x)=>a+Number(x.opening_mb||0),0),openingCost=(opening||[]).reduce((a,x)=>a+Number(x.opening_cost||0),0),soldMB=sales.reduce((a,x)=>a+Number(x.mb_amount||0),0),revenue=sales.reduce((a,x)=>a+Number(x.amount||0),0),unitCost=(boughtMB+openingMB)?(purchaseCost+openingCost)/(boughtMB+openingMB):0,cogs=sales.reduce((sum,x)=>{const p=purchases.filter(y=>y.period===x.period&&y.device_size===x.device_size),o=(opening||[]).filter(y=>y.period===x.period&&y.device_size===x.device_size),mb=p.reduce((a,y)=>a+Number(y.mb_amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_mb||0),0),cost=p.reduce((a,y)=>a+Number(y.amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_cost||0),0);return sum+(mb?Number(x.mb_amount||0)*cost/mb:0)},0),gross=revenue-cogs;let box=$("cogsSummary");if(!box){box=document.createElement("div");box.id="cogsSummary";box.className="card";const target=$("cashbookPage");target.insertBefore(box,target.children[1]);}box.innerHTML=`<h3>Cost of Goods Sold (COGS) — Gharama ya stock iliyouzwa</h3><div class="grid"><div class="card"><b>Mapato ya mauzo</b><h2>${money(revenue)}</h2></div><div class="card"><b>COGS inayokadiriwa</b><h2>${money(cogs)}</h2><small>Gharama ya ununuzi kwa MB × MB zilizouzwa</small></div><div class="card"><b>Gross profit</b><h2>${money(gross)}</h2><small>Mapato − COGS</small></div><div class="card"><b>Stock iliyobaki</b><h2>${Math.max(0,boughtMB+openingMB-soldMB).toLocaleString()} MB</h2></div></div><p class="muted small">Faida huhesabiwa kwa thamani yote ya huduma zilizouzwa (hata mkopo), ukitoa gharama ya MB zilizotumika. Ununuzi wa stock ni mali/stock, si matumizi ya faida. Gharama ya stock ya mwanzo hujumuishwa kwa kutumia thamani uliyoingiza.</p>`}
 async function loadBusinessFinance(){
  if(!adminUser)return;
- const [{data:ledger,error:le},{data:cash,error:ce},{data:openingRows,error:oe},{data:capitalRows,error:ke},{data:manualDebts,error:debtErr}]=await Promise.all([
+ const [{data:ledger,error:le},{data:cash,error:ce},{data:openingRows,error:oe},{data:capitalRows,error:ke},{data:manualDebts,error:debtErr},{data:periodRows,error:periodErr}]=await Promise.all([
   db.from("mlb_data_ledger").select("entry_type,period,device_size,gb_amount,mb_amount,amount,paid_amount,payment_state,created_at,customer_name,customer_phone").order("created_at",{ascending:false}).range(0,9999),
   db.from("mlb_cashbook").select("entry_type,amount,entry_date").limit(5000),
   db.from("mlb_stock_opening_balances").select("device_size,period,opening_mb,opening_cost"),
   db.from("mlb_business_capital_transactions").select("transaction_type,amount,created_at").limit(5000),
-  db.from("mlb_customer_debts").select("id,customer_name,product_name,debt_amount,paid_amount,created_at").limit(2000)
+  db.from("mlb_customer_debts").select("id,customer_name,product_name,debt_amount,paid_amount,created_at").limit(2000),
+  db.from("mlb_business_period_settings").select("reset_at").eq("id",1).maybeSingle()
  ]);
- if(le||ce||oe||ke||debtErr){$("businessFinanceKpis").innerHTML='<div class="notice error">Hesabu hazijapakiwa: '+esc((le||ce||oe||ke||debtErr).message)+'</div>';return}
+ if(le||ce||oe||ke||debtErr||periodErr){$("businessFinanceKpis").innerHTML='<div class="notice error">Hesabu hazijapakiwa: '+esc((le||ce||oe||ke||debtErr).message)+'</div>';return}
  const rows=ledger||[],cashRows=cash||[],purchases=rows.filter(x=>x.entry_type==="purchase"),sales=rows.filter(x=>x.entry_type==="sale");
  const purchaseCost=purchases.reduce((a,x)=>a+Number(x.amount||0),0),salesRevenue=sales.reduce((a,x)=>a+Number(x.amount||0),0),boughtMB=purchases.reduce((a,x)=>a+Number(x.mb_amount||0),0),soldMB=sales.reduce((a,x)=>a+Number(x.mb_amount||0),0),openingMB=(openingRows||[]).reduce((a,x)=>a+Number(x.opening_mb||0),0),openingCost=(openingRows||[]).reduce((a,x)=>a+Number(x.opening_cost||0),0);
  const costOfSold=sales.reduce((sum,x)=>{const p=purchases.filter(y=>y.period===x.period&&y.device_size===x.device_size),o=(openingRows||[]).filter(y=>y.period===x.period&&y.device_size===x.device_size),mb=p.reduce((a,y)=>a+Number(y.mb_amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_mb||0),0),cost=p.reduce((a,y)=>a+Number(y.amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_cost||0),0);return sum+(mb?Number(x.mb_amount||0)*cost/mb:0)},0);
- const gross=salesRevenue-costOfSold,expenses=cashRows.filter(x=>x.entry_type==="expense").reduce((a,x)=>a+Number(x.amount||0),0),drawings=(capitalRows||[]).filter(x=>x.transaction_type==="profit_withdrawal").reduce((a,x)=>a+Number(x.amount||0),0),net=gross-expenses,remainingProfit=net-drawings;
+ const resetAt=periodRows?.reset_at||"1970-01-01T00:00:00.000Z";
+ const gross=salesRevenue-costOfSold,expenses=cashRows.filter(x=>x.entry_type==="expense").reduce((a,x)=>a+Number(x.amount||0),0),drawings=(capitalRows||[]).filter(x=>x.transaction_type==="profit_withdrawal"&&String(x.created_at||"")>=resetAt).reduce((a,x)=>a+Number(x.amount||0),0),net=gross-expenses,remainingProfit=Math.max(0,net-drawings);
  const manualOwed=(manualDebts||[]).reduce((a,x)=>a+Math.max(0,Number(x.debt_amount||0)-Number(x.paid_amount||0)),0);
  const ledgerDebts=sales.reduce((a,x)=>a+Math.max(0,Number(x.amount||0)-Number(x.paid_amount==null?(x.payment_state==="paid"?x.amount:0):x.paid_amount||0)),0);
  const allDebt=manualOwed+ledgerDebts;
@@ -808,7 +810,7 @@ async function loadBusinessFinance(){
   ["Cost of Goods Sold (COGS)",money(costOfSold),"Gharama ya MB zilizouzwa tu"],
   ["Gross profit",money(gross),"Mauzo yote − COGS"],
   ["Expenses",money(expenses),"Matumizi halisi ya biashara"],
-  ["Faida iliyobaki",money(remainingProfit),`Gross profit ${money(gross)} − matumizi ${money(expenses)} − faida iliyotolewa ${money(drawings)}`],
+  ["Net profit",money(remainingProfit),`Gross profit ${money(gross)} − matumizi ${money(expenses)} − faida iliyotolewa tangu mwanzo mpya ${money(drawings)}; salio haliendi chini ya sifuri`],
   ["Faida iliyotolewa",money(drawings),"Historia yake imehifadhiwa; haijafutwa"],
   ["Madeni ya wateja",money(allDebt),"Jumla ya madeni ambayo bado hayajalipwa"]
  ];
@@ -823,7 +825,41 @@ async function loadBusinessFinance(){
  const stock=[`<div class="card finance-stock-total"><b>JUMLA YA STOCK YOTE ILIYOPO</b><h2>${Math.round(totalAll).toLocaleString('en-US')} MB</h2><small>${(totalAll/1024).toFixed(2)} GB · Simu kubwa: ${Math.round(totalBig).toLocaleString('en-US')} MB · Simu ndogo: ${Math.round(totalSmall).toLocaleString('en-US')} MB</small>${totalBig<0||totalSmall<0?'<p class="notice error">⚠️ Stock imezidi. Kagua aina ya simu na muda.</p>':''}</div>`,...['day','week','month','two_months'].map(period=>{const calc=device=>{const b=purchases.filter(x=>x.period===period&&x.device_size===device).reduce((a,x)=>a+Number(x.mb_amount||0),0),s=sales.filter(x=>x.period===period&&x.device_size===device).reduce((a,x)=>a+Number(x.mb_amount||0),0),o=(openingRows||[]).filter(x=>x.period===period&&x.device_size===device).reduce((a,x)=>a+Number(x.opening_mb||0),0);return o+b-s};const big=calc('big'),small=calc('small'),remain=big+small,label=period==='day'?'ya siku':period==='week'?'ya wiki':period==='month'?'ya mwezi 1':'ya miezi 2';return `<div class="card"><b>Stock ${label} — Simu kubwa + ndogo</b><h2>${Math.round(remain).toLocaleString('en-US')} MB</h2><small>Kubwa: ${Math.round(big).toLocaleString('en-US')} MB · Ndogo: ${Math.round(small).toLocaleString('en-US')} MB</small>${big<0||small<0?'<p class="notice error">Stock imezidi kwenye aina hii.</p>':''}</div>`})];
  $('businessStockKpis').innerHTML=stock.join('');
 }
-async function calculateProfitRange(){if(!adminUser)return;const from=$('profitFrom').value,to=$('profitTo').value;if(!from||!to||from>to)return alert('Chagua tarehe sahihi ya kuanzia na mwisho.');const [{data:ledger,error:le},{data:cash,error:ce},{data:capital,error:ke}]=await Promise.all([db.from('mlb_data_ledger').select('entry_type,period,device_size,mb_amount,amount,created_at').lte('created_at',to+'T23:59:59'),db.from('mlb_cashbook').select('entry_type,amount,entry_date').gte('entry_date',from).lte('entry_date',to),db.from('mlb_business_capital_transactions').select('transaction_type,amount,created_at').gte('created_at',from+'T00:00:00').lte('created_at',to+'T23:59:59')]);if(le||ce||ke)return alert('Ripoti haijapakiwa: '+(le||ce||ke).message);const rows=ledger||[],p=rows.filter(x=>x.entry_type==='purchase'),s=rows.filter(x=>x.entry_type==='sale'&&String(x.created_at||'').slice(0,10)>=from&&String(x.created_at||'').slice(0,10)<=to),rev=s.reduce((a,x)=>a+Number(x.amount||0),0),buy=p.reduce((a,x)=>a+Number(x.mb_amount||0),0),cost=p.reduce((a,x)=>a+Number(x.amount||0),0),sold=s.reduce((a,x)=>a+Number(x.mb_amount||0),0),cogs=s.reduce((sum,x)=>{const ps=p.filter(y=>y.period===x.period&&y.device_size===x.device_size),mb=ps.reduce((a,y)=>a+Number(y.mb_amount||0),0),c=ps.reduce((a,y)=>a+Number(y.amount||0),0);return sum+(mb?Number(x.mb_amount||0)*c/mb:0)},0),expenses=(cash||[]).filter(x=>x.entry_type==='expense').reduce((a,x)=>a+Number(x.amount||0),0),withdrawals=(capital||[]).filter(x=>x.transaction_type==='profit_withdrawal').reduce((a,x)=>a+Number(x.amount||0),0),gross=rev-cogs,net=gross-expenses,remaining=net-withdrawals;$('profitRangeResult').innerHTML=[["Mauzo yote",rev],["COGS",cogs],["Gross profit",gross],["Matumizi",expenses],["Faida iliyotolewa",withdrawals],["Faida iliyobaki",remaining]].map(x=>`<div class="card"><b>${x[0]}</b><h3>${money(x[1])}</h3></div>`).join('')}
+async function calculateProfitRange(){
+ if(!adminUser)return;
+ const from=$('profitFrom').value,to=$('profitTo').value;
+ if(!from||!to||from>to)return alert('Chagua tarehe sahihi ya kuanzia na mwisho.');
+ const [{data:ledger,error:le},{data:cash,error:ce},{data:capital,error:ke},{data:opening,error:oe}]=await Promise.all([
+  db.from('mlb_data_ledger').select('entry_type,period,device_size,mb_amount,amount,created_at').lte('created_at',to+'T23:59:59'),
+  db.from('mlb_cashbook').select('entry_type,amount,entry_date').gte('entry_date',from).lte('entry_date',to),
+  db.from('mlb_business_capital_transactions').select('transaction_type,amount,created_at').gte('created_at',from+'T00:00:00').lte('created_at',to+'T23:59:59'),
+  db.from('mlb_stock_opening_balances').select('device_size,period,opening_mb,opening_cost')
+ ]);
+ if(le||ce||ke||oe)return alert('Ripoti haijapakiwa: '+(le||ce||ke||oe).message);
+ const rows=ledger||[],p=rows.filter(x=>x.entry_type==='purchase'),s=rows.filter(x=>x.entry_type==='sale'&&String(x.created_at||'').slice(0,10)>=from&&String(x.created_at||'').slice(0,10)<=to);
+ const rev=s.reduce((a,x)=>a+Number(x.amount||0),0);
+ const cogs=s.reduce((sum,x)=>{
+  const ps=p.filter(y=>y.period===x.period&&y.device_size===x.device_size&&String(y.created_at||'')<=String(x.created_at||''));
+  const os=(opening||[]).filter(y=>y.period===x.period&&y.device_size===x.device_size);
+  const mb=ps.reduce((a,y)=>a+Number(y.mb_amount||0),0)+os.reduce((a,y)=>a+Number(y.opening_mb||0),0);
+  const cost=ps.reduce((a,y)=>a+Number(y.amount||0),0)+os.reduce((a,y)=>a+Number(y.opening_cost||0),0);
+  return sum+(mb?Number(x.mb_amount||0)*cost/mb:0);
+ },0);
+ const expenses=(cash||[]).filter(x=>x.entry_type==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+ const withdrawals=(capital||[]).filter(x=>x.transaction_type==='profit_withdrawal').reduce((a,x)=>a+Number(x.amount||0),0);
+ const incomeReceived=(capital||[]).filter(x=>['sales_in','debt_payment_in'].includes(x.transaction_type)).reduce((a,x)=>a+Number(x.amount||0),0)+(cash||[]).filter(x=>x.entry_type==='income').reduce((a,x)=>a+Number(x.amount||0),0);
+ const gross=rev-cogs,net=gross-expenses,remaining=Math.max(0,net-withdrawals);
+ $('profitRangeResult').innerHTML=[
+  ["Mauzo yote (ikiwemo mkopo)",rev],
+  ["Total income iliyopokelewa",incomeReceived],
+  ["Cost of Goods Sold (COGS)",cogs],
+  ["Gross profit",gross],
+  ["Matumizi",expenses],
+  ["Faida kabla ya kutoa",net],
+  ["Faida iliyotolewa ndani ya kipindi",withdrawals],
+  ["Net profit / faida iliyobaki",remaining]
+ ].map(x=>`<div class="card"><b>${x[0]}</b><h3>${money(x[1])}</h3></div>`).join('');
+}
 
 async function loadCashbook(){
  if(!adminUser)return;
