@@ -779,23 +779,26 @@ async function deleteCashbookEntry(id){
  const {error}=await db.from("mlb_cashbook").delete().eq("id",id);
  if(error)alert(error.message);else loadCashbook();
 }
-async function loadCostOfGoodsSold(){if(!adminUser)return;const {data,error}=await db.from("mlb_data_ledger").select("entry_type,mb_amount,amount,paid_amount,created_at").order("created_at",{ascending:false}).limit(1000);if(error)return;const rows=data||[],purchases=rows.filter(x=>x.entry_type==="purchase"),sales=rows.filter(x=>x.entry_type==="sale");const boughtMB=purchases.reduce((a,x)=>a+Number(x.mb_amount||0),0),purchaseCost=purchases.reduce((a,x)=>a+Number(x.amount||0),0),soldMB=sales.reduce((a,x)=>a+Number(x.mb_amount||0),0),revenue=sales.reduce((a,x)=>a+receivedSaleAmount(x),0),unitCost=boughtMB?purchaseCost/boughtMB:0,cogs=soldMB*unitCost,gross=revenue-cogs;let box=$("cogsSummary");if(!box){box=document.createElement("div");box.id="cogsSummary";box.className="card";const target=$("cashbookPage");target.insertBefore(box,target.children[1]);}box.innerHTML=`<h3>Cost of Goods Sold (COGS) — Gharama ya stock iliyouzwa</h3><div class="grid"><div class="card"><b>Mapato ya mauzo</b><h2>${money(revenue)}</h2></div><div class="card"><b>COGS inayokadiriwa</b><h2>${money(cogs)}</h2><small>Gharama ya ununuzi kwa MB × MB zilizouzwa</small></div><div class="card"><b>Gross profit</b><h2>${money(gross)}</h2><small>Mapato − COGS</small></div><div class="card"><b>Stock iliyobaki</b><h2>${Math.max(0,boughtMB-soldMB).toLocaleString()} MB</h2></div></div><p class="muted small">COGS inakadiriwa kwa wastani wa gharama ya MB zote zilizonunuliwa. Rekodi za mkopo hazihesabiwi kama fedha zilizopokelewa hadi malipo yaingizwe.</p>`}
+async function loadCostOfGoodsSold(){if(!adminUser)return;const [{data,error},{data:opening,error:openingError}]=await Promise.all([db.from("mlb_data_ledger").select("entry_type,period,device_size,mb_amount,amount,paid_amount,created_at").order("created_at",{ascending:false}).range(0,9999),db.from("mlb_stock_opening_balances").select("opening_mb,opening_cost")]);if(error||openingError)return;const rows=data||[],purchases=rows.filter(x=>x.entry_type==="purchase"),sales=rows.filter(x=>x.entry_type==="sale");const boughtMB=purchases.reduce((a,x)=>a+Number(x.mb_amount||0),0),purchaseCost=purchases.reduce((a,x)=>a+Number(x.amount||0),0),openingMB=(opening||[]).reduce((a,x)=>a+Number(x.opening_mb||0),0),openingCost=(opening||[]).reduce((a,x)=>a+Number(x.opening_cost||0),0),soldMB=sales.reduce((a,x)=>a+Number(x.mb_amount||0),0),revenue=sales.reduce((a,x)=>a+Number(x.amount||0),0),unitCost=(boughtMB+openingMB)?(purchaseCost+openingCost)/(boughtMB+openingMB):0,cogs=sales.reduce((sum,x)=>{const p=purchases.filter(y=>y.period===x.period&&y.device_size===x.device_size),o=(opening||[]).filter(y=>y.period===x.period&&y.device_size===x.device_size),mb=p.reduce((a,y)=>a+Number(y.mb_amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_mb||0),0),cost=p.reduce((a,y)=>a+Number(y.amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_cost||0),0);return sum+(mb?Number(x.mb_amount||0)*cost/mb:0)},0),gross=revenue-cogs;let box=$("cogsSummary");if(!box){box=document.createElement("div");box.id="cogsSummary";box.className="card";const target=$("cashbookPage");target.insertBefore(box,target.children[1]);}box.innerHTML=`<h3>Cost of Goods Sold (COGS) — Gharama ya stock iliyouzwa</h3><div class="grid"><div class="card"><b>Mapato ya mauzo</b><h2>${money(revenue)}</h2></div><div class="card"><b>COGS inayokadiriwa</b><h2>${money(cogs)}</h2><small>Gharama ya ununuzi kwa MB × MB zilizouzwa</small></div><div class="card"><b>Gross profit</b><h2>${money(gross)}</h2><small>Mapato − COGS</small></div><div class="card"><b>Stock iliyobaki</b><h2>${Math.max(0,boughtMB+openingMB-soldMB).toLocaleString()} MB</h2></div></div><p class="muted small">Faida huhesabiwa kwa thamani yote ya huduma zilizouzwa (hata mkopo), ukitoa gharama ya MB zilizotumika. Ununuzi wa stock ni mali/stock, si matumizi ya faida. Gharama ya stock ya mwanzo hujumuishwa kwa kutumia thamani uliyoingiza.</p>`}
 async function loadBusinessFinance(){
  if(!adminUser)return;
- const [{data:ledger,error:le},{data:cash,error:ce}]=await Promise.all([
-  db.from("mlb_data_ledger").select("entry_type,period,gb_amount,mb_amount,amount,paid_amount,created_at").order("created_at",{ascending:false}).limit(5000),
-  db.from("mlb_cashbook").select("entry_type,amount,entry_date").limit(5000)
+ const [{data:ledger,error:le},{data:cash,error:ce},{data:openingRows,error:oe}]=await Promise.all([
+  db.from("mlb_data_ledger").select("entry_type,period,device_size,gb_amount,mb_amount,amount,paid_amount,created_at").order("created_at",{ascending:false}).range(0,9999),
+  db.from("mlb_cashbook").select("entry_type,amount,entry_date").limit(5000),
+  db.from("mlb_stock_opening_balances").select("device_size,period,opening_mb,opening_cost")
  ]);
- if(le||ce){$("businessFinanceKpis").innerHTML='<div class="notice">Hesabu hazijapakiwa. Hakikisha migrations za Cashbook/Stock zimewekwa.</div>';return}
+ if(le||ce||oe){$("businessFinanceKpis").innerHTML='<div class="notice">Hesabu hazijapakiwa. Hakikisha migrations za Cashbook/Stock zimewekwa.</div>';return}
  const rows=ledger||[],cashRows=cash||[];
  const purchases=rows.filter(x=>x.entry_type==="purchase");
  const sales=rows.filter(x=>x.entry_type==="sale");
  const purchaseCost=purchases.reduce((s,x)=>s+Number(x.amount||0),0);
- const salesRevenue=sales.reduce((s,x)=>s+receivedSaleAmount(x),0);
+ const salesRevenue=sales.reduce((s,x)=>s+Number(x.amount||0),0);
  const boughtMB=purchases.reduce((s,x)=>s+Number(x.mb_amount||0),0);
  const soldMB=sales.reduce((s,x)=>s+Number(x.mb_amount||0),0);
- const avgCostPerMB=boughtMB?purchaseCost/boughtMB:0;
- const costOfSold=soldMB*avgCostPerMB;
+ const openingMB=(openingRows||[]).reduce((s,x)=>s+Number(x.opening_mb||0),0);
+ const openingCost=(openingRows||[]).reduce((s,x)=>s+Number(x.opening_cost||0),0);
+ const avgCostPerMB=(boughtMB+openingMB)?(purchaseCost+openingCost)/(boughtMB+openingMB):0;
+ const costOfSold=sales.reduce((sum,x)=>{const p=purchases.filter(y=>y.period===x.period&&y.device_size===x.device_size),o=(openingRows||[]).filter(y=>y.period===x.period&&y.device_size===x.device_size),mb=p.reduce((a,y)=>a+Number(y.mb_amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_mb||0),0),cost=p.reduce((a,y)=>a+Number(y.amount||0),0)+o.reduce((a,y)=>a+Number(y.opening_cost||0),0);return sum+(mb?Number(x.mb_amount||0)*cost/mb:0)},0);
  const gross=salesRevenue-costOfSold;
  const expenses=cashRows.filter(x=>x.entry_type==="expense").reduce((s,x)=>s+Number(x.amount||0),0);
  const {data:capitalRows,error:capitalError}=await db.from("mlb_business_capital_transactions").select("transaction_type,amount").limit(2000);
@@ -803,13 +806,20 @@ async function loadBusinessFinance(){
  const net=gross-expenses;
  const remainingProfit=net-drawings;
  $("businessFinanceKpis").innerHTML=[
-  ["Purchase",money(purchaseCost),"Ununuzi wa stock"],
-  ["Expenses",money(expenses+drawings),`Matumizi ${money(expenses)} + faida iliyotolewa ${money(drawings)}`],
-  ["Faida ya fedha zilizopokelewa",money(gross),"Malipo yaliyopokelewa ukitoa gharama ya stock iliyotolewa"],
+  ["Stock purchases",money(purchaseCost),"Fedha zilizowekezwa kununua stock; si matumizi ya faida"],
+  ["Expenses",money(expenses),"Matumizi halisi ya biashara pekee"],
+  ["Gross profit",money(gross),"Thamani ya mauzo yote (ikiwemo mkopo) − COGS ya MB zilizouzwa"],
+  ["Faida iliyotolewa",money(drawings),"Imetolewa kutoka kwenye faida; haijajumuishwa kwenye matumizi"],
   ["Net profit iliyobaki",money(remainingProfit),`Net profit ${money(net)} − faida iliyotolewa ${money(drawings)}`]
  ].map((x,i)=>`<div class="card finance-kpi kpi-${i}"><b>${x[0]}</b><h2>${x[1]}</h2><small>${x[2]}</small></div>`).join("");
- const {data:openingRows}=await db.from("mlb_stock_opening_balances").select("device_size,period,opening_mb");
- const stock=["day","week","month","two_months"].map(period=>{
+ const stockTotalByDevice=device=>{
+  const bought=purchases.filter(x=>x.device_size===device).reduce((s,x)=>s+Number(x.mb_amount||0),0);
+  const sold=sales.filter(x=>x.device_size===device).reduce((s,x)=>s+Number(x.mb_amount||0),0);
+  const start=(openingRows||[]).filter(x=>x.device_size===device).reduce((s,x)=>s+Number(x.opening_mb||0),0);
+  return start+bought-sold;
+ };
+ const totalBig=stockTotalByDevice("big"),totalSmall=stockTotalByDevice("small"),totalAll=totalBig+totalSmall;
+ const stock=[`<div class="card finance-stock-total"><b>JUMLA YA STOCK YOTE ILIYOPO</b><h2>${totalAll.toLocaleString("en-US")} MB</h2><small>${(totalAll/1024).toFixed(2)} GB jumla · Simu kubwa: ${totalBig.toLocaleString("en-US")} MB · Simu ndogo: ${totalSmall.toLocaleString("en-US")} MB</small>${totalBig<0||totalSmall<0?`<p class="notice error">⚠️ Stock imezidi: ${totalBig<0?"Simu kubwa "+Math.abs(totalBig).toLocaleString("en-US")+" MB ":""}${totalSmall<0?"Simu ndogo "+Math.abs(totalSmall).toLocaleString("en-US")+" MB":""}</p>`:""}</div>`,...["day","week","month","two_months"].map(period=>{
   const deviceBalance=device=>{
    const bought=purchases.filter(x=>x.period===period&&x.device_size===device).reduce((s,x)=>s+Number(x.mb_amount||0),0);
    const sold=sales.filter(x=>x.period===period&&x.device_size===device).reduce((s,x)=>s+Number(x.mb_amount||0),0);
@@ -822,7 +832,7 @@ async function loadBusinessFinance(){
   const warning=big<0?`Simu kubwa imezidi ${Math.abs(big).toLocaleString("en-US")} MB. `:"";
   const warning2=small<0?`Simu ndogo imezidi ${Math.abs(small).toLocaleString("en-US")} MB.`:"";
   return `<div class="card ${exceeded?"notice error":""}"><b>Stock ${name} — Simu kubwa + ndogo</b><h2>${remain.toLocaleString("en-US")} MB</h2><small>${(remain/1024).toFixed(2)} GB jumla · Kubwa: ${big.toLocaleString("en-US")} MB · Ndogo: ${small.toLocaleString("en-US")} MB</small>${exceeded?`<p><b>⚠️ STOCK IMEZIDI: ${warning}${warning2}</b></p>`:""}</div>`;
- }).join("");
+ })].join("");
  $("businessStockKpis").innerHTML=stock;
 }
 async function loadCashbook(){
@@ -856,7 +866,7 @@ function syncSalePaidField(){const state=$("stockSellPaymentState").value,price=
 async function saveStockOpeningBalances(){
  if(!adminUser)return;
  const periods=["day","week","month","two_months"],devices=["big","small"],payload=[];
- for(const device of devices)for(const period of periods){const value=Number($("opening_"+device+"_"+period).value);if(!Number.isInteger(value)||value<0){alert("MB za mwanzo ziwe namba kamili isiyopungua sifuri.");return}payload.push({device_size:device,period,opening_mb:value,updated_at:new Date().toISOString(),updated_by:adminUser.id})}
+ for(const device of devices)for(const period of periods){const value=Number($("opening_"+device+"_"+period).value),cost=Number($("opening_cost_"+device+"_"+period).value||0);if(!Number.isInteger(value)||value<0||!Number.isFinite(cost)||cost<0){alert("MB ziwe namba kamili na gharama iwe namba isiyopungua sifuri.");return}payload.push({device_size:device,period,opening_mb:value,opening_cost:cost,updated_at:new Date().toISOString(),updated_by:adminUser.id})}
  const {error}=await db.from("mlb_stock_opening_balances").upsert(payload,{onConflict:"device_size,period"});
  if(error){$("stockOpeningMessage").textContent="Haijahifadhiwa: "+error.message;return}
  $("stockOpeningMessage").textContent="Salio la mwanzo limehifadhiwa. Manunuzi yataongeza stock na mauzo yatapunguza.";
@@ -870,8 +880,10 @@ async function saveStockPurchase(){
  if(amount>bal){if(!confirm(`Mtaji ulioandikishwa ni ${money(bal)}. Ununuzi ni ${money(amount)}. Endelea na kufanya salio la mtaji kuwa hasi?`))return}
  const {data:entry,error}=await db.from("mlb_data_ledger").insert({entry_type:"purchase",period,device_size:device,gb_amount:gb,mb_amount:mb,amount,description:$("stockBuyNote").value.trim()||"Ununuzi wa stock"}).select("id").single();
  if(error){alert("Ununuzi haujahifadhiwa: "+error.message);return}
+ const {data:verifiedPurchase,error:verifyError}=await db.from("mlb_data_ledger").select("id,mb_amount,device_size,period").eq("id",entry.id).single();
+ if(verifyError||!verifiedPurchase){alert("Ununuzi umehifadhiwa lakini haukuweza kuthibitishwa kwenye stock. Usirudie kuingiza kabla ya kubonyeza Sasisha stock. Sababu: "+(verifyError?.message||"Rekodi haikupatikana"));await loadStockLedger();await loadBusinessFinance();return}
  try{await addCapitalMovement("capital_out",amount,line,`Ununuzi ${mb.toLocaleString()} MB (${device==="big"?"Simu kubwa":"Simu ndogo"}, ${periodLabel(period)})`,entry.id)}catch(e){await db.from("mlb_data_ledger").delete().eq("id",entry.id);alert("Ununuzi umebatilishwa kwa sababu mtaji haukuweza kusasishwa: "+e.message);return}
- ["stockBuyMB","stockBuyCost","stockBuyNote","stockBuyLine"].forEach(id=>$(id).value="");previewPurchaseGB();await loadStockLedger();await loadBusinessFinance();await loadCapitalBalance();
+ ["stockBuyMB","stockBuyCost","stockBuyNote","stockBuyLine"].forEach(id=>$(id).value="");previewPurchaseGB();await loadStockLedger();await loadBusinessFinance();await loadCapitalBalance();alert(`Ununuzi umehifadhiwa na stock imesasishwa: +${Number(verifiedPurchase.mb_amount).toLocaleString()} MB (${(Number(verifiedPurchase.mb_amount)/1024).toFixed(2)} GB) — ${verifiedPurchase.device_size==="big"?"Simu kubwa":"Simu ndogo"}, ${periodLabel(verifiedPurchase.period)}.`);
 }
 async function saveStockSale(){
  const period=$("stockSellPeriod").value,device=$("stockSellDevice").value,quantity=Number($("stockSellMB").value),unit=$("stockSellUnit").value,mb=unit==="GB"?quantity*1024:quantity,gb=unit==="GB"?quantity:quantity/1024,amount=Number($("stockSellAmount").value),state=$("stockSellPaymentState").value,paid=Number($("stockSellPaid").value||0);
@@ -895,13 +907,13 @@ async function deleteStockEntry(id){if(!adminUser||!confirm("Una uhakika unataka
 async function loadStockLedger(){
  if(!adminUser)return;
  const [{data,error},{data:opening,error:openingError}]=await Promise.all([
- db.from("mlb_data_ledger").select("*").order("created_at",{ascending:false}).limit(500),
+ db.from("mlb_data_ledger").select("*").order("created_at",{ascending:false}).range(0,4999),
  db.from("mlb_stock_opening_balances").select("*")
  ]);
  if(error){$("stockPeriodStats").innerHTML="<div class='card'>Stock ledger haipatikani: "+esc(error.message)+"</div>";return}
  if(openingError){$("stockPeriodStats").innerHTML="<div class='card'>Endesha SQL ya V5.17 ili kuwezesha kuhariri stock ya mwanzo: "+esc(openingError.message)+"</div>";return}
  const rows=data||[],openingRows=opening||[],names={day:"Siku",week:"Wiki",month:"Mwezi 1",two_months:"Miezi 2"},periods=["day","week","month","two_months"];
- $("stockOpeningEditor").innerHTML=["big","small"].map(device=>`<div class="card"><b>${device==="big"?"📱 Simu kubwa":"📞 Simu ndogo"}</b>${periods.map(p=>{const rec=openingRows.find(x=>x.device_size===device&&x.period===p);return `<label>${names[p]} — MB za kuanzia</label><input type="number" min="0" step="1" id="opening_${device}_${p}" value="${Number(rec?.opening_mb||0)}">`}).join("")}</div>`).join("");
+ $("stockOpeningEditor").innerHTML=["big","small"].map(device=>`<div class="card"><b>${device==="big"?"📱 Simu kubwa":"📞 Simu ndogo"}</b>${periods.map(p=>{const rec=openingRows.find(x=>x.device_size===device&&x.period===p);return `<label>${names[p]} — MB za kuanzia</label><input type="number" min="0" step="1" id="opening_${device}_${p}" value="${Number(rec?.opening_mb||0)}"><label>Thamani ya gharama ya stock hii (TSh)</label><input type="number" min="0" step="1" id="opening_cost_${device}_${p}" value="${Number(rec?.opening_cost||0)}" placeholder="Mfano 25000">`}).join("")}</div>`).join("");
  $("stockPeriodStats").innerHTML=["big","small"].map(device=>`<div class="card"><h3>${device==="big"?"📱 Simu kubwa":"📞 Simu ndogo"}</h3>${periods.map(p=>{const bought=rows.filter(x=>x.period===p&&x.device_size===device&&x.entry_type==="purchase").reduce((a,x)=>a+Number(x.mb_amount||0),0),sold=rows.filter(x=>x.period===p&&x.device_size===device&&x.entry_type==="sale").reduce((a,x)=>a+Number(x.mb_amount||0),0),start=Number(openingRows.find(x=>x.device_size===device&&x.period===p)?.opening_mb||0),remain=start+bought-sold;return `<div class="notice ${remain<0?"error":""}"><b>${names[p]}</b><br>Salio la mwanzo: ${start.toLocaleString()} MB · Umenunua: ${bought.toLocaleString()} MB · Umeuza: ${sold.toLocaleString()} MB<br><strong>Salio: ${remain.toLocaleString()} MB (${(remain/1024).toFixed(2)} GB)</strong>${remain<0?`<br><b>⚠️ STOCK IMEZIDI KWA ${Math.abs(remain).toLocaleString()} MB</b>`:""}</div>`}).join("")}</div>`).join("");
  const todayKey=new Date().toLocaleDateString("en-CA");
  const todaySales=rows.filter(x=>x.entry_type==="sale"&&new Date(x.created_at).toLocaleDateString("en-CA")===todayKey);
