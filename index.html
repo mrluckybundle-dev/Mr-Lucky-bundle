@@ -942,7 +942,7 @@ async function resetBusinessBooks(){
  if(phrase!=="ANZA UPYA")return alert("Uthibitisho haujalingana. Hakuna rekodi iliyofutwa.");
  const status=$("businessResetStatus");if(status)status.textContent="Inasafisha hesabu kwa usalama...";
  const {data,error}=await db.rpc("mlb_reset_business_books");
- if(error){if(status)status.textContent="";alert("Hesabu hazijafutwa. Hakikisha umeendesha SQL ya V5.25 na ujaribu tena. Sababu: "+error.message);return}
+ if(error){if(status)status.textContent="";alert("Hesabu hazijafutwa. Hakikisha umeendesha SQL ya V5.26 na ujaribu tena. Sababu: "+error.message);return}
  if(!data||data.success!==true){if(status)status.textContent="";alert("Mfumo haujathibitisha kusafishwa. Tafadhali kagua Supabase.");return}
  if(status)status.textContent="Hesabu za zamani zimeondolewa. Historia ya faida iliyotolewa imehifadhiwa.";
  alert("Umeanza upya salama. Manunuzi, mauzo, cashbook, madeni na stock ya mwanzo vimeondolewa. Faida uliyotoa imehifadhiwa.");
